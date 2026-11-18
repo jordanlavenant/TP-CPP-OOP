@@ -45,7 +45,7 @@ int main()
       std::string const text = out.str();
       check(text.find("<svg width=\"100\" height=\"200\">") != std::string::npos, "vérification de l'en-tête");
       
-      // 1.2 (pendant la durée de vie de l'objet)
+      // 1.2 (pendant que l'objet est en vie)
       check(text.find("</svg>") == std::string::npos, "vérification que la balise fermante est absente du flux");
     }
     // 1.2 (après destruction)
@@ -57,6 +57,20 @@ int main()
       check(feuille2.width() == 900 && feuille2.height() == 900, "la feuille par défaut est de 900 par 900");
       std::string const text2 = out.str();
       check(text2.find("<svg width=\"900\" height=\"900\">") != std::string::npos, "vérification de l'en-tête de la feuille par défaut");
+    }
+    // 1.5
+    {
+      std::ostringstream out_2;
+    
+      check(canvas::alive() == 0, "alive avant construction");
+    
+      canvas c1(out, 100, 100);
+      {
+        canvas c2(out_2, 200, 200);
+        check(canvas::alive() == 2, "alive après seconde construction");
+      }
+    
+      check(canvas::alive() == 1, "alive à la sortie de la portée interne");
     }
   }
 

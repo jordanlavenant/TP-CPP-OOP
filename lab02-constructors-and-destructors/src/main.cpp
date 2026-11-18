@@ -92,7 +92,10 @@ namespace
     // TO WRITE. Place the tree inside one group, in its own scope, then
     // call branch. Where the closing brace goes is what decides where the
     // closing tag goes.
-    branch(sheet, DEPTH, 11.0);
+    {
+      group const feuille(sheet, "translate(450,860)");
+      branch(sheet, DEPTH, 11.0);
+    }
 
     // Every group opened has been closed, and no line below wrote a closing
     // tag: the closing brace above did.

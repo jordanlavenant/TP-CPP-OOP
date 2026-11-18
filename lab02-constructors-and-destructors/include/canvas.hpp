@@ -37,7 +37,7 @@ class canvas
     canvas(canvas const&)            = delete;
     canvas& operator=(canvas const&) = delete;
 
-    void line(point a, point b, color const& stroke, double thickness);
+    void line(point a, point b, color const& stroke, double thickness) const;
 
     // Called by group, which is the only thing that should call them: a group
     // opened by hand is a group that can be left open.
@@ -58,7 +58,7 @@ class canvas
     std::ostream& out_;
     int           width_;
     int           height_;
-
+    
     // Computed from the two above, and therefore established after them. Which
     // is decided by the order of these declarations, and by nothing else.
     point         centre_;
