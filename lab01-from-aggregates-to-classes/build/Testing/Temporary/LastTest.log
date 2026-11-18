@@ -1,0 +1,19 @@
+Start testing: Nov 17 19:27 CET
+----------------------------------------------------------
+1/1 Testing: color
+1/1 Test: color
+Command: "/home/jorda/TP-CPP-OOP/lab01-from-aggregates-to-classes/build/tests"
+Directory: /home/jorda/TP-CPP-OOP/lab01-from-aggregates-to-classes/build
+"color" start time: Nov 17 19:27 CET
+Output:
+----------------------------------------------------------
+all checks passed
+<end of output>
+Test time =   0.01 sec
+----------------------------------------------------------
+Test Passed.
+"color" end time: Nov 17 19:27 CET
+"color" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Nov 17 19:27 CET

@@ -1,0 +1,1009 @@
+<meta charset="utf-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
+
+/* Les jetons du site, repris valeur par valeur : un enonce part en archive
+   avec sa copie de markdeep et ne voit jamais website/style.css. */
+:root {
+  --font-body    : Roboto, -apple-system, "Segoe UI", Arial, sans-serif;
+  --font-mono    : "JetBrains Mono", Consolas, "SF Mono", Menlo, monospace;
+  --measure      : 72rem;
+  --radius       : 8px;
+  --radius-sm    : 5px;
+
+  --bg           : #fbfbf9;
+  --bg-elevated  : #ffffff;
+  --bg-sunken    : #f2f3ef;
+  --bg-code      : #f7f7f4;
+  --text         : #1c1f23;
+  --text-muted   : #5d6570;
+  --text-faint   : #8a929c;
+  --border       : #e0e2dd;
+  --border-strong: #c6cabf;
+  --accent       : #38761d;
+
+  --ia-trait     : #c0392b;
+  --ia-fond      : #fdf4f2;
+  --ia-code      : #f8e7e3;
+  --ia-code-bord : #e3b6ad;
+  color-scheme   : light;
+}
+
+/* Le sombre ne vaut qu'a l'ecran : le PDF sort en media print, et une machine
+   reglee en sombre lui donnerait des pages noires. */
+@media screen {
+  :root[data-theme="dark"] {
+    --bg           : #15181a;
+    --bg-elevated  : #1c2023;
+    --bg-sunken    : #22262a;
+    --bg-code      : #1a1e21;
+    --text         : #e4e7e5;
+    --text-muted   : #a4aeaa;
+    --text-faint   : #7c8783;
+    --border       : #2c3134;
+    --border-strong: #414850;
+    --accent       : #85c46a;
+    --ia-trait     : #e06c5a;
+    --ia-fond      : #2a1c1a;
+    --ia-code      : #3a2522;
+    --ia-code-bord : #58332e;
+    color-scheme   : dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+    --bg           : #15181a;
+    --bg-elevated  : #1c2023;
+    --bg-sunken    : #22262a;
+    --bg-code      : #1a1e21;
+    --text         : #e4e7e5;
+    --text-muted   : #a4aeaa;
+    --text-faint   : #7c8783;
+    --border       : #2c3134;
+    --border-strong: #414850;
+    --accent       : #85c46a;
+    --ia-trait     : #e06c5a;
+    --ia-fond      : #2a1c1a;
+    --ia-code      : #3a2522;
+    --ia-code-bord : #58332e;
+    color-scheme   : dark;
+    }
+  }
+}
+
+/* markdeep pose id="md" sur le corps et enveloppe le document rendu dans un
+   span de classe md. Le corps n'a donc pas cette classe : un selecteur
+   body.md ne designe rien, et c'est pourquoi le plafond de 680 px tenait.
+   Cette feuille est injectee apres celle de markdeep, donc un simple body
+   suffit a la couvrir. */
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.7;
+  margin: 0;
+  max-width: none;
+  padding: 0;
+  text-align: left;         /* markdeep justifie, ce qui creuse les blancs */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Le document vit dans une colonne centree, comme sur le site. Le span que
+   markdeep pose est en ligne : il lui faut display block pour la porter. */
+.md {
+  display: block;
+  margin: 0 auto;
+  max-width: var(--measure);
+  padding: 0.8rem 1.25rem 2.5rem;
+}
+.md p, .md li { text-wrap: pretty; }
+.md li { margin-bottom: 0.3rem; }
+.md p { margin: 0 0 0.7rem; }
+
+/* markdeep reserve 40 px au-dessus du titre et 15 de plus en dessous. */
+.md div.title { padding-top: 1rem; }
+.md div.afterTitles { height: 0; }
+
+/* Le cartouche n'est pas une phrase de l'enonce mais la suite du titre. */
+.md .entete { color: var(--text-muted); margin: 0 0 1.1rem; text-align: center; }
+.md .entete p { margin: 0; }
+/* markdeep impose Verdana aux titres et un serif aux liens : on garde la
+   fonte du corps. */
+.md h1, .md h2, .md h3, .md h4, .md h5, .md h6,
+.md a, .md strong, .md b, .md em, .md i { font-family: inherit; }
+.md a:link, .md a:visited { color: var(--accent); text-decoration: none; }
+
+/* Un titre de partie porte le trait vert du site, en plus long : celui du
+   site accompagne un menu et une barre collante, l'enonce n'a que lui pour
+   marquer ses coupures. */
+/* Le trait sous un titre de partie est une bordure et non un pseudo-element
+   absolu : cale sur bottom 0, celui-ci sortait a 4 px a l'ecran et prenait la
+   hauteur de tout ce qui suivait a l'impression. */
+.md h1 {
+  border-bottom: 4px solid var(--accent); color: var(--text); font-size: 1.75rem;
+  font-weight: 700; letter-spacing: -0.01em; margin: 1.8rem 0 0.7rem;
+  padding-bottom: 0.4rem;
+}
+.md h2 {
+  border-bottom: 1px solid var(--border); color: var(--text);
+  font-size: 1.22rem; font-weight: 700; margin: 1.4rem 0 0.6rem;
+  padding-bottom: 0.25rem;
+}
+.md h3 { color: var(--text); font-size: 1.06rem; font-weight: 700;
+         margin: 1.1rem 0 0.4rem; }
+
+.md code, .md pre { font-family: var(--font-mono); font-size: 88%; }
+.md code {
+  background: var(--bg-code); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 0.08em 0.32em;
+}
+.md pre.listing {
+  background: var(--bg-code); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: none; box-sizing: border-box;
+  color: var(--text); margin: 1.2rem 0; overflow-x: auto; padding: 0.9rem 1rem;
+  resize: none;             /* markdeep leur pose une poignee de redimension */
+}
+.md pre.listing code { background: none; border: none; padding: 0; }
+.md .hljs { background: none; color: var(--text); }
+
+.md .exo { margin: 0.6em 0; }
+.md .note {
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  border-left: 4px solid var(--border-strong); border-radius: var(--radius);
+  color: var(--text); margin: 1rem auto; padding: 0.5rem 1rem;
+}
+/* L'interdiction de l'IA se lit a la taille du texte, pas en dessous : c'est
+   la seule regle de l'enonce qui vaille un zero. */
+.md .ia {
+  background: var(--ia-fond); border: 1px solid var(--ia-trait);
+  border-left: 6px solid var(--ia-trait); border-radius: var(--radius);
+  color: var(--text); margin: 1rem auto; padding: 0.6rem 1.1rem;
+}
+.md .ia code { background: var(--ia-code); border-color: var(--ia-code-bord); }
+.md .sol { display: none; }
+
+/* markdeep numerote les titres par un ::before ; les enonces portent deja
+   leurs propres numeros de partie, et les deux se cumulaient. */
+.md h1::before, .md h2::before, .md h3::before { content: "" !important; }
+
+/* Le pied de page de markdeep porte une fleche pivotee qui depasse de trois
+   pixels a droite et suffit a poser une barre de defilement horizontale. */
+.markdeepFooter { display: none; }
+
+/* A l'impression, la colonne de l'ecran deborderait la page A4. */
+@media print {
+  .md { max-width: none; padding: 0; }
+}
+</style>
+
+                **Object-Oriented Programming in C++**
+                **Lab 1 -- From Aggregates to Classes**
+
+<div class="entete">
+Chapter 1 of the course · two hours · CMake project
+</div>
+
+This lab is not **graded**. Anything not finished during the session is to
+be completed at home.
+
+<!-- ia -->
+<div class="ia">
+**Generative AI is not allowed**, on the written answers or on the code.
+The point is to learn, not to measure how good a language model is. Any
+submission produced by an AI will be graded as 0.
+</div>
+
+# Context
+
+The nine labs build a vector drawing library. The library writes SVG, a text
+format every browser can open. This lab builds the library's two basic types,
+a point and a color; the program then produces `spiro.svg`, a
+twenty-eight-petal spirograph whose color changes along the curve.
+
+<div class="note">
+A color has three components -- red, green, blue -- each between 0 and 255. In
+SVG, they are written in that order after a hash, each in **exactly two
+hexadecimal digits**: 0 is written `00`, 128 is written `80`, 255 is written
+`ff`. The color (255, 128, 0) therefore becomes `#ff8000`, seven characters in
+all.
+
+Two digits are enough because 255 is the largest number that fits in two
+hexadecimal digits. Two digits are required even below 16: without the leading
+`0`, the components that follow would shift one place to the left.
+</div>
+
+# Objectives
+
+  * Distinguish an aggregate, which guarantees nothing, from a class that
+    maintains an invariant.
+  * Know what an invariant rests on: the types of the fields, and the
+    constructors that establish it.
+  * Choose what to do with an invalid argument: clamp it to the bounds, or stop
+    the program.
+  * Recognize what a member function gains over a free one, and what it does
+    not.
+  * Run checks written before the code they check, and see them fail, then pass.
+
+# Requirements
+
+  * The build with `-Wall -Wextra` reports **zero warnings**.
+  * The checks in `tests/` pass.
+  * The four checks of 2.1 were written before the code they check.
+  * `build/spiro.svg` opens in a browser and shows the spirograph in several colors.
+  * No function in `src/color.cpp` is longer than about twenty lines.
+
+# Files
+
+Three of the files below are complete as supplied; the others need code.
+
+  * `include/svg.hpp` and `src/svg.cpp` hold `svg::open`, `svg::polyline` and
+    `svg::close`, and need no code.
+  *  `include/color.hpp` declares the class `color` and the function `mix`, and
+    needs no code.
+  * `src/color.cpp` holds the bodies to write: `saturate`, the two constructors,
+    `to_hex` and `mix`.
+  * `src/color.cpp` also holds the supplied function `hex_value`, which returns
+    the value of a hexadecimal digit.
+  * `include/geometry.hpp` holds the aggregate `point`; `midpoint` and a member
+    `translated` are added in part 1.
+  * `include/geometry.hpp` also holds the free functions `translated`, `scaled` and
+    `distance`.
+  * `include/aggregate.hpp` holds the aggregate `before::color`;
+    `before::to_hex` is fixed there in 3.3.
+  * `include/aggregate.hpp` also holds the function `before::mix`.
+  * `tests/test_color.cpp` holds the checks already supplied, and is where the
+    ones the questions ask for go.
+  * `src/main.cpp` holds `main`, which draws the spirograph; its single
+    `svg::polyline` call is replaced in part 4.
+  * `main` declares `petals`, the number of petals, and the two colors `dawn` and
+    `dusk`.
+
+<div class="note">
+The project is configured with `cmake -S . -B build`, then built with
+`cmake --build build`. The executable is `build/output`, and the drawing is
+written to `build/spiro.svg`. The command
+`ctest --test-dir build --output-on-failure` runs the checks and prints those
+that fail.
+
+The first build reports two warnings: `saturate` and `hex_value` are never
+called. Each warning disappears as soon as the code calls the function it names.
+By the end of the session, the build reports **zero warnings**.
+</div>
+
+# Part 1
+
+<div class="exo">
+**1.1** In `include/geometry.hpp`, write `midpoint`, which takes two `point`
+values and returns the point halfway between them. Make it an `inline` free
+function, like `translated`, `scaled` and `distance`. Then write its checks in
+`tests/test_color.cpp`.
+
+
+
+**1.2** In `include/geometry.hpp`, write `translated` a second time, now as a
+`const` member function of `point` that takes two `double` values `dx` and `dy`
+and returns a copy of the point shifted by them. Keep the free version already
+supplied. State what the member version gains over the free one.
+
+
+
+**1.3** In `tests/test_color.cpp`, add checks that the member and the free
+`translated` return the same point, then say which invariant, if any, `point`
+would have to protect.
+
+
+</div>
+
+# Part 2
+
+<div class="exo">
+**2.1** In `tests/test_color.cpp`, write four checks on `color`, each comparing
+the string returned by `to_hex` with the expected one, for these cases: the
+default color, a color whose three components are within bounds, a color with
+one component above 255 and another below 0, and a color read from a string.
+Build the project, run `ctest --test-dir build --output-on-failure`, and give
+the number of checks that fail.
+
+
+
+**2.2** In `src/color.cpp`, write the member function `to_hex` of `color`, which
+returns the color as a `#rrggbb` string: dividing a component by 16 gives a
+quotient and a remainder, which are the positions of the component's two digits
+in a table of sixteen characters. Rebuild the project, run
+`ctest --test-dir build --output-on-failure` again, and say which of the four
+checks now passes for the right reason.
+
+
+
+**2.3** In `src/color.cpp`, write the constructor of `color` that takes three
+integers and initializes the three components by passing each one through
+`saturate`. Leave `saturate` as it stands: for now, the function contains only
+`return static_cast&lt;std::uint8_t>(v);`. Rebuild the project, run
+`build/output`, and give the value `saturate` returns for 300, together with the
+color printed on the `class` line, where the supplied code of `main` prints
+`color{300, 40, 0}.to_hex()`.
+
+
+
+**2.4** In `src/color.cpp`, write `saturate`, which takes an `int` and clamps it
+to the range 0 to 255 before converting it to a `std::uint8_t`: a negative value
+becomes 0, a value above 255 becomes 255, and a value already between the two is
+returned unchanged. Rebuild the project, run `build/output` again, and give the
+new color.
+
+
+
+**2.5** In `src/color.cpp`, write the constructor of `color` that takes a string
+of the form `"#ff8000"`: it reads the six digits of the string with the supplied
+function `hex_value`, and checks with two `assert` calls that the string really
+is a color. The first one, placed before any digit is read, checks that the
+string is seven characters long and starts with a hash. The second one checks
+each digit as it is read, since `hex_value` returns -1 for any character that is
+not a hexadecimal digit. Then say which property of the argument makes one
+constructor saturate it and the other stop the program.
+
+
+
+**2.6** In `tests/test_color.cpp`, add four checks on `to_hex`, for colors whose three components are all 0, then 15, then 16, then 255. Then say why dividing a component by 16 can never give an index outside the
+table of sixteen characters, whatever the component.
+
+
+</div>
+
+# Part 3
+
+<div class="exo">
+**3.1** The first statement of `main`, which is supplied, converts the color
+`{300, 40, 0}` to a string twice: through the aggregate `before::color`, then
+through the class `color`. Run `build/output`, give the two strings printed on
+the `aggregate` and `class` lines, and say which one is not a color. Then add a
+check in `tests/test_color.cpp` that `color{300, 40, 0}.to_hex()` is seven
+characters long.
+
+
+
+**3.2** In `src/main.cpp`, replace `mix(dawn, dusk, 0.5)`, the color of the
+supplied `svg::polyline` call, with `color{before::to_hex({300, 40, 0})}`.
+Rebuild the project, run `build/output`, and say what stops it. Then put
+`mix(dawn, dusk, 0.5)` back.
+
+
+
+**3.3** In `include/aggregate.hpp`, fix `before::to_hex` without touching
+`before::color`: clamp each component to the range 0 to 255 before writing it,
+so that the function never produces anything but a color. The fix makes two of
+the checks supplied in `tests/test_color.cpp` fail, since they state that
+`before::to_hex` writes something other than a color: rewrite them to state the
+fix instead.
+
+
+
+**3.4** Add a check in `tests/test_color.cpp` that `before::color{300, 40, 0}`
+keeps 300 in its red component, then count the places, in the program and in any
+code added to it later, where a `before::color` can still receive a component
+out of range.
+
+
+</div>
+
+# Part 4
+
+<div class="exo">
+**4.1** Build the project, run `build/output`, then open `build/spiro.svg` in a
+browser: the skeleton of `main` draws the twenty-eight-petal spirograph with a
+single call to `svg::polyline`, and therefore in a single color. In
+`src/color.cpp`, write `mix`, which takes two colors `a` and `b` and a
+`double t` between 0 and 1, and returns the color a fraction `t` of the way from
+`a` to `b`: each component of the result is `x + (y - x) * t`, rounded to the
+nearest integer, where `x` and `y` are the same component of `a` and of `b`.
+`mix(a, b, 0)` returns `a`, and `mix(a, b, 1)` returns `b`. `color.hpp` already
+declares it as a free function, since it uses only the public interface of
+`color`.
+
+
+
+**4.2** `mix` checks nothing about its third argument. In `src/main.cpp`, after
+the two supplied colors `dawn` and `dusk`, print
+`mix(dawn, dusk, 2.0).to_hex()`, then the three fields of
+`before::mix({255, 92, 51}, {51, 156, 255}, 2.0)`. Rebuild the project, run
+`build/output`, and give both results.
+
+
+
+**4.3** In `src/main.cpp`, replace the single call to `svg::polyline`: cut the
+curve into `20 * petals` pieces, twenty per petal, and draw each one with its
+own call to `svg::polyline`. Color piece number `i` with `mix(dawn, dusk, t)`,
+where `t` runs from 0 to 1 and back across each petal: the last piece is then
+nearly the same color as the first, and the join between the two does not show.
+Make each piece end on the first point of the next; otherwise the drawing comes
+out with gaps. Rebuild the project, run `build/output`, and open
+`build/spiro.svg` in a browser.
+
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="420" viewBox="0 0 900 900" stroke-linecap="round" stroke-linejoin="round" style="display:block;margin:0.4rem auto 1.2rem;max-width:100%;height:auto">
+<rect width="100%" height="100%" fill="#0d0d12"/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="830,450 829.974,448.508 829.896,447.016 829.767,445.526 829.586,444.037 829.353,442.55 829.068,441.067 828.732,439.586 828.344,438.11 827.905,436.638 827.414,435.171 826.872,433.71 826.279,432.255 825.634,430.807 824.939,429.366 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="824.939,429.366 824.193,427.933 823.396,426.508 822.549,425.092 821.651,423.686 820.703,422.289 819.705,420.904 818.657,419.529 817.56,418.166 816.413,416.815 815.217,415.477 813.972,414.152 812.678,412.841 811.336,411.544 809.945,410.262 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="809.945,410.262 808.507,408.995 807.02,407.744 805.487,406.509 803.906,405.291 802.278,404.091 800.604,402.908 798.884,401.743 797.118,400.598 795.306,399.471 793.449,398.365 791.547,397.278 789.601,396.212 787.611,395.168 785.577,394.145 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="785.577,394.145 783.499,393.144 781.379,392.165 779.216,391.209 777.011,390.277 774.764,389.369 772.476,388.484 770.147,387.625 767.778,386.79 765.368,385.981 762.919,385.198 760.431,384.44 757.905,383.71 755.34,383.006 752.738,382.33 750.099,381.682 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="750.099,381.682 747.423,381.061 744.711,380.469 741.963,379.906 739.18,379.372 736.362,378.867 733.511,378.392 730.626,377.948 727.708,377.533 724.757,377.149 721.775,376.797 718.761,376.475 715.717,376.185 712.642,375.927 709.538,375.701 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="709.538,375.701 706.405,375.507 703.243,375.346 700.054,375.218 696.837,375.123 693.594,375.061 690.324,375.032 687.03,375.037 683.71,375.076 680.366,375.15 676.998,375.257 673.608,375.399 670.195,375.575 666.761,375.786 663.305,376.032 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="663.305,376.032 659.829,376.313 656.333,376.629 652.818,376.981 649.285,377.368 645.734,377.79 642.165,378.248 638.58,378.742 634.979,379.271 631.363,379.836 627.733,380.437 624.088,381.074 620.43,381.746 616.76,382.455 613.078,383.2 609.384,383.981 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="609.384,383.981 605.68,384.798 601.967,385.65 598.244,386.539 594.512,387.464 590.773,388.425 587.026,389.421 583.273,390.454 579.515,391.522 575.751,392.626 571.982,393.765 568.21,394.941 564.435,396.151 560.657,397.397 556.878,398.678 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="556.878,398.678 553.097,399.994 549.316,401.345 545.536,402.731 541.756,404.152 537.978,405.607 534.202,407.097 530.429,408.621 526.66,410.178 522.895,411.77 519.135,413.395 515.381,415.053 511.632,416.745 507.891,418.469 504.158,420.227 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="504.158,420.227 500.432,422.016 496.716,423.838 493.009,425.692 489.312,427.577 485.625,429.494 481.951,431.442 478.288,433.42 474.638,435.429 471.001,437.468 467.379,439.537 463.77,441.636 460.177,443.763 456.6,445.92 453.039,448.105 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="453.039,448.105 449.495,450.318 445.968,452.559 442.46,454.827 438.97,457.122 435.5,459.444 432.049,461.791 428.619,464.165 425.21,466.564 421.823,468.988 418.457,471.436 415.114,473.909 411.795,476.405 408.499,478.925 405.227,481.467 401.981,484.031 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="401.981,484.031 398.759,486.617 395.563,489.225 392.394,491.853 389.251,494.502 386.136,497.171 383.049,499.859 379.989,502.566 376.959,505.291 373.957,508.034 370.985,510.794 368.044,513.572 365.133,516.365 362.252,519.175 359.404,521.999 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="359.404,521.999 356.586,524.838 353.802,527.692 351.049,530.558 348.33,533.438 345.644,536.33 342.992,539.235 340.374,542.15 337.791,545.076 335.242,548.012 332.729,550.958 330.251,553.913 327.809,556.876 325.404,559.847 323.034,562.825 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="323.034,562.825 320.702,565.809 318.407,568.8 316.149,571.795 313.928,574.796 311.746,577.801 309.602,580.809 307.496,583.82 305.429,586.833 303.401,589.849 301.412,592.865 299.462,595.881 297.552,598.897 295.682,601.913 293.852,604.926 292.062,607.938 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="292.062,607.938 290.312,610.947 288.603,613.953 286.934,616.954 285.306,619.951 283.719,622.943 282.172,625.929 280.667,628.908 279.204,631.88 277.781,634.844 276.4,637.799 275.061,640.746 273.763,643.682 272.506,646.608 271.292,649.524 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="271.292,649.524 270.119,652.427 268.987,655.318 267.898,658.197 266.85,661.062 265.844,663.912 264.88,666.748 263.957,669.568 263.077,672.372 262.237,675.16 261.44,677.93 260.684,680.682 259.97,683.416 259.297,686.13 258.665,688.825 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="258.665,688.825 258.075,691.499 257.526,694.153 257.018,696.784 256.55,699.394 256.124,701.981 255.738,704.544 255.393,707.083 255.088,709.598 254.824,712.088 254.599,714.552 254.415,716.989 254.27,719.4 254.164,721.783 254.098,724.138 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="254.098,724.138 254.071,726.465 254.082,728.763 254.132,731.031 254.221,733.269 254.348,735.476 254.512,737.652 254.714,739.796 254.954,741.908 255.23,743.986 255.543,746.032 255.893,748.044 256.279,750.021 256.7,751.964 257.157,753.871 257.65,755.743 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="257.65,755.743 258.177,757.578 258.738,759.377 259.334,761.138 259.964,762.862 260.627,764.548 261.323,766.195 262.052,767.803 262.813,769.372 263.606,770.901 264.43,772.39 265.286,773.838 266.172,775.246 267.089,776.612 268.035,777.936 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="268.035,777.936 269.011,779.218 270.016,780.457 271.049,781.654 272.111,782.807 273.2,783.917 274.316,784.983 275.46,786.005 276.629,786.982 277.824,787.914 279.044,788.802 280.29,789.644 281.559,790.44 282.853,791.19 284.17,791.894 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="284.17,791.894 285.509,792.551 286.871,793.162 288.255,793.726 289.66,794.242 291.086,794.711 292.532,795.133 293.998,795.506 295.483,795.832 296.987,796.109 298.509,796.338 300.048,796.519 301.604,796.65 303.177,796.733 304.766,796.767 306.371,796.752 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="306.371,796.752 307.99,796.687 309.623,796.574 311.27,796.41 312.931,796.198 314.604,795.935 316.289,795.623 317.985,795.261 319.692,794.85 321.41,794.388 323.137,793.877 324.874,793.316 326.619,792.705 328.372,792.044 330.132,791.333 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="330.132,791.333 331.9,790.572 333.673,789.762 335.453,788.902 337.237,787.992 339.027,787.032 340.82,786.023 342.616,784.964 344.415,783.855 346.217,782.698 348.02,781.491 349.824,780.235 351.629,778.93 353.434,777.576 355.238,776.173 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="355.238,776.173 357.041,774.722 358.842,773.222 360.641,771.674 362.436,770.078 364.229,768.435 366.017,766.743 367.801,765.004 369.579,763.218 371.352,761.385 373.118,759.506 374.878,757.579 376.63,755.607 378.375,753.588 380.11,751.524 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="380.11,751.524 381.837,749.414 383.555,747.26 385.262,745.06 386.958,742.816 388.644,740.528 390.317,738.196 391.979,735.821 393.628,733.402 395.263,730.941 396.885,728.437 398.493,725.891 400.086,723.303 401.664,720.674 403.226,718.005 404.771,715.295 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="404.771,715.295 406.301,712.544 407.813,709.754 409.307,706.925 410.783,704.057 412.241,701.151 413.68,698.207 415.099,695.226 416.499,692.207 417.878,689.152 419.236,686.062 420.573,682.935 421.889,679.774 423.183,676.578 424.454,673.348 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="424.454,673.348 425.702,670.085 426.928,666.789 428.129,663.461 429.307,660.1 430.46,656.708 431.589,653.286 432.693,649.833 433.771,646.351 434.823,642.839 435.85,639.3 436.849,635.732 437.823,632.136 438.769,628.515 439.688,624.866 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="439.688,624.866 440.579,621.193 441.442,617.494 442.277,613.771 443.083,610.025 443.861,606.255 444.609,602.463 445.329,598.649 446.018,594.813 446.678,590.957 447.308,587.082 447.908,583.187 448.477,579.273 449.016,575.341 449.523,571.392 450,567.426 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="450,567.426 450.445,563.445 450.86,559.448 451.242,555.436 451.593,551.41 451.912,547.371 452.199,543.319 452.454,539.256 452.677,535.181 452.867,531.095 453.025,527 453.151,522.895 453.244,518.782 453.304,514.661 453.331,510.532 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="453.331,510.532 453.326,506.398 453.288,502.257 453.217,498.111 453.113,493.961 452.976,489.808 452.806,485.651 452.603,481.492 452.367,477.331 452.098,473.17 451.797,469.008 451.462,464.847 451.095,460.687 450.695,456.529 450.262,452.373 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="450.262,452.373 449.797,448.221 449.298,444.073 448.768,439.929 448.205,435.791 447.61,431.658 446.982,427.533 446.323,423.415 445.631,419.305 444.908,415.204 444.153,411.112 443.367,407.03 442.55,402.96 441.701,398.901 440.821,394.853 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="440.821,394.853 439.911,390.819 438.97,386.799 437.998,382.792 436.997,378.8 435.965,374.824 434.904,370.864 433.813,366.921 432.694,362.995 431.545,359.088 430.368,355.199 429.162,351.329 427.928,347.479 426.666,343.65 425.377,339.843 424.06,336.057 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="424.06,336.057 422.717,332.293 421.347,328.553 419.951,324.836 418.529,321.144 417.081,317.476 415.608,313.834 414.11,310.218 412.588,306.628 411.041,303.066 409.471,299.531 407.877,296.025 406.261,292.548 404.621,289.1 402.96,285.682 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="402.96,285.682 401.277,282.294 399.572,278.937 397.847,275.612 396.101,272.319 394.335,269.058 392.55,265.831 390.745,262.637 388.921,259.477 387.08,256.351 385.22,253.261 383.344,250.206 381.45,247.186 379.54,244.204 377.614,241.257 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="377.614,241.257 375.673,238.348 373.717,235.477 371.747,232.644 369.763,229.849 367.765,227.093 365.755,224.376 363.732,221.699 361.698,219.062 359.652,216.466 357.596,213.91 355.529,211.395 353.453,208.921 351.368,206.49 349.274,204.1 347.173,201.753 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="347.173,201.753 345.064,199.449 342.948,197.187 340.825,194.969 338.697,192.795 336.564,190.664 334.426,188.578 332.285,186.535 330.139,184.538 327.991,182.585 325.841,180.678 323.689,178.816 321.535,176.999 319.382,175.228 317.228,173.503 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="317.228,173.503 315.075,171.824 312.923,170.191 310.773,168.605 308.625,167.065 306.481,165.572 304.34,164.125 302.203,162.726 300.071,161.374 297.944,160.069 295.823,158.811 293.709,157.6 291.602,156.437 289.503,155.322 287.412,154.254 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="287.412,154.254 285.33,153.233 283.258,152.26 281.196,151.335 279.144,150.458 277.104,149.628 275.076,148.845 273.06,148.111 271.057,147.424 269.068,146.785 267.093,146.193 265.133,145.648 263.189,145.152 261.26,144.702 259.348,144.3 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="259.348,144.3 257.453,143.945 255.576,143.637 253.717,143.376 251.877,143.162 250.056,142.994 248.256,142.874 246.476,142.799 244.716,142.772 242.979,142.79 241.264,142.854 239.571,142.964 237.902,143.119 236.256,143.32 234.635,143.566 233.038,143.857 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="233.038,143.857 231.467,144.193 229.922,144.573 228.403,144.998 226.911,145.466 225.446,145.978 224.009,146.534 222.601,147.133 221.221,147.775 219.871,148.459 218.551,149.186 217.261,149.954 216.001,150.765 214.773,151.616 213.577,152.509 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="213.577,152.509 212.412,153.442 211.281,154.416 210.182,155.429 209.116,156.482 208.085,157.575 207.087,158.706 206.125,159.875 205.197,161.083 204.305,162.328 203.449,163.611 202.629,164.93 201.845,166.285 201.099,167.677 200.389,169.104 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="200.389,169.104 199.718,170.566 199.084,172.062 198.489,173.593 197.933,175.158 197.415,176.755 196.937,178.386 196.498,180.048 196.1,181.743 195.741,183.468 195.423,185.225 195.146,187.011 194.91,188.828 194.715,190.674 194.562,192.548 194.451,194.451 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="194.451,194.451 194.381,196.381 194.354,198.338 194.369,200.322 194.427,202.332 194.527,204.368 194.671,206.428 194.858,208.513 195.088,210.622 195.362,212.754 195.68,214.909 196.041,217.086 196.446,219.284 196.896,221.503 197.389,223.743 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="197.389,223.743 197.927,226.003 198.51,228.282 199.137,230.579 199.808,232.894 200.524,235.227 201.285,237.577 202.09,239.943 202.941,242.325 203.836,244.722 204.776,247.133 205.761,249.558 206.791,251.996 207.865,254.447 208.985,256.91 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="208.985,256.91 210.149,259.385 211.358,261.87 212.611,264.365 213.91,266.87 215.253,269.384 216.64,271.906 218.072,274.435 219.549,276.972 221.069,279.516 222.634,282.065 224.243,284.62 225.896,287.179 227.592,289.742 229.332,292.309 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="229.332,292.309 231.116,294.878 232.943,297.449 234.812,300.023 236.725,302.597 238.681,305.171 240.679,307.745 242.719,310.319 244.801,312.891 246.926,315.461 249.091,318.028 251.299,320.592 253.547,323.152 255.836,325.707 258.165,328.258 260.535,330.803 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="260.535,330.803 262.945,333.342 265.394,335.874 267.883,338.399 270.411,340.915 272.977,343.424 275.582,345.923 278.225,348.412 280.905,350.892 283.623,353.36 286.377,355.818 289.168,358.263 291.996,360.696 294.859,363.117 297.757,365.523 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="297.757,365.523 300.69,367.916 303.658,370.294 306.659,372.658 309.695,375.005 312.763,377.337 315.864,379.652 318.998,381.95 322.163,384.23 325.359,386.492 328.587,388.736 331.845,390.961 335.132,393.166 338.449,395.352 341.795,397.517 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="341.795,397.517 345.169,399.661 348.571,401.784 352.001,403.885 355.457,405.964 358.939,408.02 362.447,410.054 365.98,412.063 369.537,414.049 373.119,416.011 376.724,417.948 380.352,419.861 384.002,421.747 387.674,423.608 391.367,425.443 395.08,427.251 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="395.08,427.251 398.813,429.033 402.566,430.787 406.337,432.514 410.126,434.213 413.933,435.884 417.756,437.526 421.596,439.139 425.451,440.724 429.321,442.279 433.206,443.804 437.104,445.3 441.015,446.765 444.939,448.2 448.874,449.604 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="448.874,449.604 452.82,450.978 456.776,452.32 460.742,453.631 464.718,454.91 468.701,456.158 472.693,457.373 476.691,458.557 480.696,459.708 484.706,460.826 488.721,461.912 492.741,462.965 496.764,463.985 500.791,464.973 504.819,465.926 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="504.819,465.926 508.849,466.847 512.88,467.734 516.911,468.588 520.942,469.408 524.972,470.194 528.999,470.946 533.024,471.665 537.046,472.35 541.064,473 545.077,473.617 549.085,474.2 553.087,474.749 557.083,475.264 561.071,475.745 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="561.071,475.745 565.05,476.192 569.021,476.604 572.983,476.983 576.935,477.328 580.875,477.639 584.804,477.917 588.721,478.16 592.626,478.37 596.516,478.546 600.393,478.689 604.254,478.798 608.1,478.874 611.93,478.917 615.743,478.927 619.538,478.904 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="619.538,478.904 623.315,478.848 627.074,478.759 630.813,478.638 634.531,478.485 638.229,478.299 641.906,478.082 645.56,477.832 649.192,477.552 652.8,477.239 656.384,476.896 659.944,476.522 663.479,476.117 666.987,475.682 670.47,475.217 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="670.47,475.217 673.925,474.722 677.353,474.197 680.752,473.642 684.123,473.059 687.464,472.447 690.775,471.806 694.056,471.138 697.306,470.441 700.524,469.717 703.71,468.965 706.863,468.187 709.982,467.382 713.068,466.551 716.12,465.694 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="716.12,465.694 719.136,464.811 722.117,463.904 725.062,462.972 727.971,462.015 730.843,461.034 733.678,460.03 736.474,459.003 739.232,457.953 741.952,456.88 744.632,455.786 747.272,454.67 749.872,453.533 752.431,452.375 754.95,451.198 757.426,450 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="757.426,450 759.861,448.783 762.254,447.548 764.604,446.293 766.911,445.022 769.174,443.732 771.393,442.426 773.569,441.103 775.699,439.764 777.785,438.41 779.825,437.041 781.82,435.657 783.769,434.26 785.672,432.849 787.528,431.425 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="787.528,431.425 789.337,429.988 791.1,428.54 792.814,427.08 794.481,425.609 796.101,424.128 797.672,422.638 799.194,421.138 800.668,419.629 802.093,418.112 803.469,416.587 804.796,415.056 806.073,413.517 807.301,411.973 808.479,410.424 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="808.479,410.424 809.606,408.869 810.684,407.31 811.711,405.748 812.688,404.182 813.614,402.613 814.49,401.043 815.315,399.471 816.088,397.898 816.811,396.325 817.483,394.751 818.104,393.179 818.674,391.608 819.192,390.039 819.659,388.472 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="819.659,388.472 820.075,386.908 820.439,385.348 820.753,383.792 821.015,382.241 821.225,380.695 821.385,379.155 821.493,377.621 821.55,376.094 821.555,374.575 821.51,373.064 821.413,371.562 821.266,370.068 821.068,368.585 820.819,367.112 820.52,365.65 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="820.52,365.65 820.169,364.199 819.769,362.761 819.318,361.335 818.817,359.921 818.267,358.522 817.666,357.137 817.016,355.766 816.316,354.411 815.568,353.072 814.77,351.748 813.923,350.442 813.028,349.153 812.084,347.882 811.093,346.629 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="811.093,346.629 810.053,345.395 808.966,344.18 807.832,342.986 806.65,341.811 805.422,340.658 804.147,339.526 802.826,338.416 801.46,337.328 800.047,336.263 798.59,335.221 797.088,334.203 795.541,333.209 793.95,332.24 792.315,331.295 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="792.315,331.295 790.637,330.377 788.916,329.484 787.152,328.618 785.346,327.778 783.498,326.966 781.608,326.182 779.678,325.425 777.707,324.697 775.695,323.998 773.644,323.328 771.554,322.688 769.425,322.077 767.258,321.497 765.052,320.948 762.809,320.43 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="762.809,320.43 760.53,319.943 758.214,319.488 755.861,319.066 753.474,318.675 751.051,318.317 748.594,317.993 746.103,317.702 743.579,317.444 741.022,317.22 738.432,317.031 735.811,316.876 733.159,316.756 730.476,316.67 727.762,316.62 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="727.762,316.62 725.02,316.606 722.248,316.627 719.448,316.684 716.62,316.778 713.764,316.908 710.882,317.074 707.974,317.277 705.041,317.517 702.082,317.794 699.1,318.108 696.094,318.46 693.064,318.85 690.012,319.277 686.939,319.742 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="686.939,319.742 683.844,320.245 680.729,320.786 677.594,321.365 674.439,321.982 671.266,322.638 668.074,323.332 664.866,324.065 661.64,324.836 658.399,325.646 655.142,326.495 651.87,327.382 648.584,328.308 645.284,329.272 641.972,330.275 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="641.972,330.275 638.647,331.317 635.311,332.398 631.964,333.517 628.607,334.675 625.24,335.872 621.864,337.107 618.48,338.38 615.088,339.692 611.689,341.042 608.284,342.43 604.873,343.857 601.458,345.321 598.038,346.823 594.614,348.364 591.187,349.941 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="591.187,349.941 587.758,351.556 584.328,353.209 580.896,354.899 577.464,356.625 574.032,358.389 570.601,360.189 567.171,362.025 563.744,363.898 560.32,365.807 556.899,367.751 553.482,369.731 550.07,371.746 546.664,373.797 543.263,375.882 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="543.263,375.882 539.869,378.001 536.483,380.155 533.104,382.343 529.734,384.564 526.373,386.819 523.022,389.106 519.681,391.427 516.352,393.78 513.033,396.164 509.728,398.581 506.434,401.029 503.155,403.508 499.889,406.017 496.638,408.557 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="496.638,408.557 493.402,411.126 490.181,413.725 486.977,416.353 483.79,419.01 480.621,421.695 477.469,424.407 474.335,427.147 471.221,429.914 468.127,432.708 465.052,435.528 461.998,438.373 458.966,441.243 455.955,444.138 452.966,447.057 450,450 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="450,450 447.057,452.966 444.138,455.955 441.243,458.966 438.373,461.998 435.528,465.052 432.708,468.127 429.914,471.221 427.147,474.335 424.407,477.469 421.695,480.621 419.01,483.79 416.353,486.977 413.725,490.181 411.126,493.402 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="411.126,493.402 408.557,496.638 406.017,499.889 403.508,503.155 401.029,506.434 398.581,509.728 396.164,513.033 393.78,516.352 391.427,519.681 389.106,523.022 386.819,526.373 384.564,529.734 382.343,533.104 380.155,536.483 378.001,539.869 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="378.001,539.869 375.882,543.263 373.797,546.664 371.746,550.07 369.731,553.482 367.751,556.899 365.807,560.32 363.898,563.744 362.025,567.171 360.189,570.601 358.389,574.032 356.625,577.464 354.899,580.896 353.209,584.328 351.556,587.758 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="351.556,587.758 349.941,591.187 348.364,594.614 346.823,598.038 345.321,601.458 343.857,604.873 342.43,608.284 341.042,611.689 339.692,615.088 338.38,618.48 337.107,621.864 335.872,625.24 334.675,628.607 333.517,631.964 332.398,635.311 331.317,638.647 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="331.317,638.647 330.275,641.972 329.272,645.284 328.308,648.584 327.382,651.87 326.495,655.142 325.646,658.399 324.836,661.64 324.065,664.866 323.332,668.074 322.638,671.266 321.982,674.439 321.365,677.594 320.786,680.729 320.245,683.844 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="320.245,683.844 319.742,686.939 319.277,690.012 318.85,693.064 318.46,696.094 318.108,699.1 317.794,702.082 317.517,705.041 317.277,707.974 317.074,710.882 316.908,713.764 316.778,716.62 316.684,719.448 316.627,722.248 316.606,725.02 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="316.606,725.02 316.62,727.762 316.67,730.476 316.756,733.159 316.876,735.811 317.031,738.432 317.22,741.022 317.444,743.579 317.702,746.103 317.993,748.594 318.317,751.051 318.675,753.474 319.066,755.861 319.488,758.214 319.943,760.53 320.43,762.809 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="320.43,762.809 320.948,765.052 321.497,767.258 322.077,769.425 322.688,771.554 323.328,773.644 323.998,775.695 324.697,777.707 325.425,779.678 326.182,781.608 326.966,783.498 327.778,785.346 328.618,787.152 329.484,788.916 330.377,790.637 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="330.377,790.637 331.295,792.315 332.24,793.95 333.209,795.541 334.203,797.088 335.221,798.59 336.263,800.047 337.328,801.46 338.416,802.826 339.526,804.147 340.658,805.422 341.811,806.65 342.986,807.832 344.18,808.966 345.395,810.053 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="345.395,810.053 346.629,811.093 347.882,812.084 349.153,813.028 350.442,813.923 351.748,814.77 353.072,815.568 354.411,816.316 355.766,817.016 357.137,817.666 358.522,818.267 359.921,818.817 361.335,819.318 362.761,819.769 364.199,820.169 365.65,820.52 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="365.65,820.52 367.112,820.819 368.585,821.068 370.068,821.266 371.562,821.413 373.064,821.51 374.575,821.555 376.094,821.55 377.621,821.493 379.155,821.385 380.695,821.225 382.241,821.015 383.792,820.753 385.348,820.439 386.908,820.075 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="386.908,820.075 388.472,819.659 390.039,819.192 391.608,818.674 393.179,818.104 394.751,817.483 396.325,816.811 397.898,816.088 399.471,815.315 401.043,814.49 402.613,813.614 404.182,812.688 405.748,811.711 407.31,810.684 408.869,809.606 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="408.869,809.606 410.424,808.479 411.973,807.301 413.517,806.073 415.056,804.796 416.587,803.469 418.112,802.093 419.629,800.668 421.138,799.194 422.638,797.672 424.128,796.101 425.609,794.481 427.08,792.814 428.54,791.1 429.988,789.337 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="429.988,789.337 431.425,787.528 432.849,785.672 434.26,783.769 435.657,781.82 437.041,779.825 438.41,777.785 439.764,775.699 441.103,773.569 442.426,771.393 443.732,769.174 445.022,766.911 446.293,764.604 447.548,762.254 448.783,759.861 450,757.426 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="450,757.426 451.198,754.95 452.375,752.431 453.533,749.872 454.67,747.272 455.786,744.632 456.88,741.952 457.953,739.232 459.003,736.474 460.03,733.678 461.034,730.843 462.015,727.971 462.972,725.062 463.904,722.117 464.811,719.136 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="464.811,719.136 465.694,716.12 466.551,713.068 467.382,709.982 468.187,706.863 468.965,703.71 469.717,700.524 470.441,697.306 471.138,694.056 471.806,690.775 472.447,687.464 473.059,684.123 473.642,680.752 474.197,677.353 474.722,673.925 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="474.722,673.925 475.217,670.47 475.682,666.987 476.117,663.479 476.522,659.944 476.896,656.384 477.239,652.8 477.552,649.192 477.832,645.56 478.082,641.906 478.299,638.229 478.485,634.531 478.638,630.813 478.759,627.074 478.848,623.315 478.904,619.538 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="478.904,619.538 478.927,615.743 478.917,611.93 478.874,608.1 478.798,604.254 478.689,600.393 478.546,596.516 478.37,592.626 478.16,588.721 477.917,584.804 477.639,580.875 477.328,576.935 476.983,572.983 476.604,569.021 476.192,565.05 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="476.192,565.05 475.745,561.071 475.264,557.083 474.749,553.087 474.2,549.085 473.617,545.077 473,541.064 472.35,537.046 471.665,533.024 470.946,528.999 470.194,524.972 469.408,520.942 468.588,516.911 467.734,512.88 466.847,508.849 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="466.847,508.849 465.926,504.819 464.973,500.791 463.985,496.764 462.965,492.741 461.912,488.721 460.826,484.706 459.708,480.696 458.557,476.691 457.373,472.693 456.158,468.701 454.91,464.718 453.631,460.742 452.32,456.776 450.978,452.82 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="450.978,452.82 449.604,448.874 448.2,444.939 446.765,441.015 445.3,437.104 443.804,433.206 442.279,429.321 440.724,425.451 439.139,421.596 437.526,417.756 435.884,413.933 434.213,410.126 432.514,406.337 430.787,402.566 429.033,398.813 427.251,395.08 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="427.251,395.08 425.443,391.367 423.608,387.674 421.747,384.002 419.861,380.352 417.948,376.724 416.011,373.119 414.049,369.537 412.063,365.98 410.054,362.447 408.02,358.939 405.964,355.457 403.885,352.001 401.784,348.571 399.661,345.169 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="399.661,345.169 397.517,341.795 395.352,338.449 393.166,335.132 390.961,331.845 388.736,328.587 386.492,325.359 384.23,322.163 381.95,318.998 379.652,315.864 377.337,312.763 375.005,309.695 372.658,306.659 370.294,303.658 367.916,300.69 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="367.916,300.69 365.523,297.757 363.117,294.859 360.696,291.996 358.263,289.168 355.818,286.377 353.36,283.623 350.892,280.905 348.412,278.225 345.923,275.582 343.424,272.977 340.915,270.411 338.399,267.883 335.874,265.394 333.342,262.945 330.803,260.535 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="330.803,260.535 328.258,258.165 325.707,255.836 323.152,253.547 320.592,251.299 318.028,249.091 315.461,246.926 312.891,244.801 310.319,242.719 307.745,240.679 305.171,238.681 302.597,236.725 300.023,234.812 297.449,232.943 294.878,231.116 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="294.878,231.116 292.309,229.332 289.742,227.592 287.179,225.896 284.62,224.243 282.065,222.634 279.516,221.069 276.972,219.549 274.435,218.072 271.906,216.64 269.384,215.253 266.87,213.91 264.365,212.611 261.87,211.358 259.385,210.149 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="259.385,210.149 256.91,208.985 254.447,207.865 251.996,206.791 249.558,205.761 247.133,204.776 244.722,203.836 242.325,202.941 239.943,202.09 237.577,201.285 235.227,200.524 232.894,199.808 230.579,199.137 228.282,198.51 226.003,197.927 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="226.003,197.927 223.743,197.389 221.503,196.896 219.284,196.446 217.086,196.041 214.909,195.68 212.754,195.362 210.622,195.088 208.513,194.858 206.428,194.671 204.368,194.527 202.332,194.427 200.322,194.369 198.338,194.354 196.381,194.381 194.451,194.451 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="194.451,194.451 192.548,194.562 190.674,194.715 188.828,194.91 187.011,195.146 185.225,195.423 183.468,195.741 181.743,196.1 180.048,196.498 178.386,196.937 176.755,197.415 175.158,197.933 173.593,198.489 172.062,199.084 170.566,199.718 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="170.566,199.718 169.104,200.389 167.677,201.099 166.285,201.845 164.93,202.629 163.611,203.449 162.328,204.305 161.083,205.197 159.875,206.125 158.706,207.087 157.575,208.085 156.482,209.116 155.429,210.182 154.416,211.281 153.442,212.412 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="153.442,212.412 152.509,213.577 151.616,214.773 150.765,216.001 149.954,217.261 149.186,218.551 148.459,219.871 147.775,221.221 147.133,222.601 146.534,224.009 145.978,225.446 145.466,226.911 144.998,228.403 144.573,229.922 144.193,231.467 143.857,233.038 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="143.857,233.038 143.566,234.635 143.32,236.256 143.119,237.902 142.964,239.571 142.854,241.264 142.79,242.979 142.772,244.716 142.799,246.476 142.874,248.256 142.994,250.056 143.162,251.877 143.376,253.717 143.637,255.576 143.945,257.453 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="143.945,257.453 144.3,259.348 144.702,261.26 145.152,263.189 145.648,265.133 146.193,267.093 146.785,269.068 147.424,271.057 148.111,273.06 148.845,275.076 149.628,277.104 150.458,279.144 151.335,281.196 152.26,283.258 153.233,285.33 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="153.233,285.33 154.254,287.412 155.322,289.503 156.437,291.602 157.6,293.709 158.811,295.823 160.069,297.944 161.374,300.071 162.726,302.203 164.125,304.34 165.572,306.481 167.065,308.625 168.605,310.773 170.191,312.923 171.824,315.075 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="171.824,315.075 173.503,317.228 175.228,319.382 176.999,321.535 178.816,323.689 180.678,325.841 182.585,327.991 184.538,330.139 186.535,332.285 188.578,334.426 190.664,336.564 192.795,338.697 194.969,340.825 197.187,342.948 199.449,345.064 201.753,347.173 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="201.753,347.173 204.1,349.274 206.49,351.368 208.921,353.453 211.395,355.529 213.91,357.596 216.466,359.652 219.062,361.698 221.699,363.732 224.376,365.755 227.093,367.765 229.849,369.763 232.644,371.747 235.477,373.717 238.348,375.673 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="238.348,375.673 241.257,377.614 244.204,379.54 247.186,381.45 250.206,383.344 253.261,385.22 256.351,387.08 259.477,388.921 262.637,390.745 265.831,392.55 269.058,394.335 272.319,396.101 275.612,397.847 278.937,399.572 282.294,401.277 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="282.294,401.277 285.682,402.96 289.1,404.621 292.548,406.261 296.025,407.877 299.531,409.471 303.066,411.041 306.628,412.588 310.218,414.11 313.834,415.608 317.476,417.081 321.144,418.529 324.836,419.951 328.553,421.347 332.293,422.717 336.057,424.06 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="336.057,424.06 339.843,425.377 343.65,426.666 347.479,427.928 351.329,429.162 355.199,430.368 359.088,431.545 362.995,432.694 366.921,433.813 370.864,434.904 374.824,435.965 378.8,436.997 382.792,437.998 386.799,438.97 390.819,439.911 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="390.819,439.911 394.853,440.821 398.901,441.701 402.96,442.55 407.03,443.367 411.112,444.153 415.204,444.908 419.305,445.631 423.415,446.323 427.533,446.982 431.658,447.61 435.791,448.205 439.929,448.768 444.073,449.298 448.221,449.797 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="448.221,449.797 452.373,450.262 456.529,450.695 460.687,451.095 464.847,451.462 469.008,451.797 473.17,452.098 477.331,452.367 481.492,452.603 485.651,452.806 489.808,452.976 493.961,453.113 498.111,453.217 502.257,453.288 506.398,453.326 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="506.398,453.326 510.532,453.331 514.661,453.304 518.782,453.244 522.895,453.151 527,453.025 531.095,452.867 535.181,452.677 539.256,452.454 543.319,452.199 547.371,451.912 551.41,451.593 555.436,451.242 559.448,450.86 563.445,450.445 567.426,450 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="567.426,450 571.392,449.523 575.341,449.016 579.273,448.477 583.187,447.908 587.082,447.308 590.957,446.678 594.813,446.018 598.649,445.329 602.463,444.609 606.255,443.861 610.025,443.083 613.771,442.277 617.494,441.442 621.193,440.579 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="621.193,440.579 624.866,439.688 628.515,438.769 632.136,437.823 635.732,436.849 639.3,435.85 642.839,434.823 646.351,433.771 649.833,432.693 653.286,431.589 656.708,430.46 660.1,429.307 663.461,428.129 666.789,426.928 670.085,425.702 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="670.085,425.702 673.348,424.454 676.578,423.183 679.774,421.889 682.935,420.573 686.062,419.236 689.152,417.878 692.207,416.499 695.226,415.099 698.207,413.68 701.151,412.241 704.057,410.783 706.925,409.307 709.754,407.813 712.544,406.301 715.295,404.771 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="715.295,404.771 718.005,403.226 720.674,401.664 723.303,400.086 725.891,398.493 728.437,396.885 730.941,395.263 733.402,393.628 735.821,391.979 738.196,390.317 740.528,388.644 742.816,386.958 745.06,385.262 747.26,383.555 749.414,381.837 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="749.414,381.837 751.524,380.11 753.588,378.375 755.607,376.63 757.579,374.878 759.506,373.118 761.385,371.352 763.218,369.579 765.004,367.801 766.743,366.017 768.435,364.229 770.078,362.436 771.674,360.641 773.222,358.842 774.722,357.041 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="774.722,357.041 776.173,355.238 777.576,353.434 778.93,351.629 780.235,349.824 781.491,348.02 782.698,346.217 783.855,344.415 784.964,342.616 786.023,340.82 787.032,339.027 787.992,337.237 788.902,335.453 789.762,333.673 790.572,331.9 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="790.572,331.9 791.333,330.132 792.044,328.372 792.705,326.619 793.316,324.874 793.877,323.137 794.388,321.41 794.85,319.692 795.261,317.985 795.623,316.289 795.935,314.604 796.198,312.931 796.41,311.27 796.574,309.623 796.687,307.99 796.752,306.371 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="796.752,306.371 796.767,304.766 796.733,303.177 796.65,301.604 796.519,300.048 796.338,298.509 796.109,296.987 795.832,295.483 795.506,293.998 795.133,292.532 794.711,291.086 794.242,289.66 793.726,288.255 793.162,286.871 792.551,285.509 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="792.551,285.509 791.894,284.17 791.19,282.853 790.44,281.559 789.644,280.29 788.802,279.044 787.914,277.824 786.982,276.629 786.005,275.46 784.983,274.316 783.917,273.2 782.807,272.111 781.654,271.049 780.457,270.016 779.218,269.011 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="779.218,269.011 777.936,268.035 776.612,267.089 775.246,266.172 773.838,265.286 772.39,264.43 770.901,263.606 769.372,262.813 767.803,262.052 766.195,261.323 764.548,260.627 762.862,259.964 761.138,259.334 759.377,258.738 757.578,258.177 755.743,257.65 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="755.743,257.65 753.871,257.157 751.964,256.7 750.021,256.279 748.044,255.893 746.032,255.543 743.986,255.23 741.908,254.954 739.796,254.714 737.652,254.512 735.476,254.348 733.269,254.221 731.031,254.132 728.763,254.082 726.465,254.071 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="726.465,254.071 724.138,254.098 721.783,254.164 719.4,254.27 716.989,254.415 714.552,254.599 712.088,254.824 709.598,255.088 707.083,255.393 704.544,255.738 701.981,256.124 699.394,256.55 696.784,257.018 694.153,257.526 691.499,258.075 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="691.499,258.075 688.825,258.665 686.13,259.297 683.416,259.97 680.682,260.684 677.93,261.44 675.16,262.237 672.372,263.077 669.568,263.957 666.748,264.88 663.912,265.844 661.062,266.85 658.197,267.898 655.318,268.987 652.427,270.119 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="652.427,270.119 649.524,271.292 646.608,272.506 643.682,273.763 640.746,275.061 637.799,276.4 634.844,277.781 631.88,279.204 628.908,280.667 625.929,282.172 622.943,283.719 619.951,285.306 616.954,286.934 613.953,288.603 610.947,290.312 607.938,292.062 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="607.938,292.062 604.926,293.852 601.913,295.682 598.897,297.552 595.881,299.462 592.865,301.412 589.849,303.401 586.833,305.429 583.82,307.496 580.809,309.602 577.801,311.746 574.796,313.928 571.795,316.149 568.8,318.407 565.809,320.702 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="565.809,320.702 562.825,323.034 559.847,325.404 556.876,327.809 553.913,330.251 550.958,332.729 548.012,335.242 545.076,337.791 542.15,340.374 539.235,342.992 536.33,345.644 533.438,348.33 530.558,351.049 527.692,353.802 524.838,356.586 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="524.838,356.586 521.999,359.404 519.175,362.252 516.365,365.133 513.572,368.044 510.794,370.985 508.034,373.957 505.291,376.959 502.566,379.989 499.859,383.049 497.171,386.136 494.502,389.251 491.853,392.394 489.225,395.563 486.617,398.759 484.031,401.981 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="484.031,401.981 481.467,405.227 478.925,408.499 476.405,411.795 473.909,415.114 471.436,418.457 468.988,421.823 466.564,425.21 464.165,428.619 461.791,432.049 459.444,435.5 457.122,438.97 454.827,442.46 452.559,445.968 450.318,449.495 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="450.318,449.495 448.105,453.039 445.92,456.6 443.763,460.177 441.636,463.77 439.537,467.379 437.468,471.001 435.429,474.638 433.42,478.288 431.442,481.951 429.494,485.625 427.577,489.312 425.692,493.009 423.838,496.716 422.016,500.432 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="422.016,500.432 420.227,504.158 418.469,507.891 416.745,511.632 415.053,515.381 413.395,519.135 411.77,522.895 410.178,526.66 408.621,530.429 407.097,534.202 405.607,537.978 404.152,541.756 402.731,545.536 401.345,549.316 399.994,553.097 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="399.994,553.097 398.678,556.878 397.397,560.657 396.151,564.435 394.941,568.21 393.765,571.982 392.626,575.751 391.522,579.515 390.454,583.273 389.421,587.026 388.425,590.773 387.464,594.512 386.539,598.244 385.65,601.967 384.798,605.68 383.981,609.384 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="383.981,609.384 383.2,613.078 382.455,616.76 381.746,620.43 381.074,624.088 380.437,627.733 379.836,631.363 379.271,634.979 378.742,638.58 378.248,642.165 377.79,645.734 377.368,649.285 376.981,652.818 376.629,656.333 376.313,659.829 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="376.313,659.829 376.032,663.305 375.786,666.761 375.575,670.195 375.399,673.608 375.257,676.998 375.15,680.366 375.076,683.71 375.037,687.03 375.032,690.324 375.061,693.594 375.123,696.837 375.218,700.054 375.346,703.243 375.507,706.405 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="375.507,706.405 375.701,709.538 375.927,712.642 376.185,715.717 376.475,718.761 376.797,721.775 377.149,724.757 377.533,727.708 377.948,730.626 378.392,733.511 378.867,736.362 379.372,739.18 379.906,741.963 380.469,744.711 381.061,747.423 381.682,750.099 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="381.682,750.099 382.33,752.738 383.006,755.34 383.71,757.905 384.44,760.431 385.198,762.919 385.981,765.368 386.79,767.778 387.625,770.147 388.484,772.476 389.369,774.764 390.277,777.011 391.209,779.216 392.165,781.379 393.144,783.499 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="393.144,783.499 394.145,785.577 395.168,787.611 396.212,789.601 397.278,791.547 398.365,793.449 399.471,795.306 400.598,797.118 401.743,798.884 402.908,800.604 404.091,802.278 405.291,803.906 406.509,805.487 407.744,807.02 408.995,808.507 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="408.995,808.507 410.262,809.945 411.544,811.336 412.841,812.678 414.152,813.972 415.477,815.217 416.815,816.413 418.166,817.56 419.529,818.657 420.904,819.705 422.289,820.703 423.686,821.651 425.092,822.549 426.508,823.396 427.933,824.193 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="427.933,824.193 429.366,824.939 430.807,825.634 432.255,826.279 433.71,826.872 435.171,827.414 436.638,827.905 438.11,828.344 439.586,828.732 441.067,829.068 442.55,829.353 444.037,829.586 445.526,829.767 447.016,829.896 448.508,829.974 450,830 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="450,830 451.492,829.974 452.984,829.896 454.474,829.767 455.963,829.586 457.45,829.353 458.933,829.068 460.414,828.732 461.89,828.344 463.362,827.905 464.829,827.414 466.29,826.872 467.745,826.279 469.193,825.634 470.634,824.939 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="470.634,824.939 472.067,824.193 473.492,823.396 474.908,822.549 476.314,821.651 477.711,820.703 479.096,819.705 480.471,818.657 481.834,817.56 483.185,816.413 484.523,815.217 485.848,813.972 487.159,812.678 488.456,811.336 489.738,809.945 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="489.738,809.945 491.005,808.507 492.256,807.02 493.491,805.487 494.709,803.906 495.909,802.278 497.092,800.604 498.257,798.884 499.402,797.118 500.529,795.306 501.635,793.449 502.722,791.547 503.788,789.601 504.832,787.611 505.855,785.577 506.856,783.499 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="506.856,783.499 507.835,781.379 508.791,779.216 509.723,777.011 510.631,774.764 511.516,772.476 512.375,770.147 513.21,767.778 514.019,765.368 514.802,762.919 515.56,760.431 516.29,757.905 516.994,755.34 517.67,752.738 518.318,750.099 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="518.318,750.099 518.939,747.423 519.531,744.711 520.094,741.963 520.628,739.18 521.133,736.362 521.608,733.511 522.052,730.626 522.467,727.708 522.851,724.757 523.203,721.775 523.525,718.761 523.815,715.717 524.073,712.642 524.299,709.538 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="524.299,709.538 524.493,706.405 524.654,703.243 524.782,700.054 524.877,696.837 524.939,693.594 524.968,690.324 524.963,687.03 524.924,683.71 524.85,680.366 524.743,676.998 524.601,673.608 524.425,670.195 524.214,666.761 523.968,663.305 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="523.968,663.305 523.687,659.829 523.371,656.333 523.019,652.818 522.632,649.285 522.21,645.734 521.752,642.165 521.258,638.58 520.729,634.979 520.164,631.363 519.563,627.733 518.926,624.088 518.254,620.43 517.545,616.76 516.8,613.078 516.019,609.384 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="516.019,609.384 515.202,605.68 514.35,601.967 513.461,598.244 512.536,594.512 511.575,590.773 510.579,587.026 509.546,583.273 508.478,579.515 507.374,575.751 506.235,571.982 505.059,568.21 503.849,564.435 502.603,560.657 501.322,556.878 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="501.322,556.878 500.006,553.097 498.655,549.316 497.269,545.536 495.848,541.756 494.393,537.978 492.903,534.202 491.379,530.429 489.822,526.66 488.23,522.895 486.605,519.135 484.947,515.381 483.255,511.632 481.531,507.891 479.773,504.158 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="479.773,504.158 477.984,500.432 476.162,496.716 474.308,493.009 472.423,489.312 470.506,485.625 468.558,481.951 466.58,478.288 464.571,474.638 462.532,471.001 460.463,467.379 458.364,463.77 456.237,460.177 454.08,456.6 451.895,453.039 449.682,449.495 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="449.682,449.495 447.441,445.968 445.173,442.46 442.878,438.97 440.556,435.5 438.209,432.049 435.835,428.619 433.436,425.21 431.012,421.823 428.564,418.457 426.091,415.114 423.595,411.795 421.075,408.499 418.533,405.227 415.969,401.981 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="415.969,401.981 413.383,398.759 410.775,395.563 408.147,392.394 405.498,389.251 402.829,386.136 400.141,383.049 397.434,379.989 394.709,376.959 391.966,373.957 389.206,370.985 386.428,368.044 383.635,365.133 380.825,362.252 378.001,359.404 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="378.001,359.404 375.162,356.586 372.308,353.802 369.442,351.049 366.562,348.33 363.67,345.644 360.765,342.992 357.85,340.374 354.924,337.791 351.988,335.242 349.042,332.729 346.087,330.251 343.124,327.809 340.153,325.404 337.175,323.034 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="337.175,323.034 334.191,320.702 331.2,318.407 328.205,316.149 325.204,313.928 322.199,311.746 319.191,309.602 316.18,307.496 313.167,305.429 310.151,303.401 307.135,301.412 304.119,299.462 301.103,297.552 298.087,295.682 295.074,293.852 292.062,292.062 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="292.062,292.062 289.053,290.312 286.047,288.603 283.046,286.934 280.049,285.306 277.057,283.719 274.071,282.172 271.092,280.667 268.12,279.204 265.156,277.781 262.201,276.4 259.254,275.061 256.318,273.763 253.392,272.506 250.476,271.292 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="250.476,271.292 247.573,270.119 244.682,268.987 241.803,267.898 238.938,266.85 236.088,265.844 233.252,264.88 230.432,263.957 227.628,263.077 224.84,262.237 222.07,261.44 219.318,260.684 216.584,259.97 213.87,259.297 211.175,258.665 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="211.175,258.665 208.501,258.075 205.847,257.526 203.216,257.018 200.606,256.55 198.019,256.124 195.456,255.738 192.917,255.393 190.402,255.088 187.912,254.824 185.448,254.599 183.011,254.415 180.6,254.27 178.217,254.164 175.862,254.098 173.535,254.071 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="173.535,254.071 171.237,254.082 168.969,254.132 166.731,254.221 164.524,254.348 162.348,254.512 160.204,254.714 158.092,254.954 156.014,255.23 153.968,255.543 151.956,255.893 149.979,256.279 148.036,256.7 146.129,257.157 144.257,257.65 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="144.257,257.65 142.422,258.177 140.623,258.738 138.862,259.334 137.138,259.964 135.452,260.627 133.805,261.323 132.197,262.052 130.628,262.813 129.099,263.606 127.61,264.43 126.162,265.286 124.754,266.172 123.388,267.089 122.064,268.035 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="122.064,268.035 120.782,269.011 119.543,270.016 118.346,271.049 117.193,272.111 116.083,273.2 115.017,274.316 113.995,275.46 113.018,276.629 112.086,277.824 111.198,279.044 110.356,280.29 109.56,281.559 108.81,282.853 108.106,284.17 107.449,285.509 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="107.449,285.509 106.838,286.871 106.274,288.255 105.758,289.66 105.289,291.086 104.867,292.532 104.494,293.998 104.168,295.483 103.891,296.987 103.662,298.509 103.481,300.048 103.35,301.604 103.267,303.177 103.233,304.766 103.248,306.371 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="103.248,306.371 103.313,307.99 103.426,309.623 103.59,311.27 103.802,312.931 104.065,314.604 104.377,316.289 104.739,317.985 105.15,319.692 105.612,321.41 106.123,323.137 106.684,324.874 107.295,326.619 107.956,328.372 108.667,330.132 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="108.667,330.132 109.428,331.9 110.238,333.673 111.098,335.453 112.008,337.237 112.968,339.027 113.977,340.82 115.036,342.616 116.145,344.415 117.302,346.217 118.509,348.02 119.765,349.824 121.07,351.629 122.424,353.434 123.827,355.238 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="123.827,355.238 125.278,357.041 126.778,358.842 128.326,360.641 129.922,362.436 131.565,364.229 133.257,366.017 134.996,367.801 136.782,369.579 138.615,371.352 140.494,373.118 142.421,374.878 144.393,376.63 146.412,378.375 148.476,380.11 150.586,381.837 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="150.586,381.837 152.74,383.555 154.94,385.262 157.184,386.958 159.472,388.644 161.804,390.317 164.179,391.979 166.598,393.628 169.059,395.263 171.563,396.885 174.109,398.493 176.697,400.086 179.326,401.664 181.995,403.226 184.705,404.771 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="184.705,404.771 187.456,406.301 190.246,407.813 193.075,409.307 195.943,410.783 198.849,412.241 201.793,413.68 204.774,415.099 207.793,416.499 210.848,417.878 213.938,419.236 217.065,420.573 220.226,421.889 223.422,423.183 226.652,424.454 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="226.652,424.454 229.915,425.702 233.211,426.928 236.539,428.129 239.9,429.307 243.292,430.46 246.714,431.589 250.167,432.693 253.649,433.771 257.161,434.823 260.7,435.85 264.268,436.849 267.864,437.823 271.485,438.769 275.134,439.688 278.807,440.579 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="278.807,440.579 282.506,441.442 286.229,442.277 289.975,443.083 293.745,443.861 297.537,444.609 301.351,445.329 305.187,446.018 309.043,446.678 312.918,447.308 316.813,447.908 320.727,448.477 324.659,449.016 328.608,449.523 332.574,450 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="332.574,450 336.555,450.445 340.552,450.86 344.564,451.242 348.59,451.593 352.629,451.912 356.681,452.199 360.744,452.454 364.819,452.677 368.905,452.867 373,453.025 377.105,453.151 381.218,453.244 385.339,453.304 389.468,453.331 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="389.468,453.331 393.602,453.326 397.743,453.288 401.889,453.217 406.039,453.113 410.192,452.976 414.349,452.806 418.508,452.603 422.669,452.367 426.83,452.098 430.992,451.797 435.153,451.462 439.313,451.095 443.471,450.695 447.627,450.262 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="447.627,450.262 451.779,449.797 455.927,449.298 460.071,448.768 464.209,448.205 468.342,447.61 472.467,446.982 476.585,446.323 480.695,445.631 484.796,444.908 488.888,444.153 492.97,443.367 497.04,442.55 501.099,441.701 505.147,440.821 509.181,439.911 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="509.181,439.911 513.201,438.97 517.208,437.998 521.2,436.997 525.176,435.965 529.136,434.904 533.079,433.813 537.005,432.694 540.912,431.545 544.801,430.368 548.671,429.162 552.521,427.928 556.35,426.666 560.157,425.377 563.943,424.06 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="563.943,424.06 567.707,422.717 571.447,421.347 575.164,419.951 578.856,418.529 582.524,417.081 586.166,415.608 589.782,414.11 593.372,412.588 596.934,411.041 600.469,409.471 603.975,407.877 607.452,406.261 610.9,404.621 614.318,402.96 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="614.318,402.96 617.706,401.277 621.063,399.572 624.388,397.847 627.681,396.101 630.942,394.335 634.169,392.55 637.363,390.745 640.523,388.921 643.649,387.08 646.739,385.22 649.794,383.344 652.814,381.45 655.796,379.54 658.743,377.614 661.652,375.673 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="661.652,375.673 664.523,373.717 667.356,371.747 670.151,369.763 672.907,367.765 675.624,365.755 678.301,363.732 680.938,361.698 683.534,359.652 686.09,357.596 688.605,355.529 691.079,353.453 693.51,351.368 695.9,349.274 698.247,347.173 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="698.247,347.173 700.551,345.064 702.813,342.948 705.031,340.825 707.205,338.697 709.336,336.564 711.422,334.426 713.465,332.285 715.462,330.139 717.415,327.991 719.322,325.841 721.184,323.689 723.001,321.535 724.772,319.382 726.497,317.228 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="726.497,317.228 728.176,315.075 729.809,312.923 731.395,310.773 732.935,308.625 734.428,306.481 735.875,304.34 737.274,302.203 738.626,300.071 739.931,297.944 741.189,295.823 742.4,293.709 743.563,291.602 744.678,289.503 745.746,287.412 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="745.746,287.412 746.767,285.33 747.74,283.258 748.665,281.196 749.542,279.144 750.372,277.104 751.155,275.076 751.889,273.06 752.576,271.057 753.215,269.068 753.807,267.093 754.352,265.133 754.848,263.189 755.298,261.26 755.7,259.348 756.055,257.453 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="756.055,257.453 756.363,255.576 756.624,253.717 756.838,251.877 757.006,250.056 757.126,248.256 757.201,246.476 757.228,244.716 757.21,242.979 757.146,241.264 757.036,239.571 756.881,237.902 756.68,236.256 756.434,234.635 756.143,233.038 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="756.143,233.038 755.807,231.467 755.427,229.922 755.002,228.403 754.534,226.911 754.022,225.446 753.466,224.009 752.867,222.601 752.225,221.221 751.541,219.871 750.814,218.551 750.046,217.261 749.235,216.001 748.384,214.773 747.491,213.577 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="747.491,213.577 746.558,212.412 745.584,211.281 744.571,210.182 743.518,209.116 742.425,208.085 741.294,207.087 740.125,206.125 738.917,205.197 737.672,204.305 736.389,203.449 735.07,202.629 733.715,201.845 732.323,201.099 730.896,200.389 729.434,199.718 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="729.434,199.718 727.938,199.084 726.407,198.489 724.842,197.933 723.245,197.415 721.614,196.937 719.952,196.498 718.257,196.1 716.532,195.741 714.775,195.423 712.989,195.146 711.172,194.91 709.326,194.715 707.452,194.562 705.549,194.451 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="705.549,194.451 703.619,194.381 701.662,194.354 699.678,194.369 697.668,194.427 695.632,194.527 693.572,194.671 691.487,194.858 689.378,195.088 687.246,195.362 685.091,195.68 682.914,196.041 680.716,196.446 678.497,196.896 676.257,197.389 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="676.257,197.389 673.997,197.927 671.718,198.51 669.421,199.137 667.106,199.808 664.773,200.524 662.423,201.285 660.057,202.09 657.675,202.941 655.278,203.836 652.867,204.776 650.442,205.761 648.004,206.791 645.553,207.865 643.09,208.985 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="643.09,208.985 640.615,210.149 638.13,211.358 635.635,212.611 633.13,213.91 630.616,215.253 628.094,216.64 625.565,218.072 623.028,219.549 620.484,221.069 617.935,222.634 615.38,224.243 612.821,225.896 610.258,227.592 607.691,229.332 605.122,231.116 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="605.122,231.116 602.551,232.943 599.977,234.812 597.403,236.725 594.829,238.681 592.255,240.679 589.681,242.719 587.109,244.801 584.539,246.926 581.972,249.091 579.408,251.299 576.848,253.547 574.293,255.836 571.742,258.165 569.197,260.535 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="569.197,260.535 566.658,262.945 564.126,265.394 561.601,267.883 559.085,270.411 556.576,272.977 554.077,275.582 551.588,278.225 549.108,280.905 546.64,283.623 544.182,286.377 541.737,289.168 539.304,291.996 536.883,294.859 534.477,297.757 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="534.477,297.757 532.084,300.69 529.706,303.658 527.342,306.659 524.995,309.695 522.663,312.763 520.348,315.864 518.05,318.998 515.77,322.163 513.508,325.359 511.264,328.587 509.039,331.845 506.834,335.132 504.648,338.449 502.483,341.795 500.339,345.169 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="500.339,345.169 498.216,348.571 496.115,352.001 494.036,355.457 491.98,358.939 489.946,362.447 487.937,365.98 485.951,369.537 483.989,373.119 482.052,376.724 480.139,380.352 478.253,384.002 476.392,387.674 474.557,391.367 472.749,395.08 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="472.749,395.08 470.967,398.813 469.213,402.566 467.486,406.337 465.787,410.126 464.116,413.933 462.474,417.756 460.861,421.596 459.276,425.451 457.721,429.321 456.196,433.206 454.7,437.104 453.235,441.015 451.8,444.939 450.396,448.874 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="450.396,448.874 449.022,452.82 447.68,456.776 446.369,460.742 445.09,464.718 443.842,468.701 442.627,472.693 441.443,476.691 440.292,480.696 439.174,484.706 438.088,488.721 437.035,492.741 436.015,496.764 435.027,500.791 434.074,504.819 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="434.074,504.819 433.153,508.849 432.266,512.88 431.412,516.911 430.592,520.942 429.806,524.972 429.054,528.999 428.335,533.024 427.65,537.046 427,541.064 426.383,545.077 425.8,549.085 425.251,553.087 424.736,557.083 424.255,561.071 423.808,565.05 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="423.808,565.05 423.396,569.021 423.017,572.983 422.672,576.935 422.361,580.875 422.083,584.804 421.84,588.721 421.63,592.626 421.454,596.516 421.311,600.393 421.202,604.254 421.126,608.1 421.083,611.93 421.073,615.743 421.096,619.538 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="421.096,619.538 421.152,623.315 421.241,627.074 421.362,630.813 421.515,634.531 421.701,638.229 421.918,641.906 422.168,645.56 422.448,649.192 422.761,652.8 423.104,656.384 423.478,659.944 423.883,663.479 424.318,666.987 424.783,670.47 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="424.783,670.47 425.278,673.925 425.803,677.353 426.358,680.752 426.941,684.123 427.553,687.464 428.194,690.775 428.862,694.056 429.559,697.306 430.283,700.524 431.035,703.71 431.813,706.863 432.618,709.982 433.449,713.068 434.306,716.12 435.189,719.136 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="435.189,719.136 436.096,722.117 437.028,725.062 437.985,727.971 438.966,730.843 439.97,733.678 440.997,736.474 442.047,739.232 443.12,741.952 444.214,744.632 445.33,747.272 446.467,749.872 447.625,752.431 448.802,754.95 450,757.426 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="450,757.426 451.217,759.861 452.452,762.254 453.707,764.604 454.978,766.911 456.268,769.174 457.574,771.393 458.897,773.569 460.236,775.699 461.59,777.785 462.959,779.825 464.343,781.82 465.74,783.769 467.151,785.672 468.575,787.528 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="468.575,787.528 470.012,789.337 471.46,791.1 472.92,792.814 474.391,794.481 475.872,796.101 477.362,797.672 478.862,799.194 480.371,800.668 481.888,802.093 483.413,803.469 484.944,804.796 486.483,806.073 488.027,807.301 489.576,808.479 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="489.576,808.479 491.131,809.606 492.69,810.684 494.252,811.711 495.818,812.688 497.387,813.614 498.957,814.49 500.529,815.315 502.102,816.088 503.675,816.811 505.249,817.483 506.821,818.104 508.392,818.674 509.961,819.192 511.528,819.659 513.092,820.075 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="513.092,820.075 514.652,820.439 516.208,820.753 517.759,821.015 519.305,821.225 520.845,821.385 522.379,821.493 523.906,821.55 525.425,821.555 526.936,821.51 528.438,821.413 529.932,821.266 531.415,821.068 532.888,820.819 534.35,820.52 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="534.35,820.52 535.801,820.169 537.239,819.769 538.665,819.318 540.079,818.817 541.478,818.267 542.863,817.666 544.234,817.016 545.589,816.316 546.928,815.568 548.252,814.77 549.558,813.923 550.847,813.028 552.118,812.084 553.371,811.093 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="553.371,811.093 554.605,810.053 555.82,808.966 557.014,807.832 558.189,806.65 559.342,805.422 560.474,804.147 561.584,802.826 562.672,801.46 563.737,800.047 564.779,798.59 565.797,797.088 566.791,795.541 567.76,793.95 568.705,792.315 569.623,790.637 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="569.623,790.637 570.516,788.916 571.382,787.152 572.222,785.346 573.034,783.498 573.818,781.608 574.575,779.678 575.303,777.707 576.002,775.695 576.672,773.644 577.312,771.554 577.923,769.425 578.503,767.258 579.052,765.052 579.57,762.809 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="579.57,762.809 580.057,760.53 580.512,758.214 580.934,755.861 581.325,753.474 581.683,751.051 582.007,748.594 582.298,746.103 582.556,743.579 582.78,741.022 582.969,738.432 583.124,735.811 583.244,733.159 583.33,730.476 583.38,727.762 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="583.38,727.762 583.394,725.02 583.373,722.248 583.316,719.448 583.222,716.62 583.092,713.764 582.926,710.882 582.723,707.974 582.483,705.041 582.206,702.082 581.892,699.1 581.54,696.094 581.15,693.064 580.723,690.012 580.258,686.939 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="580.258,686.939 579.755,683.844 579.214,680.729 578.635,677.594 578.018,674.439 577.362,671.266 576.668,668.074 575.935,664.866 575.164,661.64 574.354,658.399 573.505,655.142 572.618,651.87 571.692,648.584 570.728,645.284 569.725,641.972 568.683,638.647 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="568.683,638.647 567.602,635.311 566.483,631.964 565.325,628.607 564.128,625.24 562.893,621.864 561.62,618.48 560.308,615.088 558.958,611.689 557.57,608.284 556.143,604.873 554.679,601.458 553.177,598.038 551.636,594.614 550.059,591.187 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="550.059,591.187 548.444,587.758 546.791,584.328 545.101,580.896 543.375,577.464 541.611,574.032 539.811,570.601 537.975,567.171 536.102,563.744 534.193,560.32 532.249,556.899 530.269,553.482 528.254,550.07 526.203,546.664 524.118,543.263 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="524.118,543.263 521.999,539.869 519.845,536.483 517.657,533.104 515.436,529.734 513.181,526.373 510.894,523.022 508.573,519.681 506.22,516.352 503.836,513.033 501.419,509.728 498.971,506.434 496.492,503.155 493.983,499.889 491.443,496.638 488.874,493.402 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="488.874,493.402 486.275,490.181 483.647,486.977 480.99,483.79 478.305,480.621 475.593,477.469 472.853,474.335 470.086,471.221 467.292,468.127 464.472,465.052 461.627,461.998 458.757,458.966 455.862,455.955 452.943,452.966 450,450 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="450,450 447.034,447.057 444.045,444.138 441.034,441.243 438.002,438.373 434.948,435.528 431.873,432.708 428.779,429.914 425.665,427.147 422.531,424.407 419.379,421.695 416.21,419.01 413.023,416.353 409.819,413.725 406.598,411.126 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="406.598,411.126 403.362,408.557 400.111,406.017 396.845,403.508 393.566,401.029 390.272,398.581 386.967,396.164 383.648,393.78 380.319,391.427 376.978,389.106 373.627,386.819 370.266,384.564 366.896,382.343 363.517,380.155 360.131,378.001 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="360.131,378.001 356.737,375.882 353.336,373.797 349.93,371.746 346.518,369.731 343.101,367.751 339.68,365.807 336.256,363.898 332.829,362.025 329.399,360.189 325.968,358.389 322.536,356.625 319.104,354.899 315.672,353.209 312.242,351.556 308.813,349.941 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="308.813,349.941 305.386,348.364 301.962,346.823 298.542,345.321 295.127,343.857 291.716,342.43 288.311,341.042 284.912,339.692 281.52,338.38 278.136,337.107 274.76,335.872 271.393,334.675 268.036,333.517 264.689,332.398 261.353,331.317 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="261.353,331.317 258.028,330.275 254.716,329.272 251.416,328.308 248.13,327.382 244.858,326.495 241.601,325.646 238.36,324.836 235.134,324.065 231.926,323.332 228.734,322.638 225.561,321.982 222.406,321.365 219.271,320.786 216.156,320.245 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="216.156,320.245 213.061,319.742 209.988,319.277 206.936,318.85 203.906,318.46 200.9,318.108 197.918,317.794 194.959,317.517 192.026,317.277 189.118,317.074 186.236,316.908 183.38,316.778 180.552,316.684 177.752,316.627 174.98,316.606 172.238,316.62 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="172.238,316.62 169.524,316.67 166.841,316.756 164.189,316.876 161.568,317.031 158.978,317.22 156.421,317.444 153.897,317.702 151.406,317.993 148.949,318.317 146.526,318.675 144.139,319.066 141.786,319.488 139.47,319.943 137.191,320.43 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="137.191,320.43 134.948,320.948 132.742,321.497 130.575,322.077 128.446,322.688 126.356,323.328 124.305,323.998 122.293,324.697 120.322,325.425 118.392,326.182 116.502,326.966 114.654,327.778 112.848,328.618 111.084,329.484 109.363,330.377 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="109.363,330.377 107.685,331.295 106.05,332.24 104.459,333.209 102.912,334.203 101.41,335.221 99.9526,336.263 98.5404,337.328 97.1737,338.416 95.8528,339.526 94.5781,340.658 93.3499,341.811 92.1684,342.986 91.034,344.18 89.9469,345.395 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="89.9469,345.395 88.9073,346.629 87.9157,347.882 86.9721,349.153 86.0769,350.442 85.2303,351.748 84.4325,353.072 83.6837,354.411 82.9841,355.766 82.3339,357.137 81.7334,358.522 81.1826,359.921 80.6818,361.335 80.231,362.761 79.8306,364.199 79.4805,365.65 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="79.4805,365.65 79.1809,367.112 78.932,368.585 78.7338,370.068 78.5865,371.562 78.4901,373.064 78.4448,374.575 78.4505,376.094 78.5074,377.621 78.6155,379.155 78.7748,380.695 78.9854,382.241 79.2473,383.792 79.5605,385.348 79.9251,386.908 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="79.9251,386.908 80.3409,388.472 80.808,390.039 81.3264,391.608 81.896,393.179 82.5168,394.751 83.1887,396.325 83.9116,397.898 84.6855,399.471 85.5103,401.043 86.3859,402.613 87.3121,404.182 88.2889,405.748 89.3162,407.31 90.3938,408.869 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="90.3938,408.869 91.5215,410.424 92.6992,411.973 93.9268,413.517 95.204,415.056 96.5307,416.587 97.9067,418.112 99.3318,419.629 100.806,421.138 102.328,422.638 103.899,424.128 105.519,425.609 107.186,427.08 108.9,428.54 110.663,429.988 112.472,431.425 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="112.472,431.425 114.328,432.849 116.231,434.26 118.18,435.657 120.175,437.041 122.215,438.41 124.301,439.764 126.431,441.103 128.607,442.426 130.826,443.732 133.089,445.022 135.396,446.293 137.746,447.548 140.139,448.783 142.574,450 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="142.574,450 145.05,451.198 147.569,452.375 150.128,453.533 152.728,454.67 155.368,455.786 158.048,456.88 160.768,457.953 163.526,459.003 166.322,460.03 169.157,461.034 172.029,462.015 174.938,462.972 177.883,463.904 180.864,464.811 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="180.864,464.811 183.88,465.694 186.932,466.551 190.018,467.382 193.137,468.187 196.29,468.965 199.476,469.717 202.694,470.441 205.944,471.138 209.225,471.806 212.536,472.447 215.877,473.059 219.248,473.642 222.647,474.197 226.075,474.722 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="226.075,474.722 229.53,475.217 233.013,475.682 236.521,476.117 240.056,476.522 243.616,476.896 247.2,477.239 250.808,477.552 254.44,477.832 258.094,478.082 261.771,478.299 265.469,478.485 269.187,478.638 272.926,478.759 276.685,478.848 280.462,478.904 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="280.462,478.904 284.257,478.927 288.07,478.917 291.9,478.874 295.746,478.798 299.607,478.689 303.484,478.546 307.374,478.37 311.279,478.16 315.196,477.917 319.125,477.639 323.065,477.328 327.017,476.983 330.979,476.604 334.95,476.192 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="334.95,476.192 338.929,475.745 342.917,475.264 346.913,474.749 350.915,474.2 354.923,473.617 358.936,473 362.954,472.35 366.976,471.665 371.001,470.946 375.028,470.194 379.058,469.408 383.089,468.588 387.12,467.734 391.151,466.847 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="391.151,466.847 395.181,465.926 399.209,464.973 403.236,463.985 407.259,462.965 411.279,461.912 415.294,460.826 419.304,459.708 423.309,458.557 427.307,457.373 431.299,456.158 435.282,454.91 439.258,453.631 443.224,452.32 447.18,450.978 451.126,449.604 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="451.126,449.604 455.061,448.2 458.985,446.765 462.896,445.3 466.794,443.804 470.679,442.279 474.549,440.724 478.404,439.139 482.244,437.526 486.067,435.884 489.874,434.213 493.663,432.514 497.434,430.787 501.187,429.033 504.92,427.251 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="504.92,427.251 508.633,425.443 512.326,423.608 515.998,421.747 519.648,419.861 523.276,417.948 526.881,416.011 530.463,414.049 534.02,412.063 537.553,410.054 541.061,408.02 544.543,405.964 547.999,403.885 551.429,401.784 554.831,399.661 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="554.831,399.661 558.205,397.517 561.551,395.352 564.868,393.166 568.155,390.961 571.413,388.736 574.641,386.492 577.837,384.23 581.002,381.95 584.136,379.652 587.237,377.337 590.305,375.005 593.341,372.658 596.342,370.294 599.31,367.916 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="599.31,367.916 602.243,365.523 605.141,363.117 608.004,360.696 610.832,358.263 613.623,355.818 616.377,353.36 619.095,350.892 621.775,348.412 624.418,345.923 627.023,343.424 629.589,340.915 632.117,338.399 634.606,335.874 637.055,333.342 639.465,330.803 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="639.465,330.803 641.835,328.258 644.164,325.707 646.453,323.152 648.701,320.592 650.909,318.028 653.074,315.461 655.199,312.891 657.281,310.319 659.321,307.745 661.319,305.171 663.275,302.597 665.188,300.023 667.057,297.449 668.884,294.878 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="668.884,294.878 670.668,292.309 672.408,289.742 674.104,287.179 675.757,284.62 677.366,282.065 678.931,279.516 680.451,276.972 681.928,274.435 683.36,271.906 684.747,269.384 686.09,266.87 687.389,264.365 688.642,261.87 689.851,259.385 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="689.851,259.385 691.015,256.91 692.135,254.447 693.209,251.996 694.239,249.558 695.224,247.133 696.164,244.722 697.059,242.325 697.91,239.943 698.715,237.577 699.476,235.227 700.192,232.894 700.863,230.579 701.49,228.282 702.073,226.003 702.611,223.743 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="702.611,223.743 703.104,221.503 703.554,219.284 703.959,217.086 704.32,214.909 704.638,212.754 704.912,210.622 705.142,208.513 705.329,206.428 705.473,204.368 705.573,202.332 705.631,200.322 705.646,198.338 705.619,196.381 705.549,194.451 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="705.549,194.451 705.438,192.548 705.285,190.674 705.09,188.828 704.854,187.011 704.577,185.225 704.259,183.468 703.9,181.743 703.502,180.048 703.063,178.386 702.585,176.755 702.067,175.158 701.511,173.593 700.916,172.062 700.282,170.566 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="700.282,170.566 699.611,169.104 698.901,167.677 698.155,166.285 697.371,164.93 696.551,163.611 695.695,162.328 694.803,161.083 693.875,159.875 692.913,158.706 691.915,157.575 690.884,156.482 689.818,155.429 688.719,154.416 687.588,153.442 686.423,152.509 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="686.423,152.509 685.227,151.616 683.999,150.765 682.739,149.954 681.449,149.186 680.129,148.459 678.779,147.775 677.399,147.133 675.991,146.534 674.554,145.978 673.089,145.466 671.597,144.998 670.078,144.573 668.533,144.193 666.962,143.857 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="666.962,143.857 665.365,143.566 663.744,143.32 662.098,143.119 660.429,142.964 658.736,142.854 657.021,142.79 655.284,142.772 653.524,142.799 651.744,142.874 649.944,142.994 648.123,143.162 646.283,143.376 644.424,143.637 642.547,143.945 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="642.547,143.945 640.652,144.3 638.74,144.702 636.811,145.152 634.867,145.648 632.907,146.193 630.932,146.785 628.943,147.424 626.94,148.111 624.924,148.845 622.896,149.628 620.856,150.458 618.804,151.335 616.742,152.26 614.67,153.233 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="614.67,153.233 612.588,154.254 610.497,155.322 608.398,156.437 606.291,157.6 604.177,158.811 602.056,160.069 599.929,161.374 597.797,162.726 595.66,164.125 593.519,165.572 591.375,167.065 589.227,168.605 587.077,170.191 584.925,171.824 582.772,173.503 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="582.772,173.503 580.618,175.228 578.465,176.999 576.311,178.816 574.159,180.678 572.009,182.585 569.861,184.538 567.715,186.535 565.574,188.578 563.436,190.664 561.303,192.795 559.175,194.969 557.052,197.187 554.936,199.449 552.827,201.753 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="552.827,201.753 550.726,204.1 548.632,206.49 546.547,208.921 544.471,211.395 542.404,213.91 540.348,216.466 538.302,219.062 536.268,221.699 534.245,224.376 532.235,227.093 530.237,229.849 528.253,232.644 526.283,235.477 524.327,238.348 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="524.327,238.348 522.386,241.257 520.46,244.204 518.55,247.186 516.656,250.206 514.78,253.261 512.92,256.351 511.079,259.477 509.255,262.637 507.45,265.831 505.665,269.058 503.899,272.319 502.153,275.612 500.428,278.937 498.723,282.294 497.04,285.682 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="497.04,285.682 495.379,289.1 493.739,292.548 492.123,296.025 490.529,299.531 488.959,303.066 487.412,306.628 485.89,310.218 484.392,313.834 482.919,317.476 481.471,321.144 480.049,324.836 478.653,328.553 477.283,332.293 475.94,336.057 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="475.94,336.057 474.623,339.843 473.334,343.65 472.072,347.479 470.838,351.329 469.632,355.199 468.455,359.088 467.306,362.995 466.187,366.921 465.096,370.864 464.035,374.824 463.003,378.8 462.002,382.792 461.03,386.799 460.089,390.819 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="460.089,390.819 459.179,394.853 458.299,398.901 457.45,402.96 456.633,407.03 455.847,411.112 455.092,415.204 454.369,419.305 453.677,423.415 453.018,427.533 452.39,431.658 451.795,435.791 451.232,439.929 450.702,444.073 450.203,448.221 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="450.203,448.221 449.738,452.373 449.305,456.529 448.905,460.687 448.538,464.847 448.203,469.008 447.902,473.17 447.633,477.331 447.397,481.492 447.194,485.651 447.024,489.808 446.887,493.961 446.783,498.111 446.712,502.257 446.674,506.398 446.669,510.532 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="446.669,510.532 446.696,514.661 446.756,518.782 446.849,522.895 446.975,527 447.133,531.095 447.323,535.181 447.546,539.256 447.801,543.319 448.088,547.371 448.407,551.41 448.758,555.436 449.14,559.448 449.555,563.445 450,567.426 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="450,567.426 450.477,571.392 450.984,575.341 451.523,579.273 452.092,583.187 452.692,587.082 453.322,590.957 453.982,594.813 454.671,598.649 455.391,602.463 456.139,606.255 456.917,610.025 457.723,613.771 458.558,617.494 459.421,621.193 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="459.421,621.193 460.312,624.866 461.231,628.515 462.177,632.136 463.151,635.732 464.15,639.3 465.177,642.839 466.229,646.351 467.307,649.833 468.411,653.286 469.54,656.708 470.693,660.1 471.871,663.461 473.072,666.789 474.298,670.085 475.546,673.348 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="475.546,673.348 476.817,676.578 478.111,679.774 479.427,682.935 480.764,686.062 482.122,689.152 483.501,692.207 484.901,695.226 486.32,698.207 487.759,701.151 489.217,704.057 490.693,706.925 492.187,709.754 493.699,712.544 495.229,715.295 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="495.229,715.295 496.774,718.005 498.336,720.674 499.914,723.303 501.507,725.891 503.115,728.437 504.737,730.941 506.372,733.402 508.021,735.821 509.683,738.196 511.356,740.528 513.042,742.816 514.738,745.06 516.445,747.26 518.163,749.414 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="518.163,749.414 519.89,751.524 521.625,753.588 523.37,755.607 525.122,757.579 526.882,759.506 528.648,761.385 530.421,763.218 532.199,765.004 533.983,766.743 535.771,768.435 537.564,770.078 539.359,771.674 541.158,773.222 542.959,774.722 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="542.959,774.722 544.762,776.173 546.566,777.576 548.371,778.93 550.176,780.235 551.98,781.491 553.783,782.698 555.585,783.855 557.384,784.964 559.18,786.023 560.973,787.032 562.763,787.992 564.547,788.902 566.327,789.762 568.1,790.572 569.868,791.333 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="569.868,791.333 571.628,792.044 573.381,792.705 575.126,793.316 576.863,793.877 578.59,794.388 580.308,794.85 582.015,795.261 583.711,795.623 585.396,795.935 587.069,796.198 588.73,796.41 590.377,796.574 592.01,796.687 593.629,796.752 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="593.629,796.752 595.234,796.767 596.823,796.733 598.396,796.65 599.952,796.519 601.491,796.338 603.013,796.109 604.517,795.832 606.002,795.506 607.468,795.133 608.914,794.711 610.34,794.242 611.745,793.726 613.129,793.162 614.491,792.551 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="614.491,792.551 615.83,791.894 617.147,791.19 618.441,790.44 619.71,789.644 620.956,788.802 622.176,787.914 623.371,786.982 624.54,786.005 625.684,784.983 626.8,783.917 627.889,782.807 628.951,781.654 629.984,780.457 630.989,779.218 631.965,777.936 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="631.965,777.936 632.911,776.612 633.828,775.246 634.714,773.838 635.57,772.39 636.394,770.901 637.187,769.372 637.948,767.803 638.677,766.195 639.373,764.548 640.036,762.862 640.666,761.138 641.262,759.377 641.823,757.578 642.35,755.743 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="642.35,755.743 642.843,753.871 643.3,751.964 643.721,750.021 644.107,748.044 644.457,746.032 644.77,743.986 645.046,741.908 645.286,739.796 645.488,737.652 645.652,735.476 645.779,733.269 645.868,731.031 645.918,728.763 645.929,726.465 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="645.929,726.465 645.902,724.138 645.836,721.783 645.73,719.4 645.585,716.989 645.401,714.552 645.176,712.088 644.912,709.598 644.607,707.083 644.262,704.544 643.876,701.981 643.45,699.394 642.982,696.784 642.474,694.153 641.925,691.499 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="641.925,691.499 641.335,688.825 640.703,686.13 640.03,683.416 639.316,680.682 638.56,677.93 637.763,675.16 636.923,672.372 636.043,669.568 635.12,666.748 634.156,663.912 633.15,661.062 632.102,658.197 631.013,655.318 629.881,652.427 628.708,649.524 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="628.708,649.524 627.494,646.608 626.237,643.682 624.939,640.746 623.6,637.799 622.219,634.844 620.796,631.88 619.333,628.908 617.828,625.929 616.281,622.943 614.694,619.951 613.066,616.954 611.397,613.953 609.688,610.947 607.938,607.938 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="607.938,607.938 606.148,604.926 604.318,601.913 602.448,598.897 600.538,595.881 598.588,592.865 596.599,589.849 594.571,586.833 592.504,583.82 590.398,580.809 588.254,577.801 586.072,574.796 583.851,571.795 581.593,568.8 579.298,565.809 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="579.298,565.809 576.966,562.825 574.596,559.847 572.191,556.876 569.749,553.913 567.271,550.958 564.758,548.012 562.209,545.076 559.626,542.15 557.008,539.235 554.356,536.33 551.67,533.438 548.951,530.558 546.198,527.692 543.414,524.838 540.596,521.999 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="540.596,521.999 537.748,519.175 534.867,516.365 531.956,513.572 529.015,510.794 526.043,508.034 523.041,505.291 520.011,502.566 516.951,499.859 513.864,497.171 510.749,494.502 507.606,491.853 504.437,489.225 501.241,486.617 498.019,484.031 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="498.019,484.031 494.773,481.467 491.501,478.925 488.205,476.405 484.886,473.909 481.543,471.436 478.177,468.988 474.79,466.564 471.381,464.165 467.951,461.791 464.5,459.444 461.03,457.122 457.54,454.827 454.032,452.559 450.505,450.318 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="450.505,450.318 446.961,448.105 443.4,445.92 439.823,443.763 436.23,441.636 432.621,439.537 428.999,437.468 425.362,435.429 421.712,433.42 418.049,431.442 414.375,429.494 410.688,427.577 406.991,425.692 403.284,423.838 399.568,422.016 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="399.568,422.016 395.842,420.227 392.109,418.469 388.368,416.745 384.619,415.053 380.865,413.395 377.105,411.77 373.34,410.178 369.571,408.621 365.798,407.097 362.022,405.607 358.244,404.152 354.464,402.731 350.684,401.345 346.903,399.994 343.122,398.678 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="343.122,398.678 339.343,397.397 335.565,396.151 331.79,394.941 328.018,393.765 324.249,392.626 320.485,391.522 316.727,390.454 312.974,389.421 309.227,388.425 305.488,387.464 301.756,386.539 298.033,385.65 294.32,384.798 290.616,383.981 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="290.616,383.981 286.922,383.2 283.24,382.455 279.57,381.746 275.912,381.074 272.267,380.437 268.637,379.836 265.021,379.271 261.42,378.742 257.835,378.248 254.266,377.79 250.715,377.368 247.182,376.981 243.667,376.629 240.171,376.313 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="240.171,376.313 236.695,376.032 233.239,375.786 229.805,375.575 226.392,375.399 223.002,375.257 219.634,375.15 216.29,375.076 212.97,375.037 209.676,375.032 206.406,375.061 203.163,375.123 199.946,375.218 196.757,375.346 193.595,375.507 190.462,375.701 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="190.462,375.701 187.358,375.927 184.283,376.185 181.239,376.475 178.225,376.797 175.243,377.149 172.292,377.533 169.374,377.948 166.489,378.392 163.638,378.867 160.82,379.372 158.037,379.906 155.289,380.469 152.577,381.061 149.901,381.682 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="149.901,381.682 147.262,382.33 144.66,383.006 142.095,383.71 139.569,384.44 137.081,385.198 134.632,385.981 132.222,386.79 129.853,387.625 127.524,388.484 125.236,389.369 122.989,390.277 120.784,391.209 118.621,392.165 116.501,393.144 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="116.501,393.144 114.423,394.145 112.389,395.168 110.399,396.212 108.453,397.278 106.551,398.365 104.694,399.471 102.882,400.598 101.116,401.743 99.3957,402.908 97.7216,404.091 96.094,405.291 94.5132,406.509 92.9795,407.744 91.4933,408.995 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="91.4933,408.995 90.0548,410.262 88.6642,411.544 87.3219,412.841 86.0281,414.152 84.783,415.477 83.587,416.815 82.4401,418.166 81.3426,419.529 80.2948,420.904 79.2969,422.289 78.3489,423.686 77.4512,425.092 76.6038,426.508 75.807,427.933 75.0609,429.366 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="75.0609,429.366 74.3656,430.807 73.7213,432.255 73.1281,433.71 72.586,435.171 72.0953,436.638 71.656,438.11 71.2682,439.586 70.9319,441.067 70.6473,442.55 70.4143,444.037 70.2331,445.526 70.1036,447.016 70.0259,448.508 70,450 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="70,450 70.0259,451.492 70.1036,452.984 70.2331,454.474 70.4143,455.963 70.6473,457.45 70.9319,458.933 71.2682,460.414 71.656,461.89 72.0953,463.362 72.586,464.829 73.1281,466.29 73.7213,467.745 74.3656,469.193 75.0609,470.634 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="75.0609,470.634 75.807,472.067 76.6038,473.492 77.4512,474.908 78.3489,476.314 79.2969,477.711 80.2948,479.096 81.3426,480.471 82.4401,481.834 83.587,483.185 84.783,484.523 86.0281,485.848 87.3219,487.159 88.6642,488.456 90.0548,489.738 91.4933,491.005 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="91.4933,491.005 92.9795,492.256 94.5132,493.491 96.094,494.709 97.7216,495.909 99.3957,497.092 101.116,498.257 102.882,499.402 104.694,500.529 106.551,501.635 108.453,502.722 110.399,503.788 112.389,504.832 114.423,505.855 116.501,506.856 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="116.501,506.856 118.621,507.835 120.784,508.791 122.989,509.723 125.236,510.631 127.524,511.516 129.853,512.375 132.222,513.21 134.632,514.019 137.081,514.802 139.569,515.56 142.095,516.29 144.66,516.994 147.262,517.67 149.901,518.318 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="149.901,518.318 152.577,518.939 155.289,519.531 158.037,520.094 160.82,520.628 163.638,521.133 166.489,521.608 169.374,522.052 172.292,522.467 175.243,522.851 178.225,523.203 181.239,523.525 184.283,523.815 187.358,524.073 190.462,524.299 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="190.462,524.299 193.595,524.493 196.757,524.654 199.946,524.782 203.163,524.877 206.406,524.939 209.676,524.968 212.97,524.963 216.29,524.924 219.634,524.85 223.002,524.743 226.392,524.601 229.805,524.425 233.239,524.214 236.695,523.968 240.171,523.687 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="240.171,523.687 243.667,523.371 247.182,523.019 250.715,522.632 254.266,522.21 257.835,521.752 261.42,521.258 265.021,520.729 268.637,520.164 272.267,519.563 275.912,518.926 279.57,518.254 283.24,517.545 286.922,516.8 290.616,516.019 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="290.616,516.019 294.32,515.202 298.033,514.35 301.756,513.461 305.488,512.536 309.227,511.575 312.974,510.579 316.727,509.546 320.485,508.478 324.249,507.374 328.018,506.235 331.79,505.059 335.565,503.849 339.343,502.603 343.122,501.322 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="343.122,501.322 346.903,500.006 350.684,498.655 354.464,497.269 358.244,495.848 362.022,494.393 365.798,492.903 369.571,491.379 373.34,489.822 377.105,488.23 380.865,486.605 384.619,484.947 388.368,483.255 392.109,481.531 395.842,479.773 399.568,477.984 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="399.568,477.984 403.284,476.162 406.991,474.308 410.688,472.423 414.375,470.506 418.049,468.558 421.712,466.58 425.362,464.571 428.999,462.532 432.621,460.463 436.23,458.364 439.823,456.237 443.4,454.08 446.961,451.895 450.505,449.682 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="450.505,449.682 454.032,447.441 457.54,445.173 461.03,442.878 464.5,440.556 467.951,438.209 471.381,435.835 474.79,433.436 478.177,431.012 481.543,428.564 484.886,426.091 488.205,423.595 491.501,421.075 494.773,418.533 498.019,415.969 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="498.019,415.969 501.241,413.383 504.437,410.775 507.606,408.147 510.749,405.498 513.864,402.829 516.951,400.141 520.011,397.434 523.041,394.709 526.043,391.966 529.015,389.206 531.956,386.428 534.867,383.635 537.748,380.825 540.596,378.001 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="540.596,378.001 543.414,375.162 546.198,372.308 548.951,369.442 551.67,366.562 554.356,363.67 557.008,360.765 559.626,357.85 562.209,354.924 564.758,351.988 567.271,349.042 569.749,346.087 572.191,343.124 574.596,340.153 576.966,337.175 579.298,334.191 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="579.298,334.191 581.593,331.2 583.851,328.205 586.072,325.204 588.254,322.199 590.398,319.191 592.504,316.18 594.571,313.167 596.599,310.151 598.588,307.135 600.538,304.119 602.448,301.103 604.318,298.087 606.148,295.074 607.938,292.062 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="607.938,292.062 609.688,289.053 611.397,286.047 613.066,283.046 614.694,280.049 616.281,277.057 617.828,274.071 619.333,271.092 620.796,268.12 622.219,265.156 623.6,262.201 624.939,259.254 626.237,256.318 627.494,253.392 628.708,250.476 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="628.708,250.476 629.881,247.573 631.013,244.682 632.102,241.803 633.15,238.938 634.156,236.088 635.12,233.252 636.043,230.432 636.923,227.628 637.763,224.84 638.56,222.07 639.316,219.318 640.03,216.584 640.703,213.87 641.335,211.175 641.925,208.501 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="641.925,208.501 642.474,205.847 642.982,203.216 643.45,200.606 643.876,198.019 644.262,195.456 644.607,192.917 644.912,190.402 645.176,187.912 645.401,185.448 645.585,183.011 645.73,180.6 645.836,178.217 645.902,175.862 645.929,173.535 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="645.929,173.535 645.918,171.237 645.868,168.969 645.779,166.731 645.652,164.524 645.488,162.348 645.286,160.204 645.046,158.092 644.77,156.014 644.457,153.968 644.107,151.956 643.721,149.979 643.3,148.036 642.843,146.129 642.35,144.257 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="642.35,144.257 641.823,142.422 641.262,140.623 640.666,138.862 640.036,137.138 639.373,135.452 638.677,133.805 637.948,132.197 637.187,130.628 636.394,129.099 635.57,127.61 634.714,126.162 633.828,124.754 632.911,123.388 631.965,122.064 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="631.965,122.064 630.989,120.782 629.984,119.543 628.951,118.346 627.889,117.193 626.8,116.083 625.684,115.017 624.54,113.995 623.371,113.018 622.176,112.086 620.956,111.198 619.71,110.356 618.441,109.56 617.147,108.81 615.83,108.106 614.491,107.449 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="614.491,107.449 613.129,106.838 611.745,106.274 610.34,105.758 608.914,105.289 607.468,104.867 606.002,104.494 604.517,104.168 603.013,103.891 601.491,103.662 599.952,103.481 598.396,103.35 596.823,103.267 595.234,103.233 593.629,103.248 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="593.629,103.248 592.01,103.313 590.377,103.426 588.73,103.59 587.069,103.802 585.396,104.065 583.711,104.377 582.015,104.739 580.308,105.15 578.59,105.612 576.863,106.123 575.126,106.684 573.381,107.295 571.628,107.956 569.868,108.667 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="569.868,108.667 568.1,109.428 566.327,110.238 564.547,111.098 562.763,112.008 560.973,112.968 559.18,113.977 557.384,115.036 555.585,116.145 553.783,117.302 551.98,118.509 550.176,119.765 548.371,121.07 546.566,122.424 544.762,123.827 542.959,125.278 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="542.959,125.278 541.158,126.778 539.359,128.326 537.564,129.922 535.771,131.565 533.983,133.257 532.199,134.996 530.421,136.782 528.648,138.615 526.882,140.494 525.122,142.421 523.37,144.393 521.625,146.412 519.89,148.476 518.163,150.586 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="518.163,150.586 516.445,152.74 514.738,154.94 513.042,157.184 511.356,159.472 509.683,161.804 508.021,164.179 506.372,166.598 504.737,169.059 503.115,171.563 501.507,174.109 499.914,176.697 498.336,179.326 496.774,181.995 495.229,184.705 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="495.229,184.705 493.699,187.456 492.187,190.246 490.693,193.075 489.217,195.943 487.759,198.849 486.32,201.793 484.901,204.774 483.501,207.793 482.122,210.848 480.764,213.938 479.427,217.065 478.111,220.226 476.817,223.422 475.546,226.652 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="475.546,226.652 474.298,229.915 473.072,233.211 471.871,236.539 470.693,239.9 469.54,243.292 468.411,246.714 467.307,250.167 466.229,253.649 465.177,257.161 464.15,260.7 463.151,264.268 462.177,267.864 461.231,271.485 460.312,275.134 459.421,278.807 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="459.421,278.807 458.558,282.506 457.723,286.229 456.917,289.975 456.139,293.745 455.391,297.537 454.671,301.351 453.982,305.187 453.322,309.043 452.692,312.918 452.092,316.813 451.523,320.727 450.984,324.659 450.477,328.608 450,332.574 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="450,332.574 449.555,336.555 449.14,340.552 448.758,344.564 448.407,348.59 448.088,352.629 447.801,356.681 447.546,360.744 447.323,364.819 447.133,368.905 446.975,373 446.849,377.105 446.756,381.218 446.696,385.339 446.669,389.468 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="446.669,389.468 446.674,393.602 446.712,397.743 446.783,401.889 446.887,406.039 447.024,410.192 447.194,414.349 447.397,418.508 447.633,422.669 447.902,426.83 448.203,430.992 448.538,435.153 448.905,439.313 449.305,443.471 449.738,447.627 450.203,451.779 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="450.203,451.779 450.702,455.927 451.232,460.071 451.795,464.209 452.39,468.342 453.018,472.467 453.677,476.585 454.369,480.695 455.092,484.796 455.847,488.888 456.633,492.97 457.45,497.04 458.299,501.099 459.179,505.147 460.089,509.181 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="460.089,509.181 461.03,513.201 462.002,517.208 463.003,521.2 464.035,525.176 465.096,529.136 466.187,533.079 467.306,537.005 468.455,540.912 469.632,544.801 470.838,548.671 472.072,552.521 473.334,556.35 474.623,560.157 475.94,563.943 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="475.94,563.943 477.283,567.707 478.653,571.447 480.049,575.164 481.471,578.856 482.919,582.524 484.392,586.166 485.89,589.782 487.412,593.372 488.959,596.934 490.529,600.469 492.123,603.975 493.739,607.452 495.379,610.9 497.04,614.318 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="497.04,614.318 498.723,617.706 500.428,621.063 502.153,624.388 503.899,627.681 505.665,630.942 507.45,634.169 509.255,637.363 511.079,640.523 512.92,643.649 514.78,646.739 516.656,649.794 518.55,652.814 520.46,655.796 522.386,658.743 524.327,661.652 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="524.327,661.652 526.283,664.523 528.253,667.356 530.237,670.151 532.235,672.907 534.245,675.624 536.268,678.301 538.302,680.938 540.348,683.534 542.404,686.09 544.471,688.605 546.547,691.079 548.632,693.51 550.726,695.9 552.827,698.247 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="552.827,698.247 554.936,700.551 557.052,702.813 559.175,705.031 561.303,707.205 563.436,709.336 565.574,711.422 567.715,713.465 569.861,715.462 572.009,717.415 574.159,719.322 576.311,721.184 578.465,723.001 580.618,724.772 582.772,726.497 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="582.772,726.497 584.925,728.176 587.077,729.809 589.227,731.395 591.375,732.935 593.519,734.428 595.66,735.875 597.797,737.274 599.929,738.626 602.056,739.931 604.177,741.189 606.291,742.4 608.398,743.563 610.497,744.678 612.588,745.746 614.67,746.767 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="614.67,746.767 616.742,747.74 618.804,748.665 620.856,749.542 622.896,750.372 624.924,751.155 626.94,751.889 628.943,752.576 630.932,753.215 632.907,753.807 634.867,754.352 636.811,754.848 638.74,755.298 640.652,755.7 642.547,756.055 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="642.547,756.055 644.424,756.363 646.283,756.624 648.123,756.838 649.944,757.006 651.744,757.126 653.524,757.201 655.284,757.228 657.021,757.21 658.736,757.146 660.429,757.036 662.098,756.881 663.744,756.68 665.365,756.434 666.962,756.143 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="666.962,756.143 668.533,755.807 670.078,755.427 671.597,755.002 673.089,754.534 674.554,754.022 675.991,753.466 677.399,752.867 678.779,752.225 680.129,751.541 681.449,750.814 682.739,750.046 683.999,749.235 685.227,748.384 686.423,747.491 687.588,746.558 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="687.588,746.558 688.719,745.584 689.818,744.571 690.884,743.518 691.915,742.425 692.913,741.294 693.875,740.125 694.803,738.917 695.695,737.672 696.551,736.389 697.371,735.07 698.155,733.715 698.901,732.323 699.611,730.896 700.282,729.434 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="700.282,729.434 700.916,727.938 701.511,726.407 702.067,724.842 702.585,723.245 703.063,721.614 703.502,719.952 703.9,718.257 704.259,716.532 704.577,714.775 704.854,712.989 705.09,711.172 705.285,709.326 705.438,707.452 705.549,705.549 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="705.549,705.549 705.619,703.619 705.646,701.662 705.631,699.678 705.573,697.668 705.473,695.632 705.329,693.572 705.142,691.487 704.912,689.378 704.638,687.246 704.32,685.091 703.959,682.914 703.554,680.716 703.104,678.497 702.611,676.257 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="702.611,676.257 702.073,673.997 701.49,671.718 700.863,669.421 700.192,667.106 699.476,664.773 698.715,662.423 697.91,660.057 697.059,657.675 696.164,655.278 695.224,652.867 694.239,650.442 693.209,648.004 692.135,645.553 691.015,643.09 689.851,640.615 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="689.851,640.615 688.642,638.13 687.389,635.635 686.09,633.13 684.747,630.616 683.36,628.094 681.928,625.565 680.451,623.028 678.931,620.484 677.366,617.935 675.757,615.38 674.104,612.821 672.408,610.258 670.668,607.691 668.884,605.122 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="668.884,605.122 667.057,602.551 665.188,599.977 663.275,597.403 661.319,594.829 659.321,592.255 657.281,589.681 655.199,587.109 653.074,584.539 650.909,581.972 648.701,579.408 646.453,576.848 644.164,574.293 641.835,571.742 639.465,569.197 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="639.465,569.197 637.055,566.658 634.606,564.126 632.117,561.601 629.589,559.085 627.023,556.576 624.418,554.077 621.775,551.588 619.095,549.108 616.377,546.64 613.623,544.182 610.832,541.737 608.004,539.304 605.141,536.883 602.243,534.477 599.31,532.084 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="599.31,532.084 596.342,529.706 593.341,527.342 590.305,524.995 587.237,522.663 584.136,520.348 581.002,518.05 577.837,515.77 574.641,513.508 571.413,511.264 568.155,509.039 564.868,506.834 561.551,504.648 558.205,502.483 554.831,500.339 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="554.831,500.339 551.429,498.216 547.999,496.115 544.543,494.036 541.061,491.98 537.553,489.946 534.02,487.937 530.463,485.951 526.881,483.989 523.276,482.052 519.648,480.139 515.998,478.253 512.326,476.392 508.633,474.557 504.92,472.749 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="504.92,472.749 501.187,470.967 497.434,469.213 493.663,467.486 489.874,465.787 486.067,464.116 482.244,462.474 478.404,460.861 474.549,459.276 470.679,457.721 466.794,456.196 462.896,454.7 458.985,453.235 455.061,451.8 451.126,450.396 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="451.126,450.396 447.18,449.022 443.224,447.68 439.258,446.369 435.282,445.09 431.299,443.842 427.307,442.627 423.309,441.443 419.304,440.292 415.294,439.174 411.279,438.088 407.259,437.035 403.236,436.015 399.209,435.027 395.181,434.074 391.151,433.153 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="391.151,433.153 387.12,432.266 383.089,431.412 379.058,430.592 375.028,429.806 371.001,429.054 366.976,428.335 362.954,427.65 358.936,427 354.923,426.383 350.915,425.8 346.913,425.251 342.917,424.736 338.929,424.255 334.95,423.808 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="334.95,423.808 330.979,423.396 327.017,423.017 323.065,422.672 319.125,422.361 315.196,422.083 311.279,421.84 307.374,421.63 303.484,421.454 299.607,421.311 295.746,421.202 291.9,421.126 288.07,421.083 284.257,421.073 280.462,421.096 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="280.462,421.096 276.685,421.152 272.926,421.241 269.187,421.362 265.469,421.515 261.771,421.701 258.094,421.918 254.44,422.168 250.808,422.448 247.2,422.761 243.616,423.104 240.056,423.478 236.521,423.883 233.013,424.318 229.53,424.783 226.075,425.278 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="226.075,425.278 222.647,425.803 219.248,426.358 215.877,426.941 212.536,427.553 209.225,428.194 205.944,428.862 202.694,429.559 199.476,430.283 196.29,431.035 193.137,431.813 190.018,432.618 186.932,433.449 183.88,434.306 180.864,435.189 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="180.864,435.189 177.883,436.096 174.938,437.028 172.029,437.985 169.157,438.966 166.322,439.97 163.526,440.997 160.768,442.047 158.048,443.12 155.368,444.214 152.728,445.33 150.128,446.467 147.569,447.625 145.05,448.802 142.574,450 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="142.574,450 140.139,451.217 137.746,452.452 135.396,453.707 133.089,454.978 130.826,456.268 128.607,457.574 126.431,458.897 124.301,460.236 122.215,461.59 120.175,462.959 118.18,464.343 116.231,465.74 114.328,467.151 112.472,468.575 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="112.472,468.575 110.663,470.012 108.9,471.46 107.186,472.92 105.519,474.391 103.899,475.872 102.328,477.362 100.806,478.862 99.3318,480.371 97.9067,481.888 96.5307,483.413 95.204,484.944 93.9268,486.483 92.6992,488.027 91.5215,489.576 90.3938,491.131 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="90.3938,491.131 89.3162,492.69 88.2889,494.252 87.3121,495.818 86.3859,497.387 85.5103,498.957 84.6855,500.529 83.9116,502.102 83.1887,503.675 82.5168,505.249 81.896,506.821 81.3264,508.392 80.808,509.961 80.3409,511.528 79.9251,513.092 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="79.9251,513.092 79.5605,514.652 79.2473,516.208 78.9854,517.759 78.7748,519.305 78.6155,520.845 78.5074,522.379 78.4505,523.906 78.4448,525.425 78.4901,526.936 78.5865,528.438 78.7338,529.932 78.932,531.415 79.1809,532.888 79.4805,534.35 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="79.4805,534.35 79.8306,535.801 80.231,537.239 80.6818,538.665 81.1826,540.079 81.7334,541.478 82.3339,542.863 82.9841,544.234 83.6837,545.589 84.4325,546.928 85.2303,548.252 86.0769,549.558 86.9721,550.847 87.9157,552.118 88.9073,553.371 89.9469,554.605 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="89.9469,554.605 91.034,555.82 92.1684,557.014 93.3499,558.189 94.5781,559.342 95.8528,560.474 97.1737,561.584 98.5404,562.672 99.9526,563.737 101.41,564.779 102.912,565.797 104.459,566.791 106.05,567.76 107.685,568.705 109.363,569.623 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="109.363,569.623 111.084,570.516 112.848,571.382 114.654,572.222 116.502,573.034 118.392,573.818 120.322,574.575 122.293,575.303 124.305,576.002 126.356,576.672 128.446,577.312 130.575,577.923 132.742,578.503 134.948,579.052 137.191,579.57 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="137.191,579.57 139.47,580.057 141.786,580.512 144.139,580.934 146.526,581.325 148.949,581.683 151.406,582.007 153.897,582.298 156.421,582.556 158.978,582.78 161.568,582.969 164.189,583.124 166.841,583.244 169.524,583.33 172.238,583.38 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="172.238,583.38 174.98,583.394 177.752,583.373 180.552,583.316 183.38,583.222 186.236,583.092 189.118,582.926 192.026,582.723 194.959,582.483 197.918,582.206 200.9,581.892 203.906,581.54 206.936,581.15 209.988,580.723 213.061,580.258 216.156,579.755 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="216.156,579.755 219.271,579.214 222.406,578.635 225.561,578.018 228.734,577.362 231.926,576.668 235.134,575.935 238.36,575.164 241.601,574.354 244.858,573.505 248.13,572.618 251.416,571.692 254.716,570.728 258.028,569.725 261.353,568.683 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="261.353,568.683 264.689,567.602 268.036,566.483 271.393,565.325 274.76,564.128 278.136,562.893 281.52,561.62 284.912,560.308 288.311,558.958 291.716,557.57 295.127,556.143 298.542,554.679 301.962,553.177 305.386,551.636 308.813,550.059 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="308.813,550.059 312.242,548.444 315.672,546.791 319.104,545.101 322.536,543.375 325.968,541.611 329.399,539.811 332.829,537.975 336.256,536.102 339.68,534.193 343.101,532.249 346.518,530.269 349.93,528.254 353.336,526.203 356.737,524.118 360.131,521.999 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="360.131,521.999 363.517,519.845 366.896,517.657 370.266,515.436 373.627,513.181 376.978,510.894 380.319,508.573 383.648,506.22 386.967,503.836 390.272,501.419 393.566,498.971 396.845,496.492 400.111,493.983 403.362,491.443 406.598,488.874 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="406.598,488.874 409.819,486.275 413.023,483.647 416.21,480.99 419.379,478.305 422.531,475.593 425.665,472.853 428.779,470.086 431.873,467.292 434.948,464.472 438.002,461.627 441.034,458.757 444.045,455.862 447.034,452.943 450,450 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="450,450 452.943,447.034 455.862,444.045 458.757,441.034 461.627,438.002 464.472,434.948 467.292,431.873 470.086,428.779 472.853,425.665 475.593,422.531 478.305,419.379 480.99,416.21 483.647,413.023 486.275,409.819 488.874,406.598 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="488.874,406.598 491.443,403.362 493.983,400.111 496.492,396.845 498.971,393.566 501.419,390.272 503.836,386.967 506.22,383.648 508.573,380.319 510.894,376.978 513.181,373.627 515.436,370.266 517.657,366.896 519.845,363.517 521.999,360.131 524.118,356.737 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="524.118,356.737 526.203,353.336 528.254,349.93 530.269,346.518 532.249,343.101 534.193,339.68 536.102,336.256 537.975,332.829 539.811,329.399 541.611,325.968 543.375,322.536 545.101,319.104 546.791,315.672 548.444,312.242 550.059,308.813 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="550.059,308.813 551.636,305.386 553.177,301.962 554.679,298.542 556.143,295.127 557.57,291.716 558.958,288.311 560.308,284.912 561.62,281.52 562.893,278.136 564.128,274.76 565.325,271.393 566.483,268.036 567.602,264.689 568.683,261.353 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="568.683,261.353 569.725,258.028 570.728,254.716 571.692,251.416 572.618,248.13 573.505,244.858 574.354,241.601 575.164,238.36 575.935,235.134 576.668,231.926 577.362,228.734 578.018,225.561 578.635,222.406 579.214,219.271 579.755,216.156 580.258,213.061 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="580.258,213.061 580.723,209.988 581.15,206.936 581.54,203.906 581.892,200.9 582.206,197.918 582.483,194.959 582.723,192.026 582.926,189.118 583.092,186.236 583.222,183.38 583.316,180.552 583.373,177.752 583.394,174.98 583.38,172.238 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="583.38,172.238 583.33,169.524 583.244,166.841 583.124,164.189 582.969,161.568 582.78,158.978 582.556,156.421 582.298,153.897 582.007,151.406 581.683,148.949 581.325,146.526 580.934,144.139 580.512,141.786 580.057,139.47 579.57,137.191 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="579.57,137.191 579.052,134.948 578.503,132.742 577.923,130.575 577.312,128.446 576.672,126.356 576.002,124.305 575.303,122.293 574.575,120.322 573.818,118.392 573.034,116.502 572.222,114.654 571.382,112.848 570.516,111.084 569.623,109.363 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="569.623,109.363 568.705,107.685 567.76,106.05 566.791,104.459 565.797,102.912 564.779,101.41 563.737,99.9526 562.672,98.5404 561.584,97.1737 560.474,95.8528 559.342,94.5781 558.189,93.3499 557.014,92.1684 555.82,91.034 554.605,89.9469 553.371,88.9073 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="553.371,88.9073 552.118,87.9157 550.847,86.9721 549.558,86.0769 548.252,85.2303 546.928,84.4325 545.589,83.6837 544.234,82.9841 542.863,82.3339 541.478,81.7334 540.079,81.1826 538.665,80.6818 537.239,80.231 535.801,79.8306 534.35,79.4805 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="534.35,79.4805 532.888,79.1809 531.415,78.932 529.932,78.7338 528.438,78.5865 526.936,78.4901 525.425,78.4448 523.906,78.4505 522.379,78.5074 520.845,78.6155 519.305,78.7748 517.759,78.9854 516.208,79.2473 514.652,79.5605 513.092,79.9251 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="513.092,79.9251 511.528,80.3409 509.961,80.808 508.392,81.3264 506.821,81.896 505.249,82.5168 503.675,83.1887 502.102,83.9116 500.529,84.6855 498.957,85.5103 497.387,86.3859 495.818,87.3121 494.252,88.2889 492.69,89.3162 491.131,90.3938 489.576,91.5215 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="489.576,91.5215 488.027,92.6992 486.483,93.9268 484.944,95.204 483.413,96.5307 481.888,97.9067 480.371,99.3318 478.862,100.806 477.362,102.328 475.872,103.899 474.391,105.519 472.92,107.186 471.46,108.9 470.012,110.663 468.575,112.472 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="468.575,112.472 467.151,114.328 465.74,116.231 464.343,118.18 462.959,120.175 461.59,122.215 460.236,124.301 458.897,126.431 457.574,128.607 456.268,130.826 454.978,133.089 453.707,135.396 452.452,137.746 451.217,140.139 450,142.574 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="450,142.574 448.802,145.05 447.625,147.569 446.467,150.128 445.33,152.728 444.214,155.368 443.12,158.048 442.047,160.768 440.997,163.526 439.97,166.322 438.966,169.157 437.985,172.029 437.028,174.938 436.096,177.883 435.189,180.864 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="435.189,180.864 434.306,183.88 433.449,186.932 432.618,190.018 431.813,193.137 431.035,196.29 430.283,199.476 429.559,202.694 428.862,205.944 428.194,209.225 427.553,212.536 426.941,215.877 426.358,219.248 425.803,222.647 425.278,226.075 424.783,229.53 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="424.783,229.53 424.318,233.013 423.883,236.521 423.478,240.056 423.104,243.616 422.761,247.2 422.448,250.808 422.168,254.44 421.918,258.094 421.701,261.771 421.515,265.469 421.362,269.187 421.241,272.926 421.152,276.685 421.096,280.462 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="421.096,280.462 421.073,284.257 421.083,288.07 421.126,291.9 421.202,295.746 421.311,299.607 421.454,303.484 421.63,307.374 421.84,311.279 422.083,315.196 422.361,319.125 422.672,323.065 423.017,327.017 423.396,330.979 423.808,334.95 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="423.808,334.95 424.255,338.929 424.736,342.917 425.251,346.913 425.8,350.915 426.383,354.923 427,358.936 427.65,362.954 428.335,366.976 429.054,371.001 429.806,375.028 430.592,379.058 431.412,383.089 432.266,387.12 433.153,391.151 434.074,395.181 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="434.074,395.181 435.027,399.209 436.015,403.236 437.035,407.259 438.088,411.279 439.174,415.294 440.292,419.304 441.443,423.309 442.627,427.307 443.842,431.299 445.09,435.282 446.369,439.258 447.68,443.224 449.022,447.18 450.396,451.126 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="450.396,451.126 451.8,455.061 453.235,458.985 454.7,462.896 456.196,466.794 457.721,470.679 459.276,474.549 460.861,478.404 462.474,482.244 464.116,486.067 465.787,489.874 467.486,493.663 469.213,497.434 470.967,501.187 472.749,504.92 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="472.749,504.92 474.557,508.633 476.392,512.326 478.253,515.998 480.139,519.648 482.052,523.276 483.989,526.881 485.951,530.463 487.937,534.02 489.946,537.553 491.98,541.061 494.036,544.543 496.115,547.999 498.216,551.429 500.339,554.831 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="500.339,554.831 502.483,558.205 504.648,561.551 506.834,564.868 509.039,568.155 511.264,571.413 513.508,574.641 515.77,577.837 518.05,581.002 520.348,584.136 522.663,587.237 524.995,590.305 527.342,593.341 529.706,596.342 532.084,599.31 534.477,602.243 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="534.477,602.243 536.883,605.141 539.304,608.004 541.737,610.832 544.182,613.623 546.64,616.377 549.108,619.095 551.588,621.775 554.077,624.418 556.576,627.023 559.085,629.589 561.601,632.117 564.126,634.606 566.658,637.055 569.197,639.465 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="569.197,639.465 571.742,641.835 574.293,644.164 576.848,646.453 579.408,648.701 581.972,650.909 584.539,653.074 587.109,655.199 589.681,657.281 592.255,659.321 594.829,661.319 597.403,663.275 599.977,665.188 602.551,667.057 605.122,668.884 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="605.122,668.884 607.691,670.668 610.258,672.408 612.821,674.104 615.38,675.757 617.935,677.366 620.484,678.931 623.028,680.451 625.565,681.928 628.094,683.36 630.616,684.747 633.13,686.09 635.635,687.389 638.13,688.642 640.615,689.851 643.09,691.015 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="643.09,691.015 645.553,692.135 648.004,693.209 650.442,694.239 652.867,695.224 655.278,696.164 657.675,697.059 660.057,697.91 662.423,698.715 664.773,699.476 667.106,700.192 669.421,700.863 671.718,701.49 673.997,702.073 676.257,702.611 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="676.257,702.611 678.497,703.104 680.716,703.554 682.914,703.959 685.091,704.32 687.246,704.638 689.378,704.912 691.487,705.142 693.572,705.329 695.632,705.473 697.668,705.573 699.678,705.631 701.662,705.646 703.619,705.619 705.549,705.549 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="705.549,705.549 707.452,705.438 709.326,705.285 711.172,705.09 712.989,704.854 714.775,704.577 716.532,704.259 718.257,703.9 719.952,703.502 721.614,703.063 723.245,702.585 724.842,702.067 726.407,701.511 727.938,700.916 729.434,700.282 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="729.434,700.282 730.896,699.611 732.323,698.901 733.715,698.155 735.07,697.371 736.389,696.551 737.672,695.695 738.917,694.803 740.125,693.875 741.294,692.913 742.425,691.915 743.518,690.884 744.571,689.818 745.584,688.719 746.558,687.588 747.491,686.423 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="747.491,686.423 748.384,685.227 749.235,683.999 750.046,682.739 750.814,681.449 751.541,680.129 752.225,678.779 752.867,677.399 753.466,675.991 754.022,674.554 754.534,673.089 755.002,671.597 755.427,670.078 755.807,668.533 756.143,666.962 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="756.143,666.962 756.434,665.365 756.68,663.744 756.881,662.098 757.036,660.429 757.146,658.736 757.21,657.021 757.228,655.284 757.201,653.524 757.126,651.744 757.006,649.944 756.838,648.123 756.624,646.283 756.363,644.424 756.055,642.547 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="756.055,642.547 755.7,640.652 755.298,638.74 754.848,636.811 754.352,634.867 753.807,632.907 753.215,630.932 752.576,628.943 751.889,626.94 751.155,624.924 750.372,622.896 749.542,620.856 748.665,618.804 747.74,616.742 746.767,614.67 745.746,612.588 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="745.746,612.588 744.678,610.497 743.563,608.398 742.4,606.291 741.189,604.177 739.931,602.056 738.626,599.929 737.274,597.797 735.875,595.66 734.428,593.519 732.935,591.375 731.395,589.227 729.809,587.077 728.176,584.925 726.497,582.772 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="726.497,582.772 724.772,580.618 723.001,578.465 721.184,576.311 719.322,574.159 717.415,572.009 715.462,569.861 713.465,567.715 711.422,565.574 709.336,563.436 707.205,561.303 705.031,559.175 702.813,557.052 700.551,554.936 698.247,552.827 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="698.247,552.827 695.9,550.726 693.51,548.632 691.079,546.547 688.605,544.471 686.09,542.404 683.534,540.348 680.938,538.302 678.301,536.268 675.624,534.245 672.907,532.235 670.151,530.237 667.356,528.253 664.523,526.283 661.652,524.327 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="661.652,524.327 658.743,522.386 655.796,520.46 652.814,518.55 649.794,516.656 646.739,514.78 643.649,512.92 640.523,511.079 637.363,509.255 634.169,507.45 630.942,505.665 627.681,503.899 624.388,502.153 621.063,500.428 617.706,498.723 614.318,497.04 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="614.318,497.04 610.9,495.379 607.452,493.739 603.975,492.123 600.469,490.529 596.934,488.959 593.372,487.412 589.782,485.89 586.166,484.392 582.524,482.919 578.856,481.471 575.164,480.049 571.447,478.653 567.707,477.283 563.943,475.94 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="563.943,475.94 560.157,474.623 556.35,473.334 552.521,472.072 548.671,470.838 544.801,469.632 540.912,468.455 537.005,467.306 533.079,466.187 529.136,465.096 525.176,464.035 521.2,463.003 517.208,462.002 513.201,461.03 509.181,460.089 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="509.181,460.089 505.147,459.179 501.099,458.299 497.04,457.45 492.97,456.633 488.888,455.847 484.796,455.092 480.695,454.369 476.585,453.677 472.467,453.018 468.342,452.39 464.209,451.795 460.071,451.232 455.927,450.702 451.779,450.203 447.627,449.738 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="447.627,449.738 443.471,449.305 439.313,448.905 435.153,448.538 430.992,448.203 426.83,447.902 422.669,447.633 418.508,447.397 414.349,447.194 410.192,447.024 406.039,446.887 401.889,446.783 397.743,446.712 393.602,446.674 389.468,446.669 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="389.468,446.669 385.339,446.696 381.218,446.756 377.105,446.849 373,446.975 368.905,447.133 364.819,447.323 360.744,447.546 356.681,447.801 352.629,448.088 348.59,448.407 344.564,448.758 340.552,449.14 336.555,449.555 332.574,450 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="332.574,450 328.608,450.477 324.659,450.984 320.727,451.523 316.813,452.092 312.918,452.692 309.043,453.322 305.187,453.982 301.351,454.671 297.537,455.391 293.745,456.139 289.975,456.917 286.229,457.723 282.506,458.558 278.807,459.421 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="278.807,459.421 275.134,460.312 271.485,461.231 267.864,462.177 264.268,463.151 260.7,464.15 257.161,465.177 253.649,466.229 250.167,467.307 246.714,468.411 243.292,469.54 239.9,470.693 236.539,471.871 233.211,473.072 229.915,474.298 226.652,475.546 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="226.652,475.546 223.422,476.817 220.226,478.111 217.065,479.427 213.938,480.764 210.848,482.122 207.793,483.501 204.774,484.901 201.793,486.32 198.849,487.759 195.943,489.217 193.075,490.693 190.246,492.187 187.456,493.699 184.705,495.229 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="184.705,495.229 181.995,496.774 179.326,498.336 176.697,499.914 174.109,501.507 171.563,503.115 169.059,504.737 166.598,506.372 164.179,508.021 161.804,509.683 159.472,511.356 157.184,513.042 154.94,514.738 152.74,516.445 150.586,518.163 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="150.586,518.163 148.476,519.89 146.412,521.625 144.393,523.37 142.421,525.122 140.494,526.882 138.615,528.648 136.782,530.421 134.996,532.199 133.257,533.983 131.565,535.771 129.922,537.564 128.326,539.359 126.778,541.158 125.278,542.959 123.827,544.762 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="123.827,544.762 122.424,546.566 121.07,548.371 119.765,550.176 118.509,551.98 117.302,553.783 116.145,555.585 115.036,557.384 113.977,559.18 112.968,560.973 112.008,562.763 111.098,564.547 110.238,566.327 109.428,568.1 108.667,569.868 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="108.667,569.868 107.956,571.628 107.295,573.381 106.684,575.126 106.123,576.863 105.612,578.59 105.15,580.308 104.739,582.015 104.377,583.711 104.065,585.396 103.802,587.069 103.59,588.73 103.426,590.377 103.313,592.01 103.248,593.629 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="103.248,593.629 103.233,595.234 103.267,596.823 103.35,598.396 103.481,599.952 103.662,601.491 103.891,603.013 104.168,604.517 104.494,606.002 104.867,607.468 105.289,608.914 105.758,610.34 106.274,611.745 106.838,613.129 107.449,614.491 108.106,615.83 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="108.106,615.83 108.81,617.147 109.56,618.441 110.356,619.71 111.198,620.956 112.086,622.176 113.018,623.371 113.995,624.54 115.017,625.684 116.083,626.8 117.193,627.889 118.346,628.951 119.543,629.984 120.782,630.989 122.064,631.965 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="122.064,631.965 123.388,632.911 124.754,633.828 126.162,634.714 127.61,635.57 129.099,636.394 130.628,637.187 132.197,637.948 133.805,638.677 135.452,639.373 137.138,640.036 138.862,640.666 140.623,641.262 142.422,641.823 144.257,642.35 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="144.257,642.35 146.129,642.843 148.036,643.3 149.979,643.721 151.956,644.107 153.968,644.457 156.014,644.77 158.092,645.046 160.204,645.286 162.348,645.488 164.524,645.652 166.731,645.779 168.969,645.868 171.237,645.918 173.535,645.929 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="173.535,645.929 175.862,645.902 178.217,645.836 180.6,645.73 183.011,645.585 185.448,645.401 187.912,645.176 190.402,644.912 192.917,644.607 195.456,644.262 198.019,643.876 200.606,643.45 203.216,642.982 205.847,642.474 208.501,641.925 211.175,641.335 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="211.175,641.335 213.87,640.703 216.584,640.03 219.318,639.316 222.07,638.56 224.84,637.763 227.628,636.923 230.432,636.043 233.252,635.12 236.088,634.156 238.938,633.15 241.803,632.102 244.682,631.013 247.573,629.881 250.476,628.708 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="250.476,628.708 253.392,627.494 256.318,626.237 259.254,624.939 262.201,623.6 265.156,622.219 268.12,620.796 271.092,619.333 274.071,617.828 277.057,616.281 280.049,614.694 283.046,613.066 286.047,611.397 289.053,609.688 292.062,607.938 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="292.062,607.938 295.074,606.148 298.087,604.318 301.103,602.448 304.119,600.538 307.135,598.588 310.151,596.599 313.167,594.571 316.18,592.504 319.191,590.398 322.199,588.254 325.204,586.072 328.205,583.851 331.2,581.593 334.191,579.298 337.175,576.966 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="337.175,576.966 340.153,574.596 343.124,572.191 346.087,569.749 349.042,567.271 351.988,564.758 354.924,562.209 357.85,559.626 360.765,557.008 363.67,554.356 366.562,551.67 369.442,548.951 372.308,546.198 375.162,543.414 378.001,540.596 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="378.001,540.596 380.825,537.748 383.635,534.867 386.428,531.956 389.206,529.015 391.966,526.043 394.709,523.041 397.434,520.011 400.141,516.951 402.829,513.864 405.498,510.749 408.147,507.606 410.775,504.437 413.383,501.241 415.969,498.019 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="415.969,498.019 418.533,494.773 421.075,491.501 423.595,488.205 426.091,484.886 428.564,481.543 431.012,478.177 433.436,474.79 435.835,471.381 438.209,467.951 440.556,464.5 442.878,461.03 445.173,457.54 447.441,454.032 449.682,450.505 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="449.682,450.505 451.895,446.961 454.08,443.4 456.237,439.823 458.364,436.23 460.463,432.621 462.532,428.999 464.571,425.362 466.58,421.712 468.558,418.049 470.506,414.375 472.423,410.688 474.308,406.991 476.162,403.284 477.984,399.568 479.773,395.842 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="479.773,395.842 481.531,392.109 483.255,388.368 484.947,384.619 486.605,380.865 488.23,377.105 489.822,373.34 491.379,369.571 492.903,365.798 494.393,362.022 495.848,358.244 497.269,354.464 498.655,350.684 500.006,346.903 501.322,343.122 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="501.322,343.122 502.603,339.343 503.849,335.565 505.059,331.79 506.235,328.018 507.374,324.249 508.478,320.485 509.546,316.727 510.579,312.974 511.575,309.227 512.536,305.488 513.461,301.756 514.35,298.033 515.202,294.32 516.019,290.616 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="516.019,290.616 516.8,286.922 517.545,283.24 518.254,279.57 518.926,275.912 519.563,272.267 520.164,268.637 520.729,265.021 521.258,261.42 521.752,257.835 522.21,254.266 522.632,250.715 523.019,247.182 523.371,243.667 523.687,240.171 523.968,236.695 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="523.968,236.695 524.214,233.239 524.425,229.805 524.601,226.392 524.743,223.002 524.85,219.634 524.924,216.29 524.963,212.97 524.968,209.676 524.939,206.406 524.877,203.163 524.782,199.946 524.654,196.757 524.493,193.595 524.299,190.462 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="524.299,190.462 524.073,187.358 523.815,184.283 523.525,181.239 523.203,178.225 522.851,175.243 522.467,172.292 522.052,169.374 521.608,166.489 521.133,163.638 520.628,160.82 520.094,158.037 519.531,155.289 518.939,152.577 518.318,149.901 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="518.318,149.901 517.67,147.262 516.994,144.66 516.29,142.095 515.56,139.569 514.802,137.081 514.019,134.632 513.21,132.222 512.375,129.853 511.516,127.524 510.631,125.236 509.723,122.989 508.791,120.784 507.835,118.621 506.856,116.501 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="506.856,116.501 505.855,114.423 504.832,112.389 503.788,110.399 502.722,108.453 501.635,106.551 500.529,104.694 499.402,102.882 498.257,101.116 497.092,99.3957 495.909,97.7216 494.709,96.094 493.491,94.5132 492.256,92.9795 491.005,91.4933 489.738,90.0548 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="489.738,90.0548 488.456,88.6642 487.159,87.3219 485.848,86.0281 484.523,84.783 483.185,83.587 481.834,82.4401 480.471,81.3426 479.096,80.2948 477.711,79.2969 476.314,78.3489 474.908,77.4512 473.492,76.6038 472.067,75.807 470.634,75.0609 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="470.634,75.0609 469.193,74.3656 467.745,73.7213 466.29,73.1281 464.829,72.586 463.362,72.0953 461.89,71.656 460.414,71.2682 458.933,70.9319 457.45,70.6473 455.963,70.4143 454.474,70.2331 452.984,70.1036 451.492,70.0259 450,70 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="450,70 448.508,70.0259 447.016,70.1036 445.526,70.2331 444.037,70.4143 442.55,70.6473 441.067,70.9319 439.586,71.2682 438.11,71.656 436.638,72.0953 435.171,72.586 433.71,73.1281 432.255,73.7213 430.807,74.3656 429.366,75.0609 427.933,75.807 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="427.933,75.807 426.508,76.6038 425.092,77.4512 423.686,78.3489 422.289,79.2969 420.904,80.2948 419.529,81.3426 418.166,82.4401 416.815,83.587 415.477,84.783 414.152,86.0281 412.841,87.3219 411.544,88.6642 410.262,90.0548 408.995,91.4933 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="408.995,91.4933 407.744,92.9795 406.509,94.5132 405.291,96.094 404.091,97.7216 402.908,99.3957 401.743,101.116 400.598,102.882 399.471,104.694 398.365,106.551 397.278,108.453 396.212,110.399 395.168,112.389 394.145,114.423 393.144,116.501 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="393.144,116.501 392.165,118.621 391.209,120.784 390.277,122.989 389.369,125.236 388.484,127.524 387.625,129.853 386.79,132.222 385.981,134.632 385.198,137.081 384.44,139.569 383.71,142.095 383.006,144.66 382.33,147.262 381.682,149.901 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="381.682,149.901 381.061,152.577 380.469,155.289 379.906,158.037 379.372,160.82 378.867,163.638 378.392,166.489 377.948,169.374 377.533,172.292 377.149,175.243 376.797,178.225 376.475,181.239 376.185,184.283 375.927,187.358 375.701,190.462 375.507,193.595 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="375.507,193.595 375.346,196.757 375.218,199.946 375.123,203.163 375.061,206.406 375.032,209.676 375.037,212.97 375.076,216.29 375.15,219.634 375.257,223.002 375.399,226.392 375.575,229.805 375.786,233.239 376.032,236.695 376.313,240.171 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="376.313,240.171 376.629,243.667 376.981,247.182 377.368,250.715 377.79,254.266 378.248,257.835 378.742,261.42 379.271,265.021 379.836,268.637 380.437,272.267 381.074,275.912 381.746,279.57 382.455,283.24 383.2,286.922 383.981,290.616 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="383.981,290.616 384.798,294.32 385.65,298.033 386.539,301.756 387.464,305.488 388.425,309.227 389.421,312.974 390.454,316.727 391.522,320.485 392.626,324.249 393.765,328.018 394.941,331.79 396.151,335.565 397.397,339.343 398.678,343.122 399.994,346.903 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="399.994,346.903 401.345,350.684 402.731,354.464 404.152,358.244 405.607,362.022 407.097,365.798 408.621,369.571 410.178,373.34 411.77,377.105 413.395,380.865 415.053,384.619 416.745,388.368 418.469,392.109 420.227,395.842 422.016,399.568 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="422.016,399.568 423.838,403.284 425.692,406.991 427.577,410.688 429.494,414.375 431.442,418.049 433.42,421.712 435.429,425.362 437.468,428.999 439.537,432.621 441.636,436.23 443.763,439.823 445.92,443.4 448.105,446.961 450.318,450.505 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="450.318,450.505 452.559,454.032 454.827,457.54 457.122,461.03 459.444,464.5 461.791,467.951 464.165,471.381 466.564,474.79 468.988,478.177 471.436,481.543 473.909,484.886 476.405,488.205 478.925,491.501 481.467,494.773 484.031,498.019 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="484.031,498.019 486.617,501.241 489.225,504.437 491.853,507.606 494.502,510.749 497.171,513.864 499.859,516.951 502.566,520.011 505.291,523.041 508.034,526.043 510.794,529.015 513.572,531.956 516.365,534.867 519.175,537.748 521.999,540.596 524.838,543.414 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="524.838,543.414 527.692,546.198 530.558,548.951 533.438,551.67 536.33,554.356 539.235,557.008 542.15,559.626 545.076,562.209 548.012,564.758 550.958,567.271 553.913,569.749 556.876,572.191 559.847,574.596 562.825,576.966 565.809,579.298 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="565.809,579.298 568.8,581.593 571.795,583.851 574.796,586.072 577.801,588.254 580.809,590.398 583.82,592.504 586.833,594.571 589.849,596.599 592.865,598.588 595.881,600.538 598.897,602.448 601.913,604.318 604.926,606.148 607.938,607.938 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="607.938,607.938 610.947,609.688 613.953,611.397 616.954,613.066 619.951,614.694 622.943,616.281 625.929,617.828 628.908,619.333 631.88,620.796 634.844,622.219 637.799,623.6 640.746,624.939 643.682,626.237 646.608,627.494 649.524,628.708 652.427,629.881 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="652.427,629.881 655.318,631.013 658.197,632.102 661.062,633.15 663.912,634.156 666.748,635.12 669.568,636.043 672.372,636.923 675.16,637.763 677.93,638.56 680.682,639.316 683.416,640.03 686.13,640.703 688.825,641.335 691.499,641.925 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="691.499,641.925 694.153,642.474 696.784,642.982 699.394,643.45 701.981,643.876 704.544,644.262 707.083,644.607 709.598,644.912 712.088,645.176 714.552,645.401 716.989,645.585 719.4,645.73 721.783,645.836 724.138,645.902 726.465,645.929 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="726.465,645.929 728.763,645.918 731.031,645.868 733.269,645.779 735.476,645.652 737.652,645.488 739.796,645.286 741.908,645.046 743.986,644.77 746.032,644.457 748.044,644.107 750.021,643.721 751.964,643.3 753.871,642.843 755.743,642.35 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="755.743,642.35 757.578,641.823 759.377,641.262 761.138,640.666 762.862,640.036 764.548,639.373 766.195,638.677 767.803,637.948 769.372,637.187 770.901,636.394 772.39,635.57 773.838,634.714 775.246,633.828 776.612,632.911 777.936,631.965 779.218,630.989 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="779.218,630.989 780.457,629.984 781.654,628.951 782.807,627.889 783.917,626.8 784.983,625.684 786.005,624.54 786.982,623.371 787.914,622.176 788.802,620.956 789.644,619.71 790.44,618.441 791.19,617.147 791.894,615.83 792.551,614.491 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="792.551,614.491 793.162,613.129 793.726,611.745 794.242,610.34 794.711,608.914 795.133,607.468 795.506,606.002 795.832,604.517 796.109,603.013 796.338,601.491 796.519,599.952 796.65,598.396 796.733,596.823 796.767,595.234 796.752,593.629 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="796.752,593.629 796.687,592.01 796.574,590.377 796.41,588.73 796.198,587.069 795.935,585.396 795.623,583.711 795.261,582.015 794.85,580.308 794.388,578.59 793.877,576.863 793.316,575.126 792.705,573.381 792.044,571.628 791.333,569.868 790.572,568.1 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="790.572,568.1 789.762,566.327 788.902,564.547 787.992,562.763 787.032,560.973 786.023,559.18 784.964,557.384 783.855,555.585 782.698,553.783 781.491,551.98 780.235,550.176 778.93,548.371 777.576,546.566 776.173,544.762 774.722,542.959 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="774.722,542.959 773.222,541.158 771.674,539.359 770.078,537.564 768.435,535.771 766.743,533.983 765.004,532.199 763.218,530.421 761.385,528.648 759.506,526.882 757.579,525.122 755.607,523.37 753.588,521.625 751.524,519.89 749.414,518.163 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="749.414,518.163 747.26,516.445 745.06,514.738 742.816,513.042 740.528,511.356 738.196,509.683 735.821,508.021 733.402,506.372 730.941,504.737 728.437,503.115 725.891,501.507 723.303,499.914 720.674,498.336 718.005,496.774 715.295,495.229 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="715.295,495.229 712.544,493.699 709.754,492.187 706.925,490.693 704.057,489.217 701.151,487.759 698.207,486.32 695.226,484.901 692.207,483.501 689.152,482.122 686.062,480.764 682.935,479.427 679.774,478.111 676.578,476.817 673.348,475.546 670.085,474.298 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="670.085,474.298 666.789,473.072 663.461,471.871 660.1,470.693 656.708,469.54 653.286,468.411 649.833,467.307 646.351,466.229 642.839,465.177 639.3,464.15 635.732,463.151 632.136,462.177 628.515,461.231 624.866,460.312 621.193,459.421 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="621.193,459.421 617.494,458.558 613.771,457.723 610.025,456.917 606.255,456.139 602.463,455.391 598.649,454.671 594.813,453.982 590.957,453.322 587.082,452.692 583.187,452.092 579.273,451.523 575.341,450.984 571.392,450.477 567.426,450 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="567.426,450 563.445,449.555 559.448,449.14 555.436,448.758 551.41,448.407 547.371,448.088 543.319,447.801 539.256,447.546 535.181,447.323 531.095,447.133 527,446.975 522.895,446.849 518.782,446.756 514.661,446.696 510.532,446.669 506.398,446.674 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="506.398,446.674 502.257,446.712 498.111,446.783 493.961,446.887 489.808,447.024 485.651,447.194 481.492,447.397 477.331,447.633 473.17,447.902 469.008,448.203 464.847,448.538 460.687,448.905 456.529,449.305 452.373,449.738 448.221,450.203 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="448.221,450.203 444.073,450.702 439.929,451.232 435.791,451.795 431.658,452.39 427.533,453.018 423.415,453.677 419.305,454.369 415.204,455.092 411.112,455.847 407.03,456.633 402.96,457.45 398.901,458.299 394.853,459.179 390.819,460.089 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="390.819,460.089 386.799,461.03 382.792,462.002 378.8,463.003 374.824,464.035 370.864,465.096 366.921,466.187 362.995,467.306 359.088,468.455 355.199,469.632 351.329,470.838 347.479,472.072 343.65,473.334 339.843,474.623 336.057,475.94 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="336.057,475.94 332.293,477.283 328.553,478.653 324.836,480.049 321.144,481.471 317.476,482.919 313.834,484.392 310.218,485.89 306.628,487.412 303.066,488.959 299.531,490.529 296.025,492.123 292.548,493.739 289.1,495.379 285.682,497.04 282.294,498.723 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="282.294,498.723 278.937,500.428 275.612,502.153 272.319,503.899 269.058,505.665 265.831,507.45 262.637,509.255 259.477,511.079 256.351,512.92 253.261,514.78 250.206,516.656 247.186,518.55 244.204,520.46 241.257,522.386 238.348,524.327 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="238.348,524.327 235.477,526.283 232.644,528.253 229.849,530.237 227.093,532.235 224.376,534.245 221.699,536.268 219.062,538.302 216.466,540.348 213.91,542.404 211.395,544.471 208.921,546.547 206.49,548.632 204.1,550.726 201.753,552.827 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="201.753,552.827 199.449,554.936 197.187,557.052 194.969,559.175 192.795,561.303 190.664,563.436 188.578,565.574 186.535,567.715 184.538,569.861 182.585,572.009 180.678,574.159 178.816,576.311 176.999,578.465 175.228,580.618 173.503,582.772 171.824,584.925 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="171.824,584.925 170.191,587.077 168.605,589.227 167.065,591.375 165.572,593.519 164.125,595.66 162.726,597.797 161.374,599.929 160.069,602.056 158.811,604.177 157.6,606.291 156.437,608.398 155.322,610.497 154.254,612.588 153.233,614.67 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="153.233,614.67 152.26,616.742 151.335,618.804 150.458,620.856 149.628,622.896 148.845,624.924 148.111,626.94 147.424,628.943 146.785,630.932 146.193,632.907 145.648,634.867 145.152,636.811 144.702,638.74 144.3,640.652 143.945,642.547 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="143.945,642.547 143.637,644.424 143.376,646.283 143.162,648.123 142.994,649.944 142.874,651.744 142.799,653.524 142.772,655.284 142.79,657.021 142.854,658.736 142.964,660.429 143.119,662.098 143.32,663.744 143.566,665.365 143.857,666.962 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="143.857,666.962 144.193,668.533 144.573,670.078 144.998,671.597 145.466,673.089 145.978,674.554 146.534,675.991 147.133,677.399 147.775,678.779 148.459,680.129 149.186,681.449 149.954,682.739 150.765,683.999 151.616,685.227 152.509,686.423 153.442,687.588 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="153.442,687.588 154.416,688.719 155.429,689.818 156.482,690.884 157.575,691.915 158.706,692.913 159.875,693.875 161.083,694.803 162.328,695.695 163.611,696.551 164.93,697.371 166.285,698.155 167.677,698.901 169.104,699.611 170.566,700.282 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="170.566,700.282 172.062,700.916 173.593,701.511 175.158,702.067 176.755,702.585 178.386,703.063 180.048,703.502 181.743,703.9 183.468,704.259 185.225,704.577 187.011,704.854 188.828,705.09 190.674,705.285 192.548,705.438 194.451,705.549 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="194.451,705.549 196.381,705.619 198.338,705.646 200.322,705.631 202.332,705.573 204.368,705.473 206.428,705.329 208.513,705.142 210.622,704.912 212.754,704.638 214.909,704.32 217.086,703.959 219.284,703.554 221.503,703.104 223.743,702.611 226.003,702.073 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="226.003,702.073 228.282,701.49 230.579,700.863 232.894,700.192 235.227,699.476 237.577,698.715 239.943,697.91 242.325,697.059 244.722,696.164 247.133,695.224 249.558,694.239 251.996,693.209 254.447,692.135 256.91,691.015 259.385,689.851 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="259.385,689.851 261.87,688.642 264.365,687.389 266.87,686.09 269.384,684.747 271.906,683.36 274.435,681.928 276.972,680.451 279.516,678.931 282.065,677.366 284.62,675.757 287.179,674.104 289.742,672.408 292.309,670.668 294.878,668.884 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="294.878,668.884 297.449,667.057 300.023,665.188 302.597,663.275 305.171,661.319 307.745,659.321 310.319,657.281 312.891,655.199 315.461,653.074 318.028,650.909 320.592,648.701 323.152,646.453 325.707,644.164 328.258,641.835 330.803,639.465 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="330.803,639.465 333.342,637.055 335.874,634.606 338.399,632.117 340.915,629.589 343.424,627.023 345.923,624.418 348.412,621.775 350.892,619.095 353.36,616.377 355.818,613.623 358.263,610.832 360.696,608.004 363.117,605.141 365.523,602.243 367.916,599.31 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="367.916,599.31 370.294,596.342 372.658,593.341 375.005,590.305 377.337,587.237 379.652,584.136 381.95,581.002 384.23,577.837 386.492,574.641 388.736,571.413 390.961,568.155 393.166,564.868 395.352,561.551 397.517,558.205 399.661,554.831 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="399.661,554.831 401.784,551.429 403.885,547.999 405.964,544.543 408.02,541.061 410.054,537.553 412.063,534.02 414.049,530.463 416.011,526.881 417.948,523.276 419.861,519.648 421.747,515.998 423.608,512.326 425.443,508.633 427.251,504.92 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="427.251,504.92 429.033,501.187 430.787,497.434 432.514,493.663 434.213,489.874 435.884,486.067 437.526,482.244 439.139,478.404 440.724,474.549 442.279,470.679 443.804,466.794 445.3,462.896 446.765,458.985 448.2,455.061 449.604,451.126 450.978,447.18 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="450.978,447.18 452.32,443.224 453.631,439.258 454.91,435.282 456.158,431.299 457.373,427.307 458.557,423.309 459.708,419.304 460.826,415.294 461.912,411.279 462.965,407.259 463.985,403.236 464.973,399.209 465.926,395.181 466.847,391.151 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="466.847,391.151 467.734,387.12 468.588,383.089 469.408,379.058 470.194,375.028 470.946,371.001 471.665,366.976 472.35,362.954 473,358.936 473.617,354.923 474.2,350.915 474.749,346.913 475.264,342.917 475.745,338.929 476.192,334.95 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="476.192,334.95 476.604,330.979 476.983,327.017 477.328,323.065 477.639,319.125 477.917,315.196 478.16,311.279 478.37,307.374 478.546,303.484 478.689,299.607 478.798,295.746 478.874,291.9 478.917,288.07 478.927,284.257 478.904,280.462 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="478.904,280.462 478.848,276.685 478.759,272.926 478.638,269.187 478.485,265.469 478.299,261.771 478.082,258.094 477.832,254.44 477.552,250.808 477.239,247.2 476.896,243.616 476.522,240.056 476.117,236.521 475.682,233.013 475.217,229.53 474.722,226.075 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="474.722,226.075 474.197,222.647 473.642,219.248 473.059,215.877 472.447,212.536 471.806,209.225 471.138,205.944 470.441,202.694 469.717,199.476 468.965,196.29 468.187,193.137 467.382,190.018 466.551,186.932 465.694,183.88 464.811,180.864 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="464.811,180.864 463.904,177.883 462.972,174.938 462.015,172.029 461.034,169.157 460.03,166.322 459.003,163.526 457.953,160.768 456.88,158.048 455.786,155.368 454.67,152.728 453.533,150.128 452.375,147.569 451.198,145.05 450,142.574 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="450,142.574 448.783,140.139 447.548,137.746 446.293,135.396 445.022,133.089 443.732,130.826 442.426,128.607 441.103,126.431 439.764,124.301 438.41,122.215 437.041,120.175 435.657,118.18 434.26,116.231 432.849,114.328 431.425,112.472 429.988,110.663 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="429.988,110.663 428.54,108.9 427.08,107.186 425.609,105.519 424.128,103.899 422.638,102.328 421.138,100.806 419.629,99.3318 418.112,97.9067 416.587,96.5307 415.056,95.204 413.517,93.9268 411.973,92.6992 410.424,91.5215 408.869,90.3938 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="408.869,90.3938 407.31,89.3162 405.748,88.2889 404.182,87.3121 402.613,86.3859 401.043,85.5103 399.471,84.6855 397.898,83.9116 396.325,83.1887 394.751,82.5168 393.179,81.896 391.608,81.3264 390.039,80.808 388.472,80.3409 386.908,79.9251 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="386.908,79.9251 385.348,79.5605 383.792,79.2473 382.241,78.9854 380.695,78.7748 379.155,78.6155 377.621,78.5074 376.094,78.4505 374.575,78.4448 373.064,78.4901 371.562,78.5865 370.068,78.7338 368.585,78.932 367.112,79.1809 365.65,79.4805 364.199,79.8306 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="364.199,79.8306 362.761,80.231 361.335,80.6818 359.921,81.1826 358.522,81.7334 357.137,82.3339 355.766,82.9841 354.411,83.6837 353.072,84.4325 351.748,85.2303 350.442,86.0769 349.153,86.9721 347.882,87.9157 346.629,88.9073 345.395,89.9469 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="345.395,89.9469 344.18,91.034 342.986,92.1684 341.811,93.3499 340.658,94.5781 339.526,95.8528 338.416,97.1737 337.328,98.5404 336.263,99.9526 335.221,101.41 334.203,102.912 333.209,104.459 332.24,106.05 331.295,107.685 330.377,109.363 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="330.377,109.363 329.484,111.084 328.618,112.848 327.778,114.654 326.966,116.502 326.182,118.392 325.425,120.322 324.697,122.293 323.998,124.305 323.328,126.356 322.688,128.446 322.077,130.575 321.497,132.742 320.948,134.948 320.43,137.191 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="320.43,137.191 319.943,139.47 319.488,141.786 319.066,144.139 318.675,146.526 318.317,148.949 317.993,151.406 317.702,153.897 317.444,156.421 317.22,158.978 317.031,161.568 316.876,164.189 316.756,166.841 316.67,169.524 316.62,172.238 316.606,174.98 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="316.606,174.98 316.627,177.752 316.684,180.552 316.778,183.38 316.908,186.236 317.074,189.118 317.277,192.026 317.517,194.959 317.794,197.918 318.108,200.9 318.46,203.906 318.85,206.936 319.277,209.988 319.742,213.061 320.245,216.156 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="320.245,216.156 320.786,219.271 321.365,222.406 321.982,225.561 322.638,228.734 323.332,231.926 324.065,235.134 324.836,238.36 325.646,241.601 326.495,244.858 327.382,248.13 328.308,251.416 329.272,254.716 330.275,258.028 331.317,261.353 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="331.317,261.353 332.398,264.689 333.517,268.036 334.675,271.393 335.872,274.76 337.107,278.136 338.38,281.52 339.692,284.912 341.042,288.311 342.43,291.716 343.857,295.127 345.321,298.542 346.823,301.962 348.364,305.386 349.941,308.813 351.556,312.242 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="351.556,312.242 353.209,315.672 354.899,319.104 356.625,322.536 358.389,325.968 360.189,329.399 362.025,332.829 363.898,336.256 365.807,339.68 367.751,343.101 369.731,346.518 371.746,349.93 373.797,353.336 375.882,356.737 378.001,360.131 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="378.001,360.131 380.155,363.517 382.343,366.896 384.564,370.266 386.819,373.627 389.106,376.978 391.427,380.319 393.78,383.648 396.164,386.967 398.581,390.272 401.029,393.566 403.508,396.845 406.017,400.111 408.557,403.362 411.126,406.598 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="411.126,406.598 413.725,409.819 416.353,413.023 419.01,416.21 421.695,419.379 424.407,422.531 427.147,425.665 429.914,428.779 432.708,431.873 435.528,434.948 438.373,438.002 441.243,441.034 444.138,444.045 447.057,447.034 450,450 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="450,450 452.966,452.943 455.955,455.862 458.966,458.757 461.998,461.627 465.052,464.472 468.127,467.292 471.221,470.086 474.335,472.853 477.469,475.593 480.621,478.305 483.79,480.99 486.977,483.647 490.181,486.275 493.402,488.874 496.638,491.443 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="496.638,491.443 499.889,493.983 503.155,496.492 506.434,498.971 509.728,501.419 513.033,503.836 516.352,506.22 519.681,508.573 523.022,510.894 526.373,513.181 529.734,515.436 533.104,517.657 536.483,519.845 539.869,521.999 543.263,524.118 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="543.263,524.118 546.664,526.203 550.07,528.254 553.482,530.269 556.899,532.249 560.32,534.193 563.744,536.102 567.171,537.975 570.601,539.811 574.032,541.611 577.464,543.375 580.896,545.101 584.328,546.791 587.758,548.444 591.187,550.059 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="591.187,550.059 594.614,551.636 598.038,553.177 601.458,554.679 604.873,556.143 608.284,557.57 611.689,558.958 615.088,560.308 618.48,561.62 621.864,562.893 625.24,564.128 628.607,565.325 631.964,566.483 635.311,567.602 638.647,568.683 641.972,569.725 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="641.972,569.725 645.284,570.728 648.584,571.692 651.87,572.618 655.142,573.505 658.399,574.354 661.64,575.164 664.866,575.935 668.074,576.668 671.266,577.362 674.439,578.018 677.594,578.635 680.729,579.214 683.844,579.755 686.939,580.258 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="686.939,580.258 690.012,580.723 693.064,581.15 696.094,581.54 699.1,581.892 702.082,582.206 705.041,582.483 707.974,582.723 710.882,582.926 713.764,583.092 716.62,583.222 719.448,583.316 722.248,583.373 725.02,583.394 727.762,583.38 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="727.762,583.38 730.476,583.33 733.159,583.244 735.811,583.124 738.432,582.969 741.022,582.78 743.579,582.556 746.103,582.298 748.594,582.007 751.051,581.683 753.474,581.325 755.861,580.934 758.214,580.512 760.53,580.057 762.809,579.57 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="762.809,579.57 765.052,579.052 767.258,578.503 769.425,577.923 771.554,577.312 773.644,576.672 775.695,576.002 777.707,575.303 779.678,574.575 781.608,573.818 783.498,573.034 785.346,572.222 787.152,571.382 788.916,570.516 790.637,569.623 792.315,568.705 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="792.315,568.705 793.95,567.76 795.541,566.791 797.088,565.797 798.59,564.779 800.047,563.737 801.46,562.672 802.826,561.584 804.147,560.474 805.422,559.342 806.65,558.189 807.832,557.014 808.966,555.82 810.053,554.605 811.093,553.371 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="811.093,553.371 812.084,552.118 813.028,550.847 813.923,549.558 814.77,548.252 815.568,546.928 816.316,545.589 817.016,544.234 817.666,542.863 818.267,541.478 818.817,540.079 819.318,538.665 819.769,537.239 820.169,535.801 820.52,534.35 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="820.52,534.35 820.819,532.888 821.068,531.415 821.266,529.932 821.413,528.438 821.51,526.936 821.555,525.425 821.55,523.906 821.493,522.379 821.385,520.845 821.225,519.305 821.015,517.759 820.753,516.208 820.439,514.652 820.075,513.092 819.659,511.528 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="819.659,511.528 819.192,509.961 818.674,508.392 818.104,506.821 817.483,505.249 816.811,503.675 816.088,502.102 815.315,500.529 814.49,498.957 813.614,497.387 812.688,495.818 811.711,494.252 810.684,492.69 809.606,491.131 808.479,489.576 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="808.479,489.576 807.301,488.027 806.073,486.483 804.796,484.944 803.469,483.413 802.093,481.888 800.668,480.371 799.194,478.862 797.672,477.362 796.101,475.872 794.481,474.391 792.814,472.92 791.1,471.46 789.337,470.012 787.528,468.575 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="787.528,468.575 785.672,467.151 783.769,465.74 781.82,464.343 779.825,462.959 777.785,461.59 775.699,460.236 773.569,458.897 771.393,457.574 769.174,456.268 766.911,454.978 764.604,453.707 762.254,452.452 759.861,451.217 757.426,450 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="757.426,450 754.95,448.802 752.431,447.625 749.872,446.467 747.272,445.33 744.632,444.214 741.952,443.12 739.232,442.047 736.474,440.997 733.678,439.97 730.843,438.966 727.971,437.985 725.062,437.028 722.117,436.096 719.136,435.189 716.12,434.306 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="716.12,434.306 713.068,433.449 709.982,432.618 706.863,431.813 703.71,431.035 700.524,430.283 697.306,429.559 694.056,428.862 690.775,428.194 687.464,427.553 684.123,426.941 680.752,426.358 677.353,425.803 673.925,425.278 670.47,424.783 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="670.47,424.783 666.987,424.318 663.479,423.883 659.944,423.478 656.384,423.104 652.8,422.761 649.192,422.448 645.56,422.168 641.906,421.918 638.229,421.701 634.531,421.515 630.813,421.362 627.074,421.241 623.315,421.152 619.538,421.096 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="619.538,421.096 615.743,421.073 611.93,421.083 608.1,421.126 604.254,421.202 600.393,421.311 596.516,421.454 592.626,421.63 588.721,421.84 584.804,422.083 580.875,422.361 576.935,422.672 572.983,423.017 569.021,423.396 565.05,423.808 561.071,424.255 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="561.071,424.255 557.083,424.736 553.087,425.251 549.085,425.8 545.077,426.383 541.064,427 537.046,427.65 533.024,428.335 528.999,429.054 524.972,429.806 520.942,430.592 516.911,431.412 512.88,432.266 508.849,433.153 504.819,434.074 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="504.819,434.074 500.791,435.027 496.764,436.015 492.741,437.035 488.721,438.088 484.706,439.174 480.696,440.292 476.691,441.443 472.693,442.627 468.701,443.842 464.718,445.09 460.742,446.369 456.776,447.68 452.82,449.022 448.874,450.396 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="448.874,450.396 444.939,451.8 441.015,453.235 437.104,454.7 433.206,456.196 429.321,457.721 425.451,459.276 421.596,460.861 417.756,462.474 413.933,464.116 410.126,465.787 406.337,467.486 402.566,469.213 398.813,470.967 395.08,472.749 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="395.08,472.749 391.367,474.557 387.674,476.392 384.002,478.253 380.352,480.139 376.724,482.052 373.119,483.989 369.537,485.951 365.98,487.937 362.447,489.946 358.939,491.98 355.457,494.036 352.001,496.115 348.571,498.216 345.169,500.339 341.795,502.483 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="341.795,502.483 338.449,504.648 335.132,506.834 331.845,509.039 328.587,511.264 325.359,513.508 322.163,515.77 318.998,518.05 315.864,520.348 312.763,522.663 309.695,524.995 306.659,527.342 303.658,529.706 300.69,532.084 297.757,534.477 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="297.757,534.477 294.859,536.883 291.996,539.304 289.168,541.737 286.377,544.182 283.623,546.64 280.905,549.108 278.225,551.588 275.582,554.077 272.977,556.576 270.411,559.085 267.883,561.601 265.394,564.126 262.945,566.658 260.535,569.197 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="260.535,569.197 258.165,571.742 255.836,574.293 253.547,576.848 251.299,579.408 249.091,581.972 246.926,584.539 244.801,587.109 242.719,589.681 240.679,592.255 238.681,594.829 236.725,597.403 234.812,599.977 232.943,602.551 231.116,605.122 229.332,607.691 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="229.332,607.691 227.592,610.258 225.896,612.821 224.243,615.38 222.634,617.935 221.069,620.484 219.549,623.028 218.072,625.565 216.64,628.094 215.253,630.616 213.91,633.13 212.611,635.635 211.358,638.13 210.149,640.615 208.985,643.09 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="208.985,643.09 207.865,645.553 206.791,648.004 205.761,650.442 204.776,652.867 203.836,655.278 202.941,657.675 202.09,660.057 201.285,662.423 200.524,664.773 199.808,667.106 199.137,669.421 198.51,671.718 197.927,673.997 197.389,676.257 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="197.389,676.257 196.896,678.497 196.446,680.716 196.041,682.914 195.68,685.091 195.362,687.246 195.088,689.378 194.858,691.487 194.671,693.572 194.527,695.632 194.427,697.668 194.369,699.678 194.354,701.662 194.381,703.619 194.451,705.549 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="194.451,705.549 194.562,707.452 194.715,709.326 194.91,711.172 195.146,712.989 195.423,714.775 195.741,716.532 196.1,718.257 196.498,719.952 196.937,721.614 197.415,723.245 197.933,724.842 198.489,726.407 199.084,727.938 199.718,729.434 200.389,730.896 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="200.389,730.896 201.099,732.323 201.845,733.715 202.629,735.07 203.449,736.389 204.305,737.672 205.197,738.917 206.125,740.125 207.087,741.294 208.085,742.425 209.116,743.518 210.182,744.571 211.281,745.584 212.412,746.558 213.577,747.491 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="213.577,747.491 214.773,748.384 216.001,749.235 217.261,750.046 218.551,750.814 219.871,751.541 221.221,752.225 222.601,752.867 224.009,753.466 225.446,754.022 226.911,754.534 228.403,755.002 229.922,755.427 231.467,755.807 233.038,756.143 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="233.038,756.143 234.635,756.434 236.256,756.68 237.902,756.881 239.571,757.036 241.264,757.146 242.979,757.21 244.716,757.228 246.476,757.201 248.256,757.126 250.056,757.006 251.877,756.838 253.717,756.624 255.576,756.363 257.453,756.055 259.348,755.7 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="259.348,755.7 261.26,755.298 263.189,754.848 265.133,754.352 267.093,753.807 269.068,753.215 271.057,752.576 273.06,751.889 275.076,751.155 277.104,750.372 279.144,749.542 281.196,748.665 283.258,747.74 285.33,746.767 287.412,745.746 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="287.412,745.746 289.503,744.678 291.602,743.563 293.709,742.4 295.823,741.189 297.944,739.931 300.071,738.626 302.203,737.274 304.34,735.875 306.481,734.428 308.625,732.935 310.773,731.395 312.923,729.809 315.075,728.176 317.228,726.497 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="317.228,726.497 319.382,724.772 321.535,723.001 323.689,721.184 325.841,719.322 327.991,717.415 330.139,715.462 332.285,713.465 334.426,711.422 336.564,709.336 338.697,707.205 340.825,705.031 342.948,702.813 345.064,700.551 347.173,698.247 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="347.173,698.247 349.274,695.9 351.368,693.51 353.453,691.079 355.529,688.605 357.596,686.09 359.652,683.534 361.698,680.938 363.732,678.301 365.755,675.624 367.765,672.907 369.763,670.151 371.747,667.356 373.717,664.523 375.673,661.652 377.614,658.743 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="377.614,658.743 379.54,655.796 381.45,652.814 383.344,649.794 385.22,646.739 387.08,643.649 388.921,640.523 390.745,637.363 392.55,634.169 394.335,630.942 396.101,627.681 397.847,624.388 399.572,621.063 401.277,617.706 402.96,614.318 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="402.96,614.318 404.621,610.9 406.261,607.452 407.877,603.975 409.471,600.469 411.041,596.934 412.588,593.372 414.11,589.782 415.608,586.166 417.081,582.524 418.529,578.856 419.951,575.164 421.347,571.447 422.717,567.707 424.06,563.943 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="424.06,563.943 425.377,560.157 426.666,556.35 427.928,552.521 429.162,548.671 430.368,544.801 431.545,540.912 432.694,537.005 433.813,533.079 434.904,529.136 435.965,525.176 436.997,521.2 437.998,517.208 438.97,513.201 439.911,509.181 440.821,505.147 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="440.821,505.147 441.701,501.099 442.55,497.04 443.367,492.97 444.153,488.888 444.908,484.796 445.631,480.695 446.323,476.585 446.982,472.467 447.61,468.342 448.205,464.209 448.768,460.071 449.298,455.927 449.797,451.779 450.262,447.627 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="450.262,447.627 450.695,443.471 451.095,439.313 451.462,435.153 451.797,430.992 452.098,426.83 452.367,422.669 452.603,418.508 452.806,414.349 452.976,410.192 453.113,406.039 453.217,401.889 453.288,397.743 453.326,393.602 453.331,389.468 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="453.331,389.468 453.304,385.339 453.244,381.218 453.151,377.105 453.025,373 452.867,368.905 452.677,364.819 452.454,360.744 452.199,356.681 451.912,352.629 451.593,348.59 451.242,344.564 450.86,340.552 450.445,336.555 450,332.574 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="450,332.574 449.523,328.608 449.016,324.659 448.477,320.727 447.908,316.813 447.308,312.918 446.678,309.043 446.018,305.187 445.329,301.351 444.609,297.537 443.861,293.745 443.083,289.975 442.277,286.229 441.442,282.506 440.579,278.807 439.688,275.134 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="439.688,275.134 438.769,271.485 437.823,267.864 436.849,264.268 435.85,260.7 434.823,257.161 433.771,253.649 432.693,250.167 431.589,246.714 430.46,243.292 429.307,239.9 428.129,236.539 426.928,233.211 425.702,229.915 424.454,226.652 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="424.454,226.652 423.183,223.422 421.889,220.226 420.573,217.065 419.236,213.938 417.878,210.848 416.499,207.793 415.099,204.774 413.68,201.793 412.241,198.849 410.783,195.943 409.307,193.075 407.813,190.246 406.301,187.456 404.771,184.705 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="404.771,184.705 403.226,181.995 401.664,179.326 400.086,176.697 398.493,174.109 396.885,171.563 395.263,169.059 393.628,166.598 391.979,164.179 390.317,161.804 388.644,159.472 386.958,157.184 385.262,154.94 383.555,152.74 381.837,150.586 380.11,148.476 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="380.11,148.476 378.375,146.412 376.63,144.393 374.878,142.421 373.118,140.494 371.352,138.615 369.579,136.782 367.801,134.996 366.017,133.257 364.229,131.565 362.436,129.922 360.641,128.326 358.842,126.778 357.041,125.278 355.238,123.827 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="355.238,123.827 353.434,122.424 351.629,121.07 349.824,119.765 348.02,118.509 346.217,117.302 344.415,116.145 342.616,115.036 340.82,113.977 339.027,112.968 337.237,112.008 335.453,111.098 333.673,110.238 331.9,109.428 330.132,108.667 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="330.132,108.667 328.372,107.956 326.619,107.295 324.874,106.684 323.137,106.123 321.41,105.612 319.692,105.15 317.985,104.739 316.289,104.377 314.604,104.065 312.931,103.802 311.27,103.59 309.623,103.426 307.99,103.313 306.371,103.248 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="306.371,103.248 304.766,103.233 303.177,103.267 301.604,103.35 300.048,103.481 298.509,103.662 296.987,103.891 295.483,104.168 293.998,104.494 292.532,104.867 291.086,105.289 289.66,105.758 288.255,106.274 286.871,106.838 285.509,107.449 284.17,108.106 "/>
+<polyline fill="none" stroke="#ff5c33" stroke-width="2" points="284.17,108.106 282.853,108.81 281.559,109.56 280.29,110.356 279.044,111.198 277.824,112.086 276.629,113.018 275.46,113.995 274.316,115.017 273.2,116.083 272.111,117.193 271.049,118.346 270.016,119.543 269.011,120.782 268.035,122.064 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="268.035,122.064 267.089,123.388 266.172,124.754 265.286,126.162 264.43,127.61 263.606,129.099 262.813,130.628 262.052,132.197 261.323,133.805 260.627,135.452 259.964,137.138 259.334,138.862 258.738,140.623 258.177,142.422 257.65,144.257 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="257.65,144.257 257.157,146.129 256.7,148.036 256.279,149.979 255.893,151.956 255.543,153.968 255.23,156.014 254.954,158.092 254.714,160.204 254.512,162.348 254.348,164.524 254.221,166.731 254.132,168.969 254.082,171.237 254.071,173.535 254.098,175.862 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="254.098,175.862 254.164,178.217 254.27,180.6 254.415,183.011 254.599,185.448 254.824,187.912 255.088,190.402 255.393,192.917 255.738,195.456 256.124,198.019 256.55,200.606 257.018,203.216 257.526,205.847 258.075,208.501 258.665,211.175 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="258.665,211.175 259.297,213.87 259.97,216.584 260.684,219.318 261.44,222.07 262.237,224.84 263.077,227.628 263.957,230.432 264.88,233.252 265.844,236.088 266.85,238.938 267.898,241.803 268.987,244.682 270.119,247.573 271.292,250.476 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="271.292,250.476 272.506,253.392 273.763,256.318 275.061,259.254 276.4,262.201 277.781,265.156 279.204,268.12 280.667,271.092 282.172,274.071 283.719,277.057 285.306,280.049 286.934,283.046 288.603,286.047 290.312,289.053 292.062,292.062 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="292.062,292.062 293.852,295.074 295.682,298.087 297.552,301.103 299.462,304.119 301.412,307.135 303.401,310.151 305.429,313.167 307.496,316.18 309.602,319.191 311.746,322.199 313.928,325.204 316.149,328.205 318.407,331.2 320.702,334.191 323.034,337.175 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="323.034,337.175 325.404,340.153 327.809,343.124 330.251,346.087 332.729,349.042 335.242,351.988 337.791,354.924 340.374,357.85 342.992,360.765 345.644,363.67 348.33,366.562 351.049,369.442 353.802,372.308 356.586,375.162 359.404,378.001 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="359.404,378.001 362.252,380.825 365.133,383.635 368.044,386.428 370.985,389.206 373.957,391.966 376.959,394.709 379.989,397.434 383.049,400.141 386.136,402.829 389.251,405.498 392.394,408.147 395.563,410.775 398.759,413.383 401.981,415.969 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="401.981,415.969 405.227,418.533 408.499,421.075 411.795,423.595 415.114,426.091 418.457,428.564 421.823,431.012 425.21,433.436 428.619,435.835 432.049,438.209 435.5,440.556 438.97,442.878 442.46,445.173 445.968,447.441 449.495,449.682 453.039,451.895 "/>
+<polyline fill="none" stroke="#339cff" stroke-width="2" points="453.039,451.895 456.6,454.08 460.177,456.237 463.77,458.364 467.379,460.463 471.001,462.532 474.638,464.571 478.288,466.58 481.951,468.558 485.625,470.506 489.312,472.423 493.009,474.308 496.716,476.162 500.432,477.984 504.158,479.773 "/>
+<polyline fill="none" stroke="#389afa" stroke-width="2" points="504.158,479.773 507.891,481.531 511.632,483.255 515.381,484.947 519.135,486.605 522.895,488.23 526.66,489.822 530.429,491.379 534.202,492.903 537.978,494.393 541.756,495.848 545.536,497.269 549.316,498.655 553.097,500.006 556.878,501.322 "/>
+<polyline fill="none" stroke="#4696ec" stroke-width="2" points="556.878,501.322 560.657,502.603 564.435,503.849 568.21,505.059 571.982,506.235 575.751,507.374 579.515,508.478 583.273,509.546 587.026,510.579 590.773,511.575 594.512,512.536 598.244,513.461 601.967,514.35 605.68,515.202 609.384,516.019 "/>
+<polyline fill="none" stroke="#5d8fd5" stroke-width="2" points="609.384,516.019 613.078,516.8 616.76,517.545 620.43,518.254 624.088,518.926 627.733,519.563 631.363,520.164 634.979,520.729 638.58,521.258 642.165,521.752 645.734,522.21 649.285,522.632 652.818,523.019 656.333,523.371 659.829,523.687 663.305,523.968 "/>
+<polyline fill="none" stroke="#7986b9" stroke-width="2" points="663.305,523.968 666.761,524.214 670.195,524.425 673.608,524.601 676.998,524.743 680.366,524.85 683.71,524.924 687.03,524.963 690.324,524.968 693.594,524.939 696.837,524.877 700.054,524.782 703.243,524.654 706.405,524.493 709.538,524.299 "/>
+<polyline fill="none" stroke="#997c99" stroke-width="2" points="709.538,524.299 712.642,524.073 715.717,523.815 718.761,523.525 721.775,523.203 724.757,522.851 727.708,522.467 730.626,522.052 733.511,521.608 736.362,521.133 739.18,520.628 741.963,520.094 744.711,519.531 747.423,518.939 750.099,518.318 "/>
+<polyline fill="none" stroke="#b97279" stroke-width="2" points="750.099,518.318 752.738,517.67 755.34,516.994 757.905,516.29 760.431,515.56 762.919,514.802 765.368,514.019 767.778,513.21 770.147,512.375 772.476,511.516 774.764,510.631 777.011,509.723 779.216,508.791 781.379,507.835 783.499,506.856 785.577,505.855 "/>
+<polyline fill="none" stroke="#d5695d" stroke-width="2" points="785.577,505.855 787.611,504.832 789.601,503.788 791.547,502.722 793.449,501.635 795.306,500.529 797.118,499.402 798.884,498.257 800.604,497.092 802.278,495.909 803.906,494.709 805.487,493.491 807.02,492.256 808.507,491.005 809.945,489.738 "/>
+<polyline fill="none" stroke="#ec6246" stroke-width="2" points="809.945,489.738 811.336,488.456 812.678,487.159 813.972,485.848 815.217,484.523 816.413,483.185 817.56,481.834 818.657,480.471 819.705,479.096 820.703,477.711 821.651,476.314 822.549,474.908 823.396,473.492 824.193,472.067 824.939,470.634 "/>
+<polyline fill="none" stroke="#fa5e38" stroke-width="2" points="824.939,470.634 825.634,469.193 826.279,467.745 826.872,466.29 827.414,464.829 827.905,463.362 828.344,461.89 828.732,460.414 829.068,458.933 829.353,457.45 829.586,455.963 829.767,454.474 829.896,452.984 829.974,451.492 830,450 "/>
+</svg>
+
+
+
+**4.4** In `tests/test_color.cpp`, add a check that the red component of
+`mix(color{0, 0, 0}, color{255, 255, 255}, 0.5)` is 128. Then, in
+`src/color.cpp`, replace the rounding in `mix` with a truncation, rebuild the
+project, run the checks again, and say why the new one fails. Finally, put the
+rounding back.
+
+
+
+**4.5** Remove the call to `svg::close` in `src/main.cpp`, rebuild the project,
+run `build/output`, open `build/spiro.svg` in a browser again, and say what the
+browser shows. Then put the call back.
+
+
+</div>
+
+<script>
+    markdeepOptions = { tocStyle: 'none', detectMath: true };
+</script>
+<style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style>
+<script src="markdeep.min.js" charset="utf-8"></script>
+<script>window.markdeep || document.write('<script src="https://casual-effects.com/markdeep/latest/markdeep.min.js?" charset="utf-8">\x3C/script>');</script>
+<script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

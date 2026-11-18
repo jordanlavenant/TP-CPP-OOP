@@ -1,0 +1,6 @@
+/home/jorda/TP-CPP-OOP/lab02-constructors-and-destructors/build/CMakeFiles/drawing.dir
+/home/jorda/TP-CPP-OOP/lab02-constructors-and-destructors/build/CMakeFiles/demo.dir
+/home/jorda/TP-CPP-OOP/lab02-constructors-and-destructors/build/CMakeFiles/tests.dir
+/home/jorda/TP-CPP-OOP/lab02-constructors-and-destructors/build/CMakeFiles/test.dir
+/home/jorda/TP-CPP-OOP/lab02-constructors-and-destructors/build/CMakeFiles/edit_cache.dir
+/home/jorda/TP-CPP-OOP/lab02-constructors-and-destructors/build/CMakeFiles/rebuild_cache.dir

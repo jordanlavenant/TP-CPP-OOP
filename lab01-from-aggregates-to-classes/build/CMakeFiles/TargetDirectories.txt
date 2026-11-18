@@ -1,0 +1,6 @@
+/home/jorda/TP-CPP-OOP/lab01-from-aggregates-to-classes/build/CMakeFiles/drawing.dir
+/home/jorda/TP-CPP-OOP/lab01-from-aggregates-to-classes/build/CMakeFiles/demo.dir
+/home/jorda/TP-CPP-OOP/lab01-from-aggregates-to-classes/build/CMakeFiles/tests.dir
+/home/jorda/TP-CPP-OOP/lab01-from-aggregates-to-classes/build/CMakeFiles/test.dir
+/home/jorda/TP-CPP-OOP/lab01-from-aggregates-to-classes/build/CMakeFiles/edit_cache.dir
+/home/jorda/TP-CPP-OOP/lab01-from-aggregates-to-classes/build/CMakeFiles/rebuild_cache.dir
