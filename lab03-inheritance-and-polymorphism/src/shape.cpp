@@ -34,7 +34,10 @@ void shape::scale_to_area(double target)
 {
   // TO WRITE. One line of arithmetic and two virtual calls. Written once
   // here, it must work unchanged for the three kinds below.
-  (void)target;
+  double current = area();
+  if (current == 0.0) { return; }
+  double factor = std::sqrt(target / current);
+  scale(factor);
 }
 
 // ------------------------------------------------------------------- circle
@@ -48,27 +51,25 @@ std::string circle::title() const { return "a circle"; }
 double circle::area() const
 {
   // TO WRITE.
-  return 0.0;
+  return std::numbers::pi * radius_ * radius_;
 }
 
 double circle::perimeter() const
 {
   // TO WRITE.
-  return 0.0;
+  return 2 * std::numbers::pi * radius_;
 }
 
 void circle::scale(double factor)
 {
   // TO WRITE.
-  (void)factor;
+  radius_ *= factor;
 }
 
 std::string circle::outline(color const& fill) const
 {
   // TO WRITE. `number` above writes a coordinate the way the file expects it.
-  (void)fill;
-  (void)number;
-  return "";
+  return "<circle cx=\"" + number(centre_.x) + "\" cy=\"" + number(centre_.y) + "\" r=\"" + number(radius_) + "\" fill=\"" + fill.to_hex() + "\" />";
 }
 
 // ------------------------------------------------------------------- square
@@ -82,26 +83,25 @@ std::string square::title() const { return "a square"; }
 double square::area() const
 {
   // TO WRITE.
-  return 0.0;
+  return side_ * side_;
 }
 
 double square::perimeter() const
 {
   // TO WRITE.
-  return 0.0;
+  return 4 * side_;
 }
 
 void square::scale(double factor)
 {
   // TO WRITE.
-  (void)factor;
+  side_ *= factor;
 }
 
 std::string square::outline(color const& fill) const
 {
   // TO WRITE.
-  (void)fill;
-  return "";
+  return "<rect x=\"" + number(centre_.x - side_ / 2) + "\" y=\"" + number(centre_.y - side_ / 2) + "\" width=\"" + number(side_) + "\" height=\"" + number(side_) + "\" fill=\"" + fill.to_hex() + "\" />";
 }
 
 // ----------------------------------------------------------------- triangle
@@ -115,24 +115,23 @@ std::string triangle::title() const { return "a triangle"; }
 double triangle::area() const
 {
   // TO WRITE.
-  return 0.0;
+  return std::sqrt(3) / 4 * side_ * side_;
 }
 
 double triangle::perimeter() const
 {
   // TO WRITE.
-  return 0.0;
+  return 3 * side_;
 }
 
 void triangle::scale(double factor)
 {
   // TO WRITE.
-  (void)factor;
+  side_ *= factor;
 }
 
 std::string triangle::outline(color const& fill) const
 {
   // TO WRITE.
-  (void)fill;
-  return "";
+  return "<polygon points=\"" + number(centre_.x) + "," + number(centre_.y - side_ * std::sqrt(3) / 3) + " " + number(centre_.x - side_ / 2) + "," + number(centre_.y + side_ * std::sqrt(3) / 6) + " " + number(centre_.x + side_ / 2) + "," + number(centre_.y + side_ * std::sqrt(3) / 6) + "\" fill=\"" + fill.to_hex() + "\" />";
 }

@@ -33,10 +33,10 @@ class shape
 
     // No sensible answer exists here: a shape with no kind has no area. The
     // = 0 says exactly that, and makes the class abstract.
-    virtual double      area()      const = 0;
-    virtual double      perimeter() const = 0;
-    virtual std::string outline(color const& fill) const = 0;
-    virtual void        scale(double factor)              = 0;
+    virtual double      area()      const;
+    virtual double      perimeter() const;
+    virtual std::string outline(color const& fill) const;
+    virtual void        scale(double factor);
 
     // This one does have a sensible answer, so it is virtual without being
     // pure. Each kind gives a better one. A derived class that means to

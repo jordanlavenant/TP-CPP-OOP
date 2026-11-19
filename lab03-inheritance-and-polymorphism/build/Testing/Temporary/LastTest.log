@@ -1,0 +1,19 @@
+Start testing: Nov 19 16:13 CET
+----------------------------------------------------------
+1/1 Testing: shapes
+1/1 Test: shapes
+Command: "/home/jorda/TP-CPP-OOP/lab03-inheritance-and-polymorphism/build/tests"
+Directory: /home/jorda/TP-CPP-OOP/lab03-inheritance-and-polymorphism/build
+"shapes" start time: Nov 19 16:13 CET
+Output:
+----------------------------------------------------------
+all checks passed
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"shapes" end time: Nov 19 16:13 CET
+"shapes" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Nov 19 16:13 CET

@@ -52,9 +52,13 @@ int main()
     // TO WRITE. Add the shape of rank i, placed at the point of the spiral,
     // then bring it to the area 30 + 1.6 * distance with the same call
     // whatever its kind.
-    (void)distance;
-    (void)angle;
+    point p = translated(centre, distance * std::cos(angle), distance * std::sin(angle));
+    std::unique_ptr<shape> s = make_shape(i, p);
+    s->scale_to_area(30 + 1.6 * distance);
+    garden.push_back(std::move(s));
   }
+
+
 
   std::cout << "shapes alive: " << shape::alive() << '\n';
 
@@ -66,6 +70,11 @@ int main()
 
     // TO WRITE. Bring each of the three to the area 400, then print its
     // title, its area and its perimeter.
+    for (auto const& s : trio)
+    {
+      s->scale_to_area(400);
+      std::cout << s->title() << " aire: " << s->area() << " périmètre: " << s->perimeter() << '\n';
+    }
   }
 
   {

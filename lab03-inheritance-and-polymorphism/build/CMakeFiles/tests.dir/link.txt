@@ -1,0 +1,1 @@
+/usr/bin/c++ -g CMakeFiles/tests.dir/tests/test_shape.cpp.o -o tests  libdrawing.a 

@@ -34,7 +34,42 @@ int main()
   }
 
   // --------------------------------------------------------------- to write
+  // 1.1
+  {
+    circle const c({0.0, 0.0}, 2.0);
+    check(near(c.area(), 4.0 * std::numbers::pi), "l'aire du cercle est 4*pi");
+    check(near(c.perimeter(), 4.0 * std::numbers::pi), "le périm_tre du cercle est 4*pi");
+    check(c.title() == "a circle", "le titre du cercle est 'a circle'");
+  }
+  // 1.2
+  {
+    square const s({0.0, 0.0}, 2.0);
+    check(near(s.area(), 4.0), "l'aire du carré est 4");
+    check(near(s.perimeter(), 8.0), "le périm_tre du cercle est 4*pi");
+  }
+  // 1.3
+  {
+    triangle const t({0.0, 0.0}, 2.0);
 
+    check(near(t.area(), std::sqrt(3.0)), "aire du triangle est sqrt(3)");
+    check(near(t.perimeter(), 6.0),       "perimètre du triangle est 6");
+  }
+  // 2.1
+  {
+    std::vector<std::unique_ptr<shape>> shapes;
+    shapes.push_back(std::make_unique<circle>(point{0.0, 0.0}, 2.0));
+    shapes.push_back(std::make_unique<square>(point{0.0, 0.0}, 2.0));
+    shapes.push_back(std::make_unique<triangle>(point{0.0, 0.0}, 2.0));
+
+    for (auto const& s : shapes) { s->scale_to_area(10.0); }
+    for (auto const& s : shapes) { check(near(s->area(), 10.0), "les 3 formes ont une aire de 10 avec scale_to_area"); }
+  }
+  // 3.3
+  {
+    std::vector<std::unique_ptr<shape>> v;
+    v.push_back(std::make_unique<circle>(point{0.0, 0.0}, 2.0));
+  }
+  
   {
     // The checks the questions ask for go here. `near` above compares two
     // areas or two lengths to within a tolerance, never with ==.
