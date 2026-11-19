@@ -1,0 +1,2 @@
+/usr/bin/ar qc libdrawing.a CMakeFiles/drawing.dir/src/canvas.cpp.o CMakeFiles/drawing.dir/src/color.cpp.o CMakeFiles/drawing.dir/src/drawing.cpp.o CMakeFiles/drawing.dir/src/shape.cpp.o
+/usr/bin/ranlib libdrawing.a

@@ -1,0 +1,20 @@
+Start testing: Nov 19 18:11 CET
+----------------------------------------------------------
+1/1 Testing: drawing
+1/1 Test: drawing
+Command: "/home/jorda/TP-CPP-OOP/lab04-copy-and-move/build/tests"
+Directory: /home/jorda/TP-CPP-OOP/lab04-copy-and-move/build
+"drawing" start time: Nov 19 18:11 CET
+Output:
+----------------------------------------------------------
+shape::cloned() = 0
+all checks passed
+<end of output>
+Test time =   0.00 sec
+----------------------------------------------------------
+Test Passed.
+"drawing" end time: Nov 19 18:11 CET
+"drawing" time elapsed: 00:00:00
+----------------------------------------------------------
+
+End testing: Nov 19 18:11 CET

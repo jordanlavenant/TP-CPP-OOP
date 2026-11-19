@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="900" height="900" viewBox="0 0 900 900">
+<rect width="100%" height="100%" fill="#0d0d12"/>
+<g transform="translate(450,450)">
+<circle cx="0" cy="-45" r="11.257" fill="#ff6a3d"/>
+<rect x="-12.738" y="-97.738" width="25.476" height="25.476" fill="#e67152"/>
+<polygon points="0,-150.55 22.128,-112.22 -22.128,-112.22" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="17.625" fill="#b57f7b"/>
+<rect x="-15.969" y="-220.97" width="31.937" height="31.937" fill="#9d8690"/>
+<polygon points="0,-272.41 23.737,-231.3 -23.737,-231.3" fill="#848da4"/>
+<circle cx="0" cy="-285" r="16.431" fill="#6b94b9"/>
+<rect x="-12.738" y="-337.74" width="25.476" height="25.476" fill="#539bcd"/>
+<polygon points="0,-382.51 15.161,-356.25 -15.161,-356.25" fill="#3aa2e2"/>
+</g>
+</svg>
