@@ -1,0 +1,957 @@
+<meta charset="utf-8">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700;900&display=swap');
+
+/* Les jetons du site, repris valeur par valeur : un enonce part en archive
+   avec sa copie de markdeep et ne voit jamais website/style.css. */
+:root {
+  --font-body    : Roboto, -apple-system, "Segoe UI", Arial, sans-serif;
+  --font-mono    : "JetBrains Mono", Consolas, "SF Mono", Menlo, monospace;
+  --measure      : 72rem;
+  --radius       : 8px;
+  --radius-sm    : 5px;
+
+  --bg           : #fbfbf9;
+  --bg-elevated  : #ffffff;
+  --bg-sunken    : #f2f3ef;
+  --bg-code      : #f7f7f4;
+  --text         : #1c1f23;
+  --text-muted   : #5d6570;
+  --text-faint   : #8a929c;
+  --border       : #e0e2dd;
+  --border-strong: #c6cabf;
+  --accent       : #38761d;
+
+  --ia-trait     : #c0392b;
+  --ia-fond      : #fdf4f2;
+  --ia-code      : #f8e7e3;
+  --ia-code-bord : #e3b6ad;
+  color-scheme   : light;
+}
+
+/* Le sombre ne vaut qu'a l'ecran : le PDF sort en media print, et une machine
+   reglee en sombre lui donnerait des pages noires. */
+@media screen {
+  :root[data-theme="dark"] {
+    --bg           : #15181a;
+    --bg-elevated  : #1c2023;
+    --bg-sunken    : #22262a;
+    --bg-code      : #1a1e21;
+    --text         : #e4e7e5;
+    --text-muted   : #a4aeaa;
+    --text-faint   : #7c8783;
+    --border       : #2c3134;
+    --border-strong: #414850;
+    --accent       : #85c46a;
+    --ia-trait     : #e06c5a;
+    --ia-fond      : #2a1c1a;
+    --ia-code      : #3a2522;
+    --ia-code-bord : #58332e;
+    color-scheme   : dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+    --bg           : #15181a;
+    --bg-elevated  : #1c2023;
+    --bg-sunken    : #22262a;
+    --bg-code      : #1a1e21;
+    --text         : #e4e7e5;
+    --text-muted   : #a4aeaa;
+    --text-faint   : #7c8783;
+    --border       : #2c3134;
+    --border-strong: #414850;
+    --accent       : #85c46a;
+    --ia-trait     : #e06c5a;
+    --ia-fond      : #2a1c1a;
+    --ia-code      : #3a2522;
+    --ia-code-bord : #58332e;
+    color-scheme   : dark;
+    }
+  }
+}
+
+/* markdeep pose id="md" sur le corps et enveloppe le document rendu dans un
+   span de classe md. Le corps n'a donc pas cette classe : un selecteur
+   body.md ne designe rien, et c'est pourquoi le plafond de 680 px tenait.
+   Cette feuille est injectee apres celle de markdeep, donc un simple body
+   suffit a la couvrir. */
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.7;
+  margin: 0;
+  max-width: none;
+  padding: 0;
+  text-align: left;         /* markdeep justifie, ce qui creuse les blancs */
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Le document vit dans une colonne centree, comme sur le site. Le span que
+   markdeep pose est en ligne : il lui faut display block pour la porter. */
+.md {
+  display: block;
+  margin: 0 auto;
+  max-width: var(--measure);
+  padding: 0.8rem 1.25rem 2.5rem;
+}
+.md p, .md li { text-wrap: pretty; }
+.md li { margin-bottom: 0.3rem; }
+.md p { margin: 0 0 0.7rem; }
+
+/* markdeep reserve 40 px au-dessus du titre et 15 de plus en dessous. */
+.md div.title { padding-top: 1rem; }
+.md div.afterTitles { height: 0; }
+
+/* Le cartouche n'est pas une phrase de l'enonce mais la suite du titre. */
+.md .entete { color: var(--text-muted); margin: 0 0 1.1rem; text-align: center; }
+.md .entete p { margin: 0; }
+/* markdeep impose Verdana aux titres et un serif aux liens : on garde la
+   fonte du corps. */
+.md h1, .md h2, .md h3, .md h4, .md h5, .md h6,
+.md a, .md strong, .md b, .md em, .md i { font-family: inherit; }
+.md a:link, .md a:visited { color: var(--accent); text-decoration: none; }
+
+/* Un titre de partie porte le trait vert du site, en plus long : celui du
+   site accompagne un menu et une barre collante, l'enonce n'a que lui pour
+   marquer ses coupures. */
+/* Le trait sous un titre de partie est une bordure et non un pseudo-element
+   absolu : cale sur bottom 0, celui-ci sortait a 4 px a l'ecran et prenait la
+   hauteur de tout ce qui suivait a l'impression. */
+.md h1 {
+  border-bottom: 4px solid var(--accent); color: var(--text); font-size: 1.75rem;
+  font-weight: 700; letter-spacing: -0.01em; margin: 1.8rem 0 0.7rem;
+  padding-bottom: 0.4rem;
+}
+.md h2 {
+  border-bottom: 1px solid var(--border); color: var(--text);
+  font-size: 1.22rem; font-weight: 700; margin: 1.4rem 0 0.6rem;
+  padding-bottom: 0.25rem;
+}
+.md h3 { color: var(--text); font-size: 1.06rem; font-weight: 700;
+         margin: 1.1rem 0 0.4rem; }
+
+.md code, .md pre { font-family: var(--font-mono); font-size: 88%; }
+.md code {
+  background: var(--bg-code); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 0.08em 0.32em;
+}
+.md pre.listing {
+  background: var(--bg-code); border: 1px solid var(--border);
+  border-radius: var(--radius); box-shadow: none; box-sizing: border-box;
+  color: var(--text); margin: 1.2rem 0; overflow-x: auto; padding: 0.9rem 1rem;
+  resize: none;             /* markdeep leur pose une poignee de redimension */
+}
+.md pre.listing code { background: none; border: none; padding: 0; }
+.md .hljs { background: none; color: var(--text); }
+
+.md .exo { margin: 0.6em 0; }
+.md .note {
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  border-left: 4px solid var(--border-strong); border-radius: var(--radius);
+  color: var(--text); margin: 1rem auto; padding: 0.5rem 1rem;
+}
+/* L'interdiction de l'IA se lit a la taille du texte, pas en dessous : c'est
+   la seule regle de l'enonce qui vaille un zero. */
+.md .ia {
+  background: var(--ia-fond); border: 1px solid var(--ia-trait);
+  border-left: 6px solid var(--ia-trait); border-radius: var(--radius);
+  color: var(--text); margin: 1rem auto; padding: 0.6rem 1.1rem;
+}
+.md .ia code { background: var(--ia-code); border-color: var(--ia-code-bord); }
+.md .sol { display: none; }
+
+/* markdeep numerote les titres par un ::before ; les enonces portent deja
+   leurs propres numeros de partie, et les deux se cumulaient. */
+.md h1::before, .md h2::before, .md h3::before { content: "" !important; }
+
+/* Le pied de page de markdeep porte une fleche pivotee qui depasse de trois
+   pixels a droite et suffit a poser une barre de defilement horizontale. */
+.markdeepFooter { display: none; }
+
+/* A l'impression, la colonne de l'ecran deborderait la page A4. */
+@media print {
+  .md { max-width: none; padding: 0; }
+}
+</style>
+
+                    **Object-Oriented Programming in C++**
+                    **Lab 3 -- Inheritance and Polymorphism**
+
+<div class="entete">
+Section 3 of the course · two hours · CMake project
+</div>
+
+This lab is not **graded**. Questions in parts 1 to 3 that are not finished
+during the session are to be completed at home.
+
+<!-- ia -->
+<div class="ia">
+**Generative AI is not allowed**, on the written answers or on the code.
+The point is to learn, not to measure how good a language model is. Any
+submission produced by an AI will be graded as 0.
+</div>
+
+# Context
+
+The canvas from lab 2 can only draw a line. Here one method is added, `draw`,
+which takes a shape by reference to the base and asks it for its SVG element.
+That is everything **the canvas will ever know about shapes**.
+
+Three concrete shapes are to be written: a circle, a square and an equilateral
+triangle. By the end of the session the program writes `garden.svg`: 520 shapes
+placed on a sunflower spiral, the three kinds intermixed, each scaled to an area
+set by its distance from the center alone.
+
+<div class="note">
+**`scale_to_area`** is the function the lab is about: three lines long, not
+virtual, written once in the base. It works for a circle, for a square and for a
+triangle, because the two functions it calls, `area` and `scale`, are virtual.
+</div>
+
+# Objectives
+
+  * Write the member functions of three classes derived from an abstract base.
+  * Explain why the compiler rejects any object of a class that has a pure
+    virtual function.
+  * Write a non-virtual function in the base whose only access to the derived
+    object is through virtual calls.
+  * Understand what `override` makes the compiler check, and what happens when
+    it is missing.
+  * Destroy a shape through a pointer to a `shape` whose destructor is not
+    virtual, and note the effect.
+
+# Requirements
+
+  * The project builds with `-Wall -Wextra` and the compiler emits **zero warnings**.
+  * The checks in `tests/` pass, including the one written in question 2.1.
+  * `build/garden.svg` shows the 520 shapes, with no kind systematically larger
+    than the others.
+  * The program reports no **shape alive** after the garden is emptied.
+  * Nothing is reported under `-fsanitize=address`.
+
+# Files
+
+Three files have code to write; everything else is supplied complete.
+
+  * `include/color.hpp`, `src/color.cpp` and `include/geometry.hpp` provide
+    `color` and `point`, written in lab 1.
+      * `translated`, in `include/geometry.hpp`, returns a point shifted along x and
+        along y.
+  * `include/canvas.hpp` and `src/canvas.cpp` provide the `canvas` of lab 2,
+    with a `draw` method added for this lab.
+  * `include/shape.hpp` declares the base `shape` and the three derived
+    classes `circle`, `square` and `triangle`.
+  * `shape` declares four pure virtual functions: `area`, `perimeter`, `scale`
+    and `outline`.
+  * `shape` also declares a virtual `title` with a body and a non-virtual
+    `scale_to_area`.
+  * `circle` holds its radius in `radius_`, and `square` and `triangle` hold
+    their side in `side_`.
+  * `shape` holds the center in `centre_`, a `point`, which the three derived
+    classes inherit.
+  * `src/shape.cpp` holds the bodies to write, marked `TO WRITE`.
+  * `src/main.cpp` holds the loop meant to fill `garden` with 520 shapes, and
+    fills `trio` with one of each kind.
+      * `make_shape`, supplied, returns the shape of rank `i` placed at a point.
+      * The loop computes `distance` and `angle` for each shape, around the
+        point `centre`.
+      * Part 2 asks for the body of that loop and for the printing of `trio`.
+  * `tests/test_shape.cpp` holds the checks already written and is where the
+    new ones belong.
+
+The executable is `build/output` and the drawing is written to
+`build/garden.svg`. Build the project with `cmake -S . -B build` and then
+`cmake --build build`; the checks are compiled into `build/tests`, which
+`ctest --test-dir build` runs.
+
+<div class="note">
+None of the **three shapes refers to the other two**, and the program never
+tests which kind it is holding. `make_shape` returns a
+`std::unique_ptr&lt;shape>` and no later code inspects the object behind the
+pointer.
+</div>
+
+# Part 1
+
+<div class="exo">
+**1.1** Write, in `src/shape.cpp`, the four functions of `circle` that
+override the pure virtual functions of `shape`. `area` and `perimeter` take
+nothing and return the area and the perimeter of the circle, `scale` takes a
+factor and multiplies the radius by it, and `outline` takes the fill color and
+returns the `&lt;circle>` element, with the two coordinates of its center and
+its radius converted to text by `number`, a function supplied in
+`src/shape.cpp` that takes a `double`, and the fill color converted by its
+`to_hex`. In `tests/test_shape.cpp`, declare a `circle` of radius 2 as
+`const`, check its area and its perimeter, then check that its `title`,
+supplied, returns `a circle`.
+
+
+
+**1.2** Write, in `src/shape.cpp`, the four functions of `square` that override
+the pure virtual functions of `shape`. In SVG, a rectangle is placed by its
+top-left corner, while a `square` is placed by its center, so `outline`
+subtracts half a side from both coordinates of the center and returns the
+`&lt;rect>` element. In `tests/test_shape.cpp`, check that a square of side 3
+gives an area of 9 and a perimeter of 12.
+
+
+
+**1.3** Write, in `src/shape.cpp`, the four functions of `triangle` that
+override the pure virtual functions of `shape`. The triangle is equilateral and
+points up, and its area is the only one of the three whose formula is not
+obvious. The center of the triangle lies one third of the height above the base,
+and `outline` returns the `&lt;polygon>` element of its three vertices. In
+`tests/test_shape.cpp`, check that a triangle of side 2 gives a perimeter of 6
+and an area equal to `std::sqrt(3.0)`.
+
+
+
+**1.4** Uncomment the line `shape s({0.0, 0.0});` in `tests/test_shape.cpp`,
+build the project and read the error message. Say what `= 0` changes in the four
+declarations that end with it, then comment the line out again.
+
+
+
+**1.5** In `include/shape.hpp`, remove `override` and `const` from the
+declaration of `circle::title`; in `src/shape.cpp`, remove `const` from its
+definition. Build the project and note the two diagnostics. Then restore
+`override` while leaving the `const` off, build the project again and note the
+error that replaces the one in the test file: the warning stays. Finally, put
+`const` back in both files.
+
+
+</div>
+
+# Part 2
+
+<div class="exo">
+**2.1** Write `shape::scale_to_area` in `src/shape.cpp`: it takes a target area,
+reads the current one through `area`, does nothing if that area is not positive,
+and otherwise calls `scale` once. Then write its check in `tests/test_shape.cpp`:
+one shape of each kind brought to the same area by the same function.
+
+
+
+**2.2** In `src/main.cpp`, write the body of the loop that fills `garden`, after
+the supplied computation of `distance` and `angle`. The body adds to `garden`
+the shape returned by `make_shape(i, p)`, where `p` is the point that
+`translated` returns for `centre` moved by `distance * std::cos(angle)` along x
+and by `distance * std::sin(angle)` along y. It then brings that shape to the
+area `30.0 + 1.6 * distance`. Build the project, run `build/output`, and open
+`build/garden.svg`.
+
+<svg xmlns="http://www.w3.org/2000/svg" width="420" height="420" viewBox="0 0 900 900" style="display:block;margin:0.4rem auto 1.2rem;max-width:100%;height:auto">
+<rect width="100%" height="100%" fill="#0d0d12"/>
+<circle cx="450" cy="450" r="3.0902" fill="#e95420"/>
+<rect x="433.68" y="457.7" width="7.5631" height="7.5631" fill="#e95420"/>
+<polygon points="452.1,418.79 458.39,429.68 445.81,429.68" fill="#e85421"/>
+<circle cx="467.92" cy="473.37" r="4.9543" fill="#e85421"/>
+<rect x="411.93" y="439.48" width="9.1869" height="9.1869" fill="#e85521"/>
+<polygon points="482.07,421.24 489.32,433.78 474.83,433.78" fill="#e75522"/>
+<circle cx="439.19" cy="490.21" r="5.5459" fill="#e75522"/>
+<rect x="424.22" y="405.04" width="10.098" height="10.098" fill="#e75523"/>
+<polygon points="495.17,457.42 503.02,471.03 487.31,471.03" fill="#e65523"/>
+<circle cx="402.86" cy="469.46" r="5.9601" fill="#e65523"/>
+<rect x="467.4" y="395.92" width="10.771" height="10.771" fill="#e65624"/>
+<polygon points="466.87,494.18 475.21,508.61 458.54,508.61" fill="#e55624"/>
+<circle cx="399.05" cy="420.47" r="6.2882" fill="#e55624"/>
+<rect x="504.21" y="431.18" width="11.317" height="11.317" fill="#e55625"/>
+<polygon points="413.42,491.96 422.14,507.07 404.69,507.07" fill="#e45625"/>
+<circle cx="441.54" cy="384.71" r="6.5637" fill="#e45626"/>
+<rect x="496.11" y="487.93" width="11.781" height="11.781" fill="#e45726"/>
+<polygon points="379.97,442.44 389.03,458.13 370.91,458.13" fill="#e35726"/>
+<circle cx="501.12" cy="399.12" r="6.8031" fill="#e35727"/>
+<rect x="440.48" y="517.93" width="12.189" height="12.189" fill="#e35727"/>
+<polygon points="401.29,380.82 410.65,397.03 391.93,397.03" fill="#e25727"/>
+<circle cx="527.21" cy="460.39" r="7.0161" fill="#e25728"/>
+<rect x="378.27" y="489.26" width="12.553" height="12.553" fill="#e25828"/>
+<polygon points="467.89,359.35 477.52,376.02 458.27,376.02" fill="#e15829"/>
+<circle cx="491.41" cy="522.26" r="7.2087" fill="#e15829"/>
+<rect x="362.58" y="417.72" width="12.884" height="12.884" fill="#e15829"/>
+<polygon points="528.69,402.25 538.56,419.34 518.82,419.34" fill="#e0582a"/>
+<circle cx="415.9" cy="531.49" r="7.385" fill="#e0582a"/>
+<rect x="412.96" y="358.76" width="13.188" height="13.188" fill="#e0592a"/>
+<polygon points="531.04,480.94 541.13,498.42 520.94,498.42" fill="#df592b"/>
+<circle cx="359.96" cy="473.73" r="7.5479" fill="#df592b"/>
+<rect x="494.46" y="363.65" width="13.47" height="13.47" fill="#df592c"/>
+<polygon points="466.29,532.88 476.59,550.73 455.99,550.73" fill="#de592c"/>
+<circle cx="372.79" cy="390.2" r="7.6997" fill="#de592c"/>
+<rect x="541.92" y="434.95" width="13.733" height="13.733" fill="#de5a2d"/>
+<polygon points="381.7,511.7 392.2,529.89 371.2,529.89" fill="#dd5a2d"/>
+<circle cx="450.5" cy="348" r="7.842" fill="#dd5a2d"/>
+<rect x="512.49" y="519.6" width="13.98" height="13.98" fill="#dd5a2e"/>
+<polygon points="345.65,427.99 356.34,446.5 334.97,446.5" fill="#dc5a2e"/>
+<circle cx="534.57" cy="385.82" r="7.9761" fill="#dc5a2f"/>
+<rect x="423.65" y="548.67" width="14.214" height="14.214" fill="#dc5b2f"/>
+<polygon points="392.02,345.33 402.88,364.14 381.17,364.14" fill="#db5b2f"/>
+<circle cx="556.25" cy="479.12" r="8.1031" fill="#db5b30"/>
+<rect x="343.6" y="493.68" width="14.435" height="14.435" fill="#db5b30"/>
+<polygon points="489.2,331.54 500.22,350.63 478.18,350.63" fill="#da5b30"/>
+<circle cx="493" cy="555.62" r="8.2237" fill="#da5b31"/>
+<rect x="338.49" y="393.3" width="14.645" height="14.645" fill="#d95c31"/>
+<polygon points="561.37,402.75 572.55,422.12 550.19,422.12" fill="#d95c32"/>
+<circle cx="390.45" cy="551.61" r="8.3387" fill="#d95c32"/>
+<rect x="417.59" y="326.23" width="14.846" height="14.846" fill="#d85c32"/>
+<polygon points="548,506.53 559.33,526.16 536.67,526.16" fill="#d85c33"/>
+<circle cx="329.53" cy="465.01" r="8.4487" fill="#d85c33"/>
+<rect x="521.94" y="349.13" width="15.038" height="15.038" fill="#d75d33"/>
+<polygon points="454.51,560.43 465.98,580.3 443.04,580.3" fill="#d75d34"/>
+<circle cx="362.31" cy="361.02" r="8.5541" fill="#d75d34"/>
+<rect x="568.3" y="448.83" width="15.222" height="15.222" fill="#d65d35"/>
+<polygon points="351.93,517.62 363.54,537.74 340.32,537.74" fill="#d65d35"/>
+<circle cx="467.74" cy="322.88" r="8.6554" fill="#d65d35"/>
+<rect x="515.72" y="548.93" width="15.4" height="15.4" fill="#d55e36"/>
+<polygon points="322.75,407.16 334.49,427.5 311,427.5" fill="#d55e36"/>
+<circle cx="564.57" cy="385.09" r="8.7529" fill="#d55e36"/>
+<rect x="401.24" y="568.51" width="15.57" height="15.57" fill="#d45e37"/>
+<polygon points="394.45,314.5 406.32,335.07 382.58,335.07" fill="#d45e37"/>
+<circle cx="574.22" cy="502.7" r="8.847" fill="#d45e38"/>
+<rect x="313.94" y="487.54" width="15.735" height="15.735" fill="#d35f38"/>
+<polygon points="514.35,315.14 526.35,335.92 502.36,335.92" fill="#d35f38"/>
+<circle cx="484.55" cy="583.72" r="8.938" fill="#d35f39"/>
+<rect x="325.38" y="366.22" width="15.895" height="15.895" fill="#d25f39"/>
+<polygon points="588.27,412.94 600.39,433.93 576.16,433.93" fill="#d25f39"/>
+<circle cx="362.99" cy="561.22" r="9.026" fill="#d25f3a"/>
+<rect x="430.92" y="300.17" width="16.049" height="16.049" fill="#d1603a"/>
+<polygon points="554.68,533.66 566.91,554.85 542.44,554.85" fill="#d1603b"/>
+<circle cx="305.76" cy="448.59" r="9.1113" fill="#d1603b"/>
+<rect x="549.95" y="344.84" width="16.199" height="16.199" fill="#d0603b"/>
+<polygon points="435.79,581.29 448.14,602.68 423.45,602.68" fill="#d0603c"/>
+<circle cx="361.57" cy="332.29" r="9.194" fill="#d0603c"/>
+<rect x="587.51" y="469.06" width="16.344" height="16.344" fill="#cf613c"/>
+<polygon points="323.36,514.45 335.81,536.03 310.9,536.03" fill="#cf613d"/>
+<circle cx="490.39" cy="305.39" r="9.2744" fill="#cf613d"/>
+<rect x="510.09" y="576.52" width="16.485" height="16.485" fill="#ce613e"/>
+<polygon points="307.69,381.94 320.25,403.7 295.13,403.7" fill="#ce613e"/>
+<circle cx="591.99" cy="393" r="9.3526" fill="#ce613e"/>
+<rect x="375.08" y="580.48" width="16.622" height="16.622" fill="#cd623f"/>
+<polygon points="405.09,287.15 417.76,309.09 392.43,309.09" fill="#cd623f"/>
+<circle cx="584.04" cy="529.43" r="9.4288" fill="#cd623f"/>
+<rect x="288.22" y="473.78" width="16.756" height="16.756" fill="#cc6240"/>
+<polygon points="541.92,307.18 554.69,329.29 529.16,329.29" fill="#cc6240"/>
+<circle cx="468.84" cy="607.44" r="9.5029" fill="#cc6241"/>
+<rect x="320.62" y="337.6" width="16.887" height="16.887" fill="#cb6341"/>
+<polygon points="610.3,430.08 623.16,452.36 597.43,452.36" fill="#cb6341"/>
+<circle cx="334.58" cy="562.64" r="9.5753" fill="#cb6342"/>
+<rect x="450.56" y="279.58" width="17.014" height="17.014" fill="#ca6342"/>
+<polygon points="553.25,561.24 566.21,583.69 540.29,583.69" fill="#ca6342"/>
+<circle cx="287.74" cy="426.55" r="9.6459" fill="#ca6343"/>
+<rect x="577.64" y="348.62" width="17.138" height="17.138" fill="#c96443"/>
+<polygon points="412.06,596.22 425.11,618.83 399,618.83" fill="#c96444"/>
+<circle cx="368.6" cy="304.68" r="9.715" fill="#c96444"/>
+<rect x="600.38" y="493.81" width="17.259" height="17.259" fill="#c86444"/>
+<polygon points="296.55,503.91 309.69,526.68 283.4,526.68" fill="#c86445"/>
+<circle cx="516.82" cy="294.61" r="9.7824" fill="#c86445"/>
+<rect x="497.28" y="601.83" width="17.378" height="17.378" fill="#c76545"/>
+<polygon points="299.55,353.76 312.78,376.69 286.32,376.69" fill="#c76546"/>
+<circle cx="616.44" cy="407.86" r="9.8484" fill="#c76546"/>
+<rect x="346.53" y="585.46" width="17.494" height="17.494" fill="#c66547"/>
+<polygon points="422.3,263.48 435.63,286.55 408.98,286.55" fill="#c66547"/>
+<circle cx="586.68" cy="558" r="9.913" fill="#c66547"/>
+<rect x="266.64" y="453.94" width="17.608" height="17.608" fill="#c56648"/>
+<polygon points="570.67,306.6 584.08,329.83 557.26,329.83" fill="#c56648"/>
+<circle cx="447.41" cy="626.65" r="9.9763" fill="#c56648"/>
+<rect x="323.18" y="308.53" width="17.719" height="17.719" fill="#c46649"/>
+<polygon points="627.37,452.61 640.86,475.97 613.88,475.97" fill="#c46649"/>
+<circle cx="306.28" cy="556.88" r="10.038" fill="#c46649"/>
+<rect x="475.01" y="264.4" width="17.829" height="17.829" fill="#c3674a"/>
+<polygon points="544.75,588.21 558.33,611.72 531.18,611.72" fill="#c3674a"/>
+<circle cx="275.42" cy="400.32" r="10.099" fill="#c3674b"/>
+<rect x="604.03" y="359.38" width="17.936" height="17.936" fill="#c2674b"/>
+<polygon points="384.68,605.28 398.34,628.93 371.03,628.93" fill="#c2674b"/>
+<circle cx="382.33" cy="279.02" r="10.159" fill="#c2674c"/>
+<rect x="607.08" y="521.69" width="18.041" height="18.041" fill="#c1684c"/>
+<polygon points="272.26,487.05 285.99,510.84 258.52,510.84" fill="#c1684c"/>
+<circle cx="545.72" cy="290.26" r="10.217" fill="#c1684d"/>
+<rect x="478.4" y="624.13" width="18.144" height="18.144" fill="#c0684d"/>
+<polygon points="297.99,323.82 311.8,347.75 284.18,347.75" fill="#c0684e"/>
+<circle cx="637.31" cy="428.51" r="10.275" fill="#c0684e"/>
+<rect x="316.78" y="583.83" width="18.245" height="18.245" fill="#bf694e"/>
+<polygon points="444.93,243.96 458.82,268.02 431.04,268.02" fill="#bf694f"/>
+<circle cx="582.61" cy="587.22" r="10.331" fill="#bf694f"/>
+<rect x="249.6" y="429.18" width="18.345" height="18.345" fill="#be694f"/>
+<polygon points="599.46,312.82 613.42,337.01 585.49,337.01" fill="#be6950"/>
+<circle cx="421.46" cy="640.96" r="10.387" fill="#be6950"/>
+<rect x="332.42" y="280.07" width="18.443" height="18.443" fill="#bd6a51"/>
+<polygon points="639.18,479.27 653.22,503.58 625.15,503.58" fill="#bd6a51"/>
+<circle cx="279.13" cy="544.62" r="10.441" fill="#bc6a51"/>
+<rect x="503.05" y="254.84" width="18.539" height="18.539" fill="#bc6a52"/>
+<polygon points="529.91,613.54 544.03,637.98 515.8,637.98" fill="#bc6a52"/>
+<circle cx="268.93" cy="371.09" r="10.495" fill="#bb6a52"/>
+<rect x="628.2" y="376.32" width="18.633" height="18.633" fill="#bb6b53"/>
+<polygon points="354.86,608.39 369.04,632.95 340.68,632.95" fill="#bb6b53"/>
+<circle cx="401.93" cy="256.17" r="10.548" fill="#ba6b54"/>
+<rect x="607.62" y="551.49" width="18.727" height="18.727" fill="#ba6b54"/>
+<polygon points="251.28,464.71 265.53,489.39 237.03,489.39" fill="#ba6b54"/>
+<circle cx="575.92" cy="292.23" r="10.6" fill="#b96b55"/>
+<rect x="454.36" y="642.7" width="18.818" height="18.818" fill="#b96c55"/>
+<polygon points="302.81,293.24 317.13,318.05 288.49,318.05" fill="#b96c55"/>
+<circle cx="653.96" cy="453.98" r="10.651" fill="#b86c56"/>
+<rect x="286.93" y="575.85" width="18.909" height="18.909" fill="#b86c56"/>
+<polygon points="471.95,229.15 486.34,254.07 457.56,254.07" fill="#b86c57"/>
+<circle cx="572.19" cy="615.99" r="10.702" fill="#b76c57"/>
+<rect x="237.59" y="400.51" width="18.997" height="18.997" fill="#b76d57"/>
+<polygon points="627.23,325.37 641.69,350.41 612.77,350.41" fill="#b76d58"/>
+<circle cx="392.04" cy="649.98" r="10.751" fill="#b66d58"/>
+<rect x="347.81" y="253.23" width="19.085" height="19.085" fill="#b66d58"/>
+<polygon points="645.43,508.95 659.96,534.11 630.91,534.11" fill="#b66d59"/>
+<circle cx="254.1" cy="526.43" r="10.8" fill="#b56d59"/>
+<rect x="533.54" y="251.12" width="19.171" height="19.171" fill="#b56e5a"/>
+<polygon points="509.39,636.3 523.98,661.57 494.8,661.57" fill="#b56e5a"/>
+<circle cx="268.4" cy="339.97" r="10.848" fill="#b46e5a"/>
+<rect x="649.27" y="398.7" width="19.257" height="19.257" fill="#b46e5b"/>
+<polygon points="323.72,605.46 338.37,630.84 309.06,630.84" fill="#b46e5b"/>
+<circle cx="426.61" cy="236.92" r="10.896" fill="#b36e5b"/>
+<rect x="602.02" y="582.09" width="19.341" height="19.341" fill="#b36f5c"/>
+<polygon points="234.35,437.71 249.06,463.2 219.63,463.2" fill="#b36f5c"/>
+<circle cx="606.32" cy="300.4" r="10.943" fill="#b26f5d"/>
+<rect x="426.03" y="656.86" width="19.423" height="19.423" fill="#b26f5d"/>
+<polygon points="313.8,263.09 328.58,288.69 299.02,288.69" fill="#b26f5d"/>
+<circle cx="665.81" cy="483.34" r="10.989" fill="#b16f5e"/>
+<rect x="258.05" y="561.81" width="19.505" height="19.505" fill="#b1705e"/>
+<polygon points="502.39,219.51 517.23,245.22 487.55,245.22" fill="#b1705e"/>
+<circle cx="555.8" cy="643.28" r="11.035" fill="#b0705f"/>
+<rect x="231.01" y="368.94" width="19.586" height="19.586" fill="#b0705f"/>
+<polygon points="652.99,343.77 667.89,369.58 638.09,369.58" fill="#b07060"/>
+<circle cx="360.19" cy="653.36" r="11.08" fill="#af7060"/>
+<rect x="368.82" y="228.94" width="19.665" height="19.665" fill="#af7160"/>
+<polygon points="645.86,540.59 660.82,566.51 630.9,566.51" fill="#af7161"/>
+<circle cx="232.09" cy="502.92" r="11.125" fill="#ae7161"/>
+<rect x="565.42" y="253.38" width="19.744" height="19.744" fill="#ae7161"/>
+<polygon points="483.86,655.63 498.88,681.65 468.83,681.65" fill="#ae7162"/>
+<circle cx="273.92" cy="308.05" r="11.169" fill="#ad7162"/>
+<rect x="666.45" y="425.78" width="19.822" height="19.822" fill="#ad7163"/>
+<polygon points="292.32,596.5 307.4,622.62 277.24,622.62" fill="#ad7263"/>
+<circle cx="455.56" cy="221.99" r="11.212" fill="#ac7263"/>
+<rect x="590.38" y="612.41" width="19.898" height="19.898" fill="#ac7264"/>
+<polygon points="222.09,406.9 237.23,433.12 206.95,433.12" fill="#ac7264"/>
+<circle cx="635.86" cy="314.57" r="11.255" fill="#ab7264"/>
+<rect x="394.32" y="666.04" width="19.974" height="19.974" fill="#ab7265"/>
+<polygon points="330.69,234.39 345.89,260.71 315.49,260.71" fill="#ab7365"/>
+<circle cx="672.37" cy="515.63" r="11.297" fill="#aa7366"/>
+<rect x="231.12" y="542.06" width="20.049" height="20.049" fill="#aa7366"/>
+<polygon points="535.28,215.45 550.53,241.87 520.02,241.87" fill="#aa7366"/>
+<circle cx="533.88" cy="668.14" r="11.339" fill="#a97367"/>
+<rect x="230.18" y="335.47" width="20.123" height="20.123" fill="#a97367"/>
+<polygon points="675.82,367.5 691.13,394.01 660.52,394.01" fill="#a97467"/>
+<circle cx="326.95" cy="650.87" r="11.381" fill="#a87468"/>
+<rect x="394.83" y="208.07" width="20.196" height="20.196" fill="#a87468"/>
+<polygon points="640.32,573.12 655.69,599.73 624.96,599.73" fill="#a87469"/>
+<circle cx="213.9" cy="474.76" r="11.422" fill="#a77469"/>
+<rect x="597.64" y="261.67" width="20.268" height="20.268" fill="#a77469"/>
+<polygon points="454.04,670.77 469.46,697.47 438.62,697.47" fill="#a7756a"/>
+<circle cx="285.45" cy="276.38" r="11.462" fill="#a6756a"/>
+<rect x="679.05" y="456.75" width="20.34" height="20.34" fill="#a6756a"/>
+<polygon points="261.71,581.62 277.18,608.42 246.24,608.42" fill="#a6756b"/>
+<circle cx="487.95" cy="211.99" r="11.502" fill="#a5756b"/>
+<rect x="572.91" y="641.43" width="20.41" height="20.41" fill="#a5756c"/>
+<polygon points="215.06,373.16 230.59,400.06 199.53,400.06" fill="#a5766c"/>
+<circle cx="663.55" cy="334.45" r="11.542" fill="#a4766c"/>
+<rect x="360.15" y="669.77" width="20.48" height="20.48" fill="#a4766d"/>
+<polygon points="353.1,208.08 368.67,235.07 337.52,235.07" fill="#a4766d"/>
+<circle cx="673.26" cy="549.9" r="11.581" fill="#a3766d"/>
+<rect x="207.06" y="517.05" width="20.55" height="20.55" fill="#a3766e"/>
+<polygon points="569.61,217.25 585.24,244.33 553.98,244.33" fill="#a3776e"/>
+<circle cx="506.96" cy="689.68" r="11.62" fill="#a2776e"/>
+<rect x="235.3" y="301.11" width="20.618" height="20.618" fill="#a2776f"/>
+<polygon points="694.9,395.93 710.58,423.09 679.21,423.09" fill="#a2776f"/>
+<circle cx="293.34" cy="642.4" r="11.658" fill="#a17770"/>
+<rect x="425.17" y="191.39" width="20.686" height="20.686" fill="#a17770"/>
+<polygon points="628.8,605.52 644.53,632.77 613.06,632.77" fill="#a17870"/>
+<circle cx="200.26" cy="442.69" r="11.696" fill="#a07871"/>
+<rect x="629.15" y="275.94" width="20.753" height="20.753" fill="#a07871"/>
+<polygon points="420.75,681.06 436.53,708.41 404.96,708.41" fill="#9f7871"/>
+<circle cx="302.84" cy="245.95" r="11.734" fill="#9f7872"/>
+<rect x="686.49" y="490.76" width="20.819" height="20.819" fill="#9f7872"/>
+<polygon points="232.89,561.06 248.72,588.49 217.05,588.49" fill="#9e7973"/>
+<circle cx="522.89" cy="207.42" r="11.771" fill="#9e7973"/>
+<rect x="549.92" y="668.18" width="20.885" height="20.885" fill="#9e7973"/>
+<polygon points="213.66,337.42 229.55,364.93 197.78,364.93" fill="#9d7974"/>
+<circle cx="688.45" cy="359.64" r="11.808" fill="#9d7974"/>
+<rect x="324.48" y="667.73" width="20.95" height="20.95" fill="#9d7974"/>
+<polygon points="380.53,185.07 396.46,212.67 364.59,212.67" fill="#9c7a75"/>
+<circle cx="668.23" cy="585.15" r="11.844" fill="#9c7a75"/>
+<rect x="186.73" y="487.35" width="21.015" height="21.015" fill="#9c7a76"/>
+<polygon points="604.39,225.06 620.37,252.75 588.4,252.75" fill="#9b7a76"/>
+<circle cx="475.69" cy="707.1" r="11.88" fill="#9b7a76"/>
+<rect x="246.43" y="266.87" width="21.078" height="21.078" fill="#9b7a77"/>
+<polygon points="709.47,428.36 725.51,456.13 693.44,456.13" fill="#9a7b77"/>
+<circle cx="260.38" cy="627.96" r="11.916" fill="#9a7b77"/>
+<rect x="459.08" y="179.57" width="21.142" height="21.142" fill="#9a7b78"/>
+<polygon points="611.39,636.76 627.47,664.61 595.31,664.61" fill="#997b78"/>
+<circle cx="191.76" cy="407.53" r="11.951" fill="#997b79"/>
+<rect x="658.97" y="295.98" width="21.204" height="21.204" fill="#997b79"/>
+<polygon points="384.84,685.98 400.97,713.92 368.71,713.92" fill="#987c79"/>
+<circle cx="325.8" cy="217.76" r="11.987" fill="#987c7a"/>
+<rect x="688.34" y="526.9" width="21.266" height="21.266" fill="#987c7a"/>
+<polygon points="206.78,535.17 222.96,563.18 190.61,563.18" fill="#977c7a"/>
+<circle cx="559.42" cy="208.64" r="12.021" fill="#977c7b"/>
+<rect x="521.86" y="691.74" width="21.328" height="21.328" fill="#977c7b"/>
+<polygon points="218.18,300.63 234.4,328.73 201.96,328.73" fill="#967d7c"/>
+<circle cx="709.71" cy="389.61" r="12.056" fill="#967d7c"/>
+<rect x="288.29" y="659.71" width="21.389" height="21.389" fill="#967d7c"/>
+<polygon points="412.4,166.15 428.66,194.33 396.13,194.33" fill="#957d7d"/>
+<circle cx="657.19" cy="620.39" r="12.09" fill="#957d7d"/>
+<rect x="170.86" y="453.62" width="21.449" height="21.449" fill="#957d7d"/>
+<polygon points="638.6,238.89 654.92,267.15 622.29,267.15" fill="#947e7e"/>
+<circle cx="440.79" cy="719.71" r="12.124" fill="#947e7e"/>
+<rect x="263.51" y="233.74" width="21.509" height="21.509" fill="#947e7f"/>
+<polygon points="718.93,464 735.29,492.33 702.57,492.33" fill="#937e7f"/>
+<circle cx="229.05" cy="607.72" r="12.158" fill="#937e7f"/>
+<rect x="495.71" y="173.15" width="21.568" height="21.568" fill="#937e80"/>
+<polygon points="588.34,665.87 604.74,694.28 571.94,694.28" fill="#927f80"/>
+<circle cx="188.88" cy="370.15" r="12.191" fill="#927f80"/>
+<rect x="686.15" y="321.45" width="21.627" height="21.627" fill="#927f81"/>
+<polygon points="347.23,685.13 363.68,713.62 330.78,713.62" fill="#917f81"/>
+<circle cx="353.94" cy="192.7" r="12.224" fill="#917f82"/>
+<rect x="684.26" y="564.23" width="21.686" height="21.686" fill="#917f82"/>
+<polygon points="184.28,504.44 200.77,533 167.79,533" fill="#908082"/>
+<circle cx="596.58" cy="215.88" r="12.257" fill="#908083"/>
+<rect x="489.29" y="711.28" width="21.744" height="21.744" fill="#908083"/>
+<polygon points="228.76,263.79 245.3,292.43 212.22,292.43" fill="#8f8083"/>
+<circle cx="726.54" cy="423.73" r="12.289" fill="#8f8084"/>
+<rect x="252.59" y="645.66" width="21.801" height="21.801" fill="#8f8084"/>
+<polygon points="448,152.04 464.58,180.76 431.42,180.76" fill="#8e8185"/>
+<circle cx="640.16" cy="654.62" r="12.321" fill="#8e8185"/>
+<rect x="160.12" y="416.61" width="21.858" height="21.858" fill="#8e8185"/>
+<polygon points="671.27,258.62 687.89,287.41 654.65,287.41" fill="#8d8186"/>
+<circle cx="403.06" cy="726.94" r="12.353" fill="#8d8186"/>
+<rect x="286.31" y="202.7" width="21.914" height="21.914" fill="#8d8186"/>
+<polygon points="722.77,501.99 739.43,530.85 706.1,530.85" fill="#8c8287"/>
+<circle cx="200.3" cy="581.97" r="12.385" fill="#8c8287"/>
+<rect x="534.16" y="172.56" width="21.97" height="21.97" fill="#8c8288"/>
+<polygon points="560.03,691.93 576.74,720.87 543.32,720.87" fill="#8b8288"/>
+<circle cx="191.95" cy="331.5" r="12.416" fill="#8b8288"/>
+<rect x="709.79" y="351.9" width="22.026" height="22.026" fill="#8b8289"/>
+<polygon points="308.89,678.24 325.64,707.25 292.14,707.25" fill="#8a8389"/>
+<circle cx="386.7" cy="171.63" r="12.448" fill="#8a8389"/>
+<rect x="674.09" y="601.75" width="22.081" height="22.081" fill="#8a838a"/>
+<polygon points="166.16,469.47 182.95,498.55 149.37,498.55" fill="#89838a"/>
+<circle cx="633.37" cy="229.23" r="12.479" fill="#89838b"/>
+<rect x="452.87" y="726.09" width="22.136" height="22.136" fill="#89838b"/>
+<polygon points="245.39,227.89 262.22,257.04 228.56,257.04" fill="#88848b"/>
+<circle cx="738.28" cy="461.26" r="12.509" fill="#88848c"/>
+<rect x="218.35" y="625.66" width="22.19" height="22.19" fill="#88848c"/>
+<polygon points="486.54,143.33 503.42,172.56 469.67,172.56" fill="#87848c"/>
+<circle cx="617.33" cy="686.85" r="12.54" fill="#87848d"/>
+<rect x="155.01" y="377.16" width="22.244" height="22.244" fill="#87848d"/>
+<polygon points="701.43,283.98 718.35,313.28 684.52,313.28" fill="#86858e"/>
+<circle cx="363.4" cy="728.33" r="12.57" fill="#86858e"/>
+<rect x="314.49" y="174.68" width="22.297" height="22.297" fill="#86858e"/>
+<polygon points="720.61,541.4 737.56,570.76 703.65,570.76" fill="#85858f"/>
+<circle cx="175.04" cy="551.13" r="12.6" fill="#85858f"/>
+<rect x="573.48" y="178.08" width="22.35" height="22.35" fill="#85858f"/>
+<polygon points="526.97,714.08 543.96,743.52 509.97,743.52" fill="#848690"/>
+<circle cx="201.19" cy="292.53" r="12.63" fill="#848690"/>
+<rect x="729.11" y="386.76" width="22.403" height="22.403" fill="#848691"/>
+<polygon points="270.79,665.19 287.83,694.7 253.75,694.7" fill="#838691"/>
+<circle cx="423.45" cy="155.28" r="12.659" fill="#838691"/>
+<rect x="657.79" y="638.49" width="22.455" height="22.455" fill="#828692"/>
+<polygon points="153.11,430.97 170.18,460.54 136.03,460.54" fill="#828792"/>
+<circle cx="668.81" cy="248.62" r="12.689" fill="#828792"/>
+<rect x="413.39" y="735.53" width="22.507" height="22.507" fill="#818793"/>
+<polygon points="267.93,193.89 285.04,223.53 250.81,223.53" fill="#818793"/>
+<circle cx="744.38" cy="501.37" r="12.718" fill="#818794"/>
+<rect x="186.54" y="599.95" width="22.559" height="22.559" fill="#808794"/>
+<polygon points="527.16,140.49 544.32,170.21 510.01,170.21" fill="#808894"/>
+<circle cx="589.01" cy="716.16" r="12.747" fill="#808895"/>
+<rect x="155.95" y="336.17" width="22.61" height="22.61" fill="#7f8895"/>
+<polygon points="728.19,314.57 745.38,344.34 710.99,344.34" fill="#7f8895"/>
+<circle cx="322.75" cy="723.57" r="12.776" fill="#7f8896"/>
+<rect x="347.56" y="150.53" width="22.661" height="22.661" fill="#7e8896"/>
+<polygon points="712.23,581.26 729.46,611.11 695,611.11" fill="#7e8996"/>
+<circle cx="154.07" cy="515.77" r="12.804" fill="#7e8997"/>
+<rect x="612.7" y="189.85" width="22.711" height="22.711" fill="#7d8997"/>
+<polygon points="489.78,731.55 507.04,761.46 472.51,761.46" fill="#7d8998"/>
+<circle cx="216.65" cy="254.25" r="12.832" fill="#7d8998"/>
+<rect x="743.38" y="425.31" width="22.762" height="22.762" fill="#7c8998"/>
+<polygon points="233.93,646.03 251.24,676 216.62,676" fill="#7c8a99"/>
+<circle cx="463.43" cy="144.29" r="12.861" fill="#7c8a99"/>
+<rect x="635.5" y="673.45" width="22.811" height="22.811" fill="#7b8a99"/>
+<polygon points="145.7,389.74 163.05,419.79 128.36,419.79" fill="#7b8a9a"/>
+<circle cx="701.94" cy="273.85" r="12.889" fill="#7b8a9a"/>
+<rect x="371.69" y="739.1" width="22.861" height="22.861" fill="#7a8a9b"/>
+<polygon points="296.08,162.74 313.46,192.85 278.69,192.85" fill="#7a8b9b"/>
+<circle cx="744.43" cy="543.18" r="12.916" fill="#7a8b9b"/>
+<rect x="158.08" y="568.91" width="22.91" height="22.91" fill="#798b9c"/>
+<polygon points="568.93,143.87 586.35,174.04 551.51,174.04" fill="#798b9c"/>
+<circle cx="555.67" cy="741.67" r="12.944" fill="#798b9c"/>
+<rect x="163.17" y="294.61" width="22.959" height="22.959" fill="#788b9d"/>
+<polygon points="750.69,349.84 768.15,380.08 733.23,380.08" fill="#788c9d"/>
+<circle cx="282.07" cy="712.5" r="12.971" fill="#788c9e"/>
+<rect x="384.93" y="131.05" width="23.007" height="23.007" fill="#778c9e"/>
+<polygon points="697.54,620.6 715.04,650.9 680.05,650.9" fill="#778c9e"/>
+<circle cx="138.13" cy="476.56" r="12.998" fill="#778c9f"/>
+<rect x="650.81" y="207.88" width="23.055" height="23.055" fill="#768c9f"/>
+<polygon points="449.19,743.68 466.72,774.05 431.66,774.05" fill="#768d9f"/>
+<circle cx="238.23" cy="217.64" r="13.026" fill="#768da0"/>
+<rect x="752.02" y="466.78" width="23.103" height="23.103" fill="#758da0"/>
+<polygon points="199.28,620.91 216.85,651.34 181.72,651.34" fill="#758da1"/>
+<circle cx="505.8" cy="139.21" r="13.052" fill="#758da1"/>
+<rect x="607.46" y="705.67" width="23.151" height="23.151" fill="#748da1"/>
+<polygon points="144.39,346.68 162,377.17 126.79,377.17" fill="#748da2"/>
+<circle cx="731.81" cy="304.56" r="13.079" fill="#748ea2"/>
+<rect x="328.69" y="736.44" width="23.198" height="23.198" fill="#738ea2"/>
+<polygon points="329.41,135.34 347.05,165.89 311.77,165.89" fill="#738ea3"/>
+<circle cx="738.12" cy="585.74" r="13.106" fill="#738ea3"/>
+<rect x="133.8" y="533.05" width="23.245" height="23.245" fill="#728ea4"/>
+<polygon points="610.86,153.66 628.54,184.27 593.19,184.27" fill="#728ea4"/>
+<circle cx="517.87" cy="762.57" r="13.132" fill="#728fa4"/>
+<rect x="176.8" y="253.46" width="23.291" height="23.291" fill="#718fa5"/>
+<polygon points="768.2,389.15 785.91,419.82 750.49,419.82" fill="#718fa5"/>
+<circle cx="242.37" cy="695.08" r="13.158" fill="#718fa5"/>
+<rect x="425.87" y="116.92" width="23.338" height="23.338" fill="#708fa6"/>
+<polygon points="676.62,658.41 694.36,689.15 658.87,689.15" fill="#708fa6"/>
+<circle cx="127.83" cy="434.27" r="13.184" fill="#7090a7"/>
+<rect x="686.83" y="232" width="23.384" height="23.384" fill="#6f90a7"/>
+<polygon points="406.04,749.92 423.82,780.71 388.26,780.71" fill="#6f90a7"/>
+<circle cx="265.7" cy="183.65" r="13.21" fill="#6f90a8"/>
+<rect x="754.53" y="510.29" width="23.43" height="23.43" fill="#6e90a8"/>
+<polygon points="167.79,590.18 185.6,621.04 149.97,621.04" fill="#6e90a8"/>
+<circle cx="549.65" cy="140.41" r="13.236" fill="#6e91a9"/>
+<rect x="574.1" y="734.26" width="23.475" height="23.475" fill="#6d91a9"/>
+<polygon points="149.49,302.72 167.34,333.63 131.64,333.63" fill="#6d91aa"/>
+<circle cx="757.57" cy="340.27" r="13.261" fill="#6d91aa"/>
+<rect x="285.36" y="727.31" width="23.52" height="23.52" fill="#6c91aa"/>
+<polygon points="367.35,112.51 385.24,143.48 349.47,143.48" fill="#6c91ab"/>
+<circle cx="725.33" cy="628.04" r="13.287" fill="#6c92ab"/>
+<rect x="114.49" y="492.99" width="23.565" height="23.565" fill="#6b92ab"/>
+<polygon points="651.97,169.9 669.89,200.93 634.06,200.93" fill="#6b92ac"/>
+<circle cx="476.34" cy="778.15" r="13.312" fill="#6b92ac"/>
+<rect x="196.79" y="213.72" width="23.61" height="23.61" fill="#6a92ad"/>
+<polygon points="780.07,431.73 798.02,462.82 762.12,462.82" fill="#6a92ad"/>
+<circle cx="204.63" cy="671.44" r="13.337" fill="#6a93ad"/>
+<rect x="469.56" y="108.71" width="23.654" height="23.654" fill="#6993ae"/>
+<polygon points="649.67,693.72 667.65,724.87 631.68,724.87" fill="#6993ae"/>
+<circle cx="123.69" cy="389.77" r="13.362" fill="#6993ae"/>
+<rect x="719.82" y="261.91" width="23.699" height="23.699" fill="#6893af"/>
+<polygon points="361.24,749.83 379.26,781.04 343.22,781.04" fill="#6893af"/>
+<circle cx="298.67" cy="153.23" r="13.387" fill="#6894b0"/>
+<rect x="750.59" y="554.89" width="23.742" height="23.742" fill="#6794b0"/>
+<polygon points="140.33,554.29 158.38,585.56 122.28,585.56" fill="#6794b0"/>
+<circle cx="594" cy="148.16" r="13.412" fill="#6794b1"/>
+<rect x="535.94" y="758.36" width="23.786" height="23.786" fill="#6694b1"/>
+<polygon points="161.16,258.84 179.25,290.17 143.08,290.17" fill="#6694b1"/>
+<circle cx="778.42" cy="380.36" r="13.436" fill="#6595b2"/>
+<rect x="242.71" y="711.63" width="23.83" height="23.83" fill="#6595b2"/>
+<polygon points="409.23,94.975 427.35,126.36 391.12,126.36" fill="#6595b3"/>
+<circle cx="706.07" cy="669.1" r="13.461" fill="#6495b3"/>
+<rect x="100.82" y="449.49" width="23.873" height="23.873" fill="#6495b3"/>
+<polygon points="691.26,192.51 709.41,223.95 673.11,223.95" fill="#6495b4"/>
+<circle cx="431.86" cy="787.81" r="13.485" fill="#6396b4"/>
+<rect x="222.96" y="176.37" width="23.916" height="23.916" fill="#6396b4"/>
+<polygon points="785.77,476.73 803.96,508.23 767.59,508.23" fill="#6396b5"/>
+<circle cx="169.82" cy="641.86" r="13.509" fill="#6296b5"/>
+<rect x="515.11" y="106.88" width="23.958" height="23.958" fill="#6296b6"/>
+<polygon points="617.05,725.59 635.26,757.14 598.83,757.14" fill="#6296b6"/>
+<circle cx="126.06" cy="343.99" r="13.533" fill="#6197b6"/>
+<rect x="748.86" y="297.18" width="24.001" height="24.001" fill="#6197b7"/>
+<polygon points="315.74,743.14 333.99,774.75 297.49,774.75" fill="#6197b7"/>
+<circle cx="336.61" cy="127.22" r="13.557" fill="#6097b7"/>
+<rect x="740" y="599.59" width="24.043" height="24.043" fill="#6097b8"/>
+<polygon points="117.72,513.84 136,545.5 99.444,545.5" fill="#6097b8"/>
+<circle cx="637.86" cy="162.56" r="13.581" fill="#5f98b9"/>
+<rect x="493.66" y="777.22" width="24.085" height="24.085" fill="#5f98b9"/>
+<polygon points="179.43,216.06 197.74,247.78 161.12,247.78" fill="#5f98b9"/>
+<circle cx="793.67" cy="424.11" r="13.604" fill="#5e98ba"/>
+<rect x="201.73" y="689.48" width="24.127" height="24.127" fill="#5e98ba"/>
+<polygon points="454.26,83.365 472.6,115.14 435.92,115.14" fill="#5e98ba"/>
+<circle cx="680.49" cy="707.92" r="13.628" fill="#5d99bb"/>
+<rect x="93.325" y="403.39" width="24.168" height="24.168" fill="#5d99bb"/>
+<polygon points="727.75,221.23 746.12,253.05 709.37,253.05" fill="#5d99bb"/>
+<circle cx="385.32" cy="791.07" r="13.651" fill="#5c99bc"/>
+<rect x="254.98" y="142.36" width="24.21" height="24.21" fill="#5c99bc"/>
+<polygon points="784.91,523.22 803.32,555.1 766.51,555.1" fill="#5c99bd"/>
+<circle cx="138.86" cy="606.75" r="13.674" fill="#5b9abd"/>
+<rect x="561.56" y="111.73" width="24.251" height="24.251" fill="#5b9abd"/>
+<polygon points="579.26,753.13 597.7,785.07 560.82,785.07" fill="#5b9abe"/>
+<circle cx="135.17" cy="297.91" r="13.697" fill="#5a9abe"/>
+<rect x="773.13" y="337.22" width="24.292" height="24.292" fill="#5a9abe"/>
+<polygon points="270.55,729.71 289.02,761.7 252.08,761.7" fill="#5a9abf"/>
+<circle cx="378.89" cy="106.4" r="13.72" fill="#599bbf"/>
+<rect x="722.7" y="643.4" width="24.332" height="24.332" fill="#599bc0"/>
+<polygon points="100.69,469.53 119.19,501.57 82.188,501.57" fill="#599bc0"/>
+<circle cx="680.22" cy="183.58" r="13.743" fill="#589bc0"/>
+<rect x="448.03" y="790.18" width="24.373" height="24.373" fill="#589bc1"/>
+<polygon points="204.15,175.39 222.68,207.48 185.63,207.48" fill="#589bc1"/>
+<circle cx="802.73" cy="470.67" r="13.766" fill="#579cc1"/>
+<rect x="163.42" y="661.08" width="24.413" height="24.413" fill="#579cc2"/>
+<polygon points="501.55,78.185 520.11,110.33 482.99,110.33" fill="#579cc2"/>
+<circle cx="648.9" cy="743.52" r="13.789" fill="#569cc3"/>
+<rect x="92.445" y="355.6" width="24.453" height="24.453" fill="#569cc3"/>
+<polygon points="760.5,255.66 779.09,287.86 741.91,287.86" fill="#569cc3"/>
+<circle cx="337.69" cy="787.59" r="13.811" fill="#559dc4"/>
+<rect x="292.36" y="112.59" width="24.493" height="24.493" fill="#559dc4"/>
+<polygon points="777.23,570.21 795.85,602.46 758.61,602.46" fill="#559dc4"/>
+<circle cx="112.6" cy="566.68" r="13.834" fill="#549dc5"/>
+<rect x="607.9" y="123.44" width="24.533" height="24.533" fill="#549dc5"/>
+<polygon points="536.93,775.55 555.58,807.86 518.28,807.86" fill="#549dc6"/>
+<circle cx="151.11" cy="252.56" r="13.856" fill="#539ec6"/>
+<rect x="791.87" y="381.34" width="24.572" height="24.572" fill="#539ec6"/>
+<polygon points="226.69,709.55 245.37,741.9 208.01,741.9" fill="#539ec7"/>
+<circle cx="424.74" cy="91.468" r="13.878" fill="#529ec7"/>
+<rect x="698.79" y="685.28" width="24.611" height="24.611" fill="#529ec7"/>
+<polygon points="89.83,422.2 108.54,454.6 71.119,454.6" fill="#529ec8"/>
+<circle cx="720.07" cy="211.01" r="13.9" fill="#519fc8"/>
+<rect x="399.93" y="796.72" width="24.65" height="24.65" fill="#519fc9"/>
+<polygon points="235.06,137.79 253.8,170.25 216.32,170.25" fill="#519fc9"/>
+<circle cx="805.16" cy="519.15" r="13.922" fill="#509fc9"/>
+<rect x="128.73" y="626.78" width="24.689" height="24.689" fill="#509fca"/>
+<polygon points="550.15,79.809 568.92,112.32 531.38,112.32" fill="#509fca"/>
+<circle cx="611.75" cy="774.99" r="13.944" fill="#4fa0ca"/>
+<rect x="98.465" y="307.11" width="24.728" height="24.728" fill="#4fa0cb"/>
+<polygon points="788.63,295.28 807.43,327.85 769.83,327.85" fill="#4fa0cb"/>
+<circle cx="289.98" cy="777.17" r="13.966" fill="#4ea0cc"/>
+<rect x="334.5" y="87.893" width="24.766" height="24.766" fill="#4ea0cc"/>
+<polygon points="762.61,616.68 781.44,649.29 743.78,649.29" fill="#4ea0cc"/>
+<circle cx="91.824" cy="522.31" r="13.987" fill="#4da1cd"/>
+<rect x="653.1" y="142.02" width="24.805" height="24.805" fill="#4da1cd"/>
+<polygon points="490.8,792.14 509.66,824.8 471.95,824.8" fill="#4da1cd"/>
+<circle cx="173.8" cy="208.97" r="14.009" fill="#4ca1ce"/>
+<rect x="804.45" y="428.73" width="24.843" height="24.843" fill="#4ca1ce"/>
+<polygon points="185.17,682.81 204.06,715.52 166.29,715.52" fill="#4ca1cf"/>
+<circle cx="473.31" cy="82.973" r="14.03" fill="#4ba2cf"/>
+<rect x="668.54" y="724.24" width="24.881" height="24.881" fill="#4ba2cf"/>
+<polygon points="85.64,372.74 104.55,405.5 66.725,405.5" fill="#4ba2d0"/>
+<circle cx="756.43" cy="244.53" r="14.052" fill="#4aa2d0"/>
+<rect x="350.29" y="796.42" width="24.919" height="24.919" fill="#4aa2d0"/>
+<polygon points="271.73,104.22 290.67,137.03 252.78,137.03" fill="#4aa2d1"/>
+<circle cx="800.62" cy="568.54" r="14.073" fill="#49a3d1"/>
+<rect x="98.555" y="587.11" width="24.956" height="24.956" fill="#49a3d2"/>
+<polygon points="599.06,88.466 618.03,121.33 580.08,121.33" fill="#48a3d2"/>
+<circle cx="569.63" cy="801.48" r="14.094" fill="#48a3d2"/>
+<rect x="111.53" y="258.95" width="24.994" height="24.994" fill="#48a3d3"/>
+<polygon points="811.35,339.43 830.35,372.34 792.35,372.34" fill="#47a3d3"/>
+<circle cx="243.2" cy="759.77" r="14.115" fill="#47a4d3"/>
+<rect x="380.67" y="69" width="25.031" height="25.031" fill="#47a4d4"/>
+<polygon points="741.11,661.6 760.13,694.56 722.08,694.56" fill="#46a4d4"/>
+<circle cx="77.186" cy="474.44" r="14.136" fill="#46a4d5"/>
+<rect x="696.13" y="167.34" width="25.068" height="25.068" fill="#46a4d5"/>
+<polygon points="441.73,802.29 460.79,835.3 422.67,835.3" fill="#45a4d5"/>
+<circle cx="203.01" cy="168.13" r="14.157" fill="#45a5d6"/>
+<rect x="810.35" y="478.49" width="25.105" height="25.105" fill="#45a5d6"/>
+<polygon points="147,649.82 166.08,682.87 127.91,682.87" fill="#44a5d6"/>
+<circle cx="523.64" cy="81.356" r="14.178" fill="#44a5d7"/>
+<rect x="632.34" y="759.33" width="25.142" height="25.142" fill="#44a5d7"/>
+<polygon points="88.469,322.13 107.58,355.23 69.356,355.23" fill="#43a5d8"/>
+<circle cx="788.39" cy="283.64" r="14.198" fill="#43a6d8"/>
+<rect x="300.13" y="789.02" width="25.178" height="25.178" fill="#43a6d8"/>
+<polygon points="313.58,75.541 332.72,108.69 294.44,108.69" fill="#42a6d9"/>
+<circle cx="788.95" cy="617.84" r="14.219" fill="#42a6d9"/>
+<rect x="73.724" y="542.7" width="25.215" height="25.215" fill="#42a6d9"/>
+<polygon points="647.22,104.24 666.39,137.44 628.06,137.44" fill="#41a6da"/>
+<circle cx="523.25" cy="822.23" r="14.239" fill="#41a7da"/>
+<rect x="131.61" y="212.16" width="25.251" height="25.251" fill="#41a7db"/>
+<polygon points="827.97,387.32 847.16,420.57 808.77,420.57" fill="#40a7db"/>
+<circle cx="198.41" cy="735.47" r="14.26" fill="#40a7db"/>
+<rect x="430.03" y="56.536" width="25.287" height="25.287" fill="#40a7dc"/>
+<polygon points="712.91,703.93 732.13,737.23 693.68,737.23" fill="#3fa7dc"/>
+<circle cx="69.241" cy="423.96" r="14.28" fill="#3fa8dc"/>
+<rect x="735.99" y="199.11" width="25.323" height="25.323" fill="#3fa8dd"/>
+<polygon points="390.65,805.54 409.9,838.89 371.4,838.89" fill="#3ea8dd"/>
+<circle cx="238.37" cy="131.04" r="14.3" fill="#3ea8de"/>
+<rect x="809.19" y="529.65" width="25.359" height="25.359" fill="#3ea8de"/>
+<polygon points="113.09,611.03 132.37,644.42 93.817,644.42" fill="#3da8de"/>
+<circle cx="574.73" cy="86.914" r="14.32" fill="#3da9df"/>
+<rect x="590.74" y="789.63" width="25.394" height="25.394" fill="#3da9df"/>
+<polygon points="98.522,271.4 117.83,304.84 79.218,304.84" fill="#3ca9df"/>
+<circle cx="815.11" cy="327.72" r="14.34" fill="#3ca9e0"/>
+<rect x="250.49" y="774.41" width="25.43" height="25.43" fill="#3ca9e0"/>
+<polygon points="359.93,52.549 379.26,86.031 340.6,86.031" fill="#3ba9e1"/>
+<circle cx="770.12" cy="665.98" r="14.36" fill="#3baae1"/>
+<rect x="54.96" y="494.31" width="25.465" height="25.465" fill="#3baae1"/>
+<polygon points="693.61,127.05 712.96,160.58 674.25,160.58" fill="#3aaae2"/>
+<circle cx="473.44" cy="836.58" r="14.38" fill="#3aaae2"/>
+</svg>
+
+
+
+**2.3** In `src/main.cpp`, in the block after the loop, write a loop over `trio`
+that brings each of the three shapes to the area 400 with `scale_to_area`, then
+prints its title, its area and its perimeter. Build the project and run
+`build/output`.
+
+
+
+**2.4** In `src/shape.cpp`, replace the expression that `triangle::area`
+returns with `std::sqrt(3.0) * side_ * side_`. Rebuild the project, run
+`build/output`, open `build/garden.svg`, say how the triangles change, and run
+`build/tests`. Do the same with `side_ * side_ / 4.0`, then restore the
+correct expression.
+
+
+</div>
+
+# Part 3
+
+<div class="exo">
+**3.1** In `include/shape.hpp`, remove `virtual` from the destructor of `shape`.
+Rebuild the project, run `build/output` again, and compare its output, the
+number of shapes alive included, and `build/garden.svg` with those obtained
+before.
+
+
+
+**3.2** Without putting `virtual` back, build the project with the address
+sanitizer and run the program with the two commands below. Say what the
+sanitizer reports, then put `virtual` back.
+
+<script type="preformatted">
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ sh
+cmake -S . -B build-asan -DCMAKE_CXX_FLAGS="-fsanitize=address -g"
+cmake --build build-asan && ./build-asan/output
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+</script>
+
+
+
+**3.3** In the `main` of `tests/test_shape.cpp`, write `std::vector&lt;shape> v;`
+and build the project. Then add `v.push_back(circle({0.0, 0.0}, 1.0));`, build
+the project again and read the error message.
+
+
+
+**3.4** In `include/shape.hpp`, remove the `= 0` from the four pure virtual
+functions of `shape`, and give each one a body in `src/shape.cpp` that returns
+`0.0` or `""`, or does nothing; remove the two `= delete` lines of
+`include/shape.hpp` as well. In `src/shape.cpp`, omit the parameter names in
+the definitions of `shape::outline` and `shape::scale`, or `-Wextra` reports
+the parameters as unused. Below the lines of question **3.3**, print
+`v[0].area()` and `v[0].title()`, build the project and run `build/tests`.
+Then remove the four bodies from `src/shape.cpp`, put the `= 0` and the two
+`= delete` lines back in `include/shape.hpp`, and remove from
+`tests/test_shape.cpp` the lines written in question **3.3** and in this
+question.
+
+
+</div>
+
+# Part 4
+
+This part is optional and can be done at the end of the session if time allows.
+
+<div class="exo">
+**4.1** In the `main` of `tests/test_shape.cpp`, print `sizeof(circle)` and
+`sizeof(point) + sizeof(double)`, the sum of the sizes of the two fields of a
+`circle`: its center, inherited from `shape`, and its radius. Build the project,
+run `build/tests`, and say where the difference comes from.
+
+
+
+**4.2** Declare `triangle` `final` in `include/shape.hpp`, then write the line
+`struct big_triangle : triangle {};` in `tests/test_shape.cpp`, before the
+function `main`. Build the project and read the error, then remove both changes.
+
+
+</div>
+
+
+<script>
+    markdeepOptions = { tocStyle: 'none', detectMath: true };
+</script>
+<style class="fallback">body{visibility:hidden;white-space:pre;font-family:monospace}</style>
+<script src="markdeep.min.js" charset="utf-8"></script>
+<script>window.markdeep || document.write('<script src="https://casual-effects.com/markdeep/latest/markdeep.min.js?" charset="utf-8">\x3C/script>');</script>
+<script>window.alreadyProcessedMarkdeep||(document.body.style.visibility="visible")</script>

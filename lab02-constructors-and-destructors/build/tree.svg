@@ -1,5 +1,5 @@
 <svg xmlns='http://www.w3.org/2000/svg' width="900" height="900">
-<g transform="translate(450,860)">
+<g transform="translate(450, 860)">
 <line x1="0" y1="0" x2="0" y2="-150" stroke="#b5763a" stroke-width="11" />
 <g transform="translate(0,-150) rotate(-27) scale(0.78)">
 <line x1="0" y1="0" x2="0" y2="-150" stroke="#b0814e" stroke-width="8.36" />

@@ -6,7 +6,7 @@ LAVENANT Jordan - APP4 IIM
 
 ### 1.2
 
-La balise `</svg>` apparaitra dans le flux lorsque l'objet `canvas` sera détruit, c'est à dire quand le destructeur est appelé.
+La balise `</svg>` apparaitra dans le flux lorsque l'objet `canvas` sera détruit, lorsque le destructeeur sera appelé.
 
 ### 1.4
 
@@ -16,7 +16,7 @@ La balise `</svg>` apparaitra dans le flux lorsque l'objet `canvas` sera détrui
 </svg>
 ```
 
-Le premier en tete `<svg>` provient de canvas sheet = file qui convertit implcitement le flux `file` en `canvas`.
+Le premier en tete `<svg>` provient de canvas `sheet = file` qui convertit implcitement le flux `file` en `canvas`.
 
 Le second en tete `<svg>` provient de l'appel à la fonction prenant un `canvas` en lui passant `file`, le compilateur fait une seconde conversion implicite en créant silencieusement un objet `canvas`. A la sortie de la fonction, l'objet est détruit, et son destructeur écrit la base fermante `</svg>`.
 
@@ -56,7 +56,7 @@ La liste d'initialisation permet d'initialiser les références et les constante
 
 ### 3.2
 
-Si la copie était autorisée, on aurai une même référence vers le même `canvas`. Ainsi, à la destruction, les 2 destructeurs s'éxécuteraient et appelleraient `close_group()`, alors qu'il n'y a qu'une seule balise `<g>` ouvrante, et produirait un SVG invalide.
+Si la copie était autorisée, on aurai une même référence vers le même `canvas`. Ainsi, à la destruction, les 2 destructeurs s'éxécuteraient et appelleraient `close_group()`, alors qu'il n'y a qu'une seule balise `<g>` ouvrante, et produirait un SVG invalide car on aurai 2 balises `</g>`.
 
 ### 3.3
 
@@ -73,3 +73,9 @@ Message d'erreur :
 `/home/jorda/TP-CPP-OOP/lab02-constructors-and-destructors/src/canvas.cpp:34:5: error: increment of member ‘canvas::strokes_’ in read-only object`
 
 Cela compile car `out_` fait référence vers un objet externe, ainsi elle ne rend pas le flux constant, car seulement les membres de `canvas` deviennent constant. Comme on a retiré `++strokes;`, aucun membre de `canvas` n'est modifié, donc le code est valide pour le compilateur.
+
+## Partie 4
+
+### 4.1
+
+J'ai bel et bien 400 balise ouvrante avec `strokes`.

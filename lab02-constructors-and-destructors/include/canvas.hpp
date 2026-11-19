@@ -37,7 +37,7 @@ class canvas
     canvas(canvas const&)            = delete;
     canvas& operator=(canvas const&) = delete;
 
-    void line(point a, point b, color const& stroke, double thickness) const;
+    void line(point a, point b, color const& stroke, double thickness);
 
     // Called by group, which is the only thing that should call them: a group
     // opened by hand is a group that can be left open.

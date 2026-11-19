@@ -1,3 +1,2 @@
-canvas 3 0
+canvas 15 0.000237704
 ---
-canvas

@@ -43,7 +43,7 @@ int main()
       check(feuille1.width() == 100 && feuille1.height() == 200, "l'affichage est de la bonne taille");
       check(feuille1.centre().x == 50.0 && feuille1.centre().y == 100.0, "le centre est au bon endroit");
       std::string const text = out.str();
-      check(text.find("<svg width=\"100\" height=\"200\">") != std::string::npos, "vérification de l'en-tête");
+      check(text.find("<svg xmlns='http://www.w3.org/2000/svg' width=\"100\" height=\"200\">") != std::string::npos, "vérification de l'en-tête");
       
       // 1.2 (pendant que l'objet est en vie)
       check(text.find("</svg>") == std::string::npos, "vérification que la balise fermante est absente du flux");
@@ -56,7 +56,7 @@ int main()
       canvas feuille2(out);
       check(feuille2.width() == 900 && feuille2.height() == 900, "la feuille par défaut est de 900 par 900");
       std::string const text2 = out.str();
-      check(text2.find("<svg width=\"900\" height=\"900\">") != std::string::npos, "vérification de l'en-tête de la feuille par défaut");
+      check(text2.find("<svg xmlns='http://www.w3.org/2000/svg' width=\"900\" height=\"900\">") != std::string::npos, "vérification de l'en-tête de la feuille par défaut");
     }
     // 1.5
     {
@@ -101,6 +101,34 @@ int main()
     sheet.line({1.0, 1.0}, {2.0, 2.0}, color{0, 255, 0}, 1.0);
 
     check(sheet.strokes() == 2, "two lines, counted by the canvas that drew them");
+  }
+
+  // ------------------------------------------------------------------ part 4
+  {
+    std::ostringstream out;
+    try 
+    {
+      canvas feuille(out);
+      group const g1(feuille, "");
+      group const g2(feuille, "");
+
+      throw std::runtime_error("test");
+    }
+    catch (std::runtime_error const&)
+    {
+    }
+
+    std::string text = out.str();
+    std::size_t g1_close = text.find("</g>");
+    std::size_t g2_close = text.find("</g>", g1_close + 1);
+
+    check(g1_close != std::string::npos, "la balise fermante du premier groupe existe");
+    check(g2_close != std::string::npos, "la balise fermante du second groupe existe");
+    
+    std::size_t svg_close = text.find("</svg>");
+    check(svg_close != std::string::npos, "la balise fermante du svg existe");
+    
+    check(canvas::alive() == 0, "canvas::alive() vaut 0");
   }
 
   if (failures == 0) { std::cout << "all checks passed\n"; }

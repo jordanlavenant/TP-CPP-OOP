@@ -11,7 +11,7 @@ canvas::canvas(std::ostream& out, int w, int h)
   // write the header. The reference to the stream must be established in the
   // initialiser list: a reference cannot be assigned afterwards.
 
-  out_ << "<svg width=\"" << width_ << "\" height=\"" << height_ << "\">" << std::endl;
+  out_ << "<svg xmlns='http://www.w3.org/2000/svg' width=\"" << width_ << "\" height=\"" << height_ << "\">" << std::endl;
   ++alive_;
 }
 
@@ -26,26 +26,26 @@ canvas::~canvas()
   --alive_;
 }
 
-void canvas::line(point a, point b, color const& stroke, double thickness) const
+void canvas::line(point a, point b, color const& stroke, double thickness)
 {
   // TO WRITE.
   out_ << "<line x1=\"" << a.x << "\" y1=\"" << a.y << "\" x2=\"" << b.x << "\" y2=\"" << b.y
       << "\" stroke=\"" << stroke.to_hex() << "\" stroke-width=\"" << thickness << "\" />" << std::endl;
-  // ++strokes_;
+  ++strokes_;
 }
 
 void canvas::open_group(std::string const& transform)
 {
   // TO WRITE.
   out_ << "<g transform=\"" << transform << "\">" << std::endl;
-  ++depth_;
+  depth_++;
 }
 
 void canvas::close_group()
 {
   // TO WRITE.
   out_ << "</g>" << std::endl;
-  --depth_;
+  depth_--;
 }
 
 int   canvas::width()   const { return width_;   }

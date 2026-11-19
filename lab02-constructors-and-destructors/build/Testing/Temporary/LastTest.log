@@ -1,19 +1,19 @@
-Start testing: Nov 18 21:44 CET
+Start testing: Nov 19 10:04 CET
 ----------------------------------------------------------
 1/1 Testing: canvas
 1/1 Test: canvas
 Command: "/home/jorda/TP-CPP-OOP/lab02-constructors-and-destructors/build/tests"
 Directory: /home/jorda/TP-CPP-OOP/lab02-constructors-and-destructors/build
-"canvas" start time: Nov 18 21:44 CET
+"canvas" start time: Nov 19 10:04 CET
 Output:
 ----------------------------------------------------------
-FAILED: two lines, counted by the canvas that drew them
+all checks passed
 <end of output>
 Test time =   0.00 sec
 ----------------------------------------------------------
-Test Failed.
-"canvas" end time: Nov 18 21:44 CET
+Test Passed.
+"canvas" end time: Nov 19 10:04 CET
 "canvas" time elapsed: 00:00:00
 ----------------------------------------------------------
 
-End testing: Nov 18 21:44 CET
+End testing: Nov 19 10:04 CET
