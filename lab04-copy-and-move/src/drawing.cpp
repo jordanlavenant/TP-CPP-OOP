@@ -22,7 +22,8 @@ drawing::drawing(drawing&& other) noexcept
 drawing& drawing::operator=(drawing const& other)
 {
   // TO WRITE.
-  (void)other;
+  drawing copy = other;
+  std::swap(shapes_, copy.shapes_);
   return *this;
 }
 

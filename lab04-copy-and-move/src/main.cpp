@@ -98,7 +98,13 @@ static void run()
     // TO WRITE. One copy per arm, each scaled by its own factor, each
     // drawn inside a group turned by its share of the circle. The motif is
     // const: nothing here may change it.
-    motif.draw_into(sheet, color{"#ff6a3d"}, color{"#3aa2e2"});
+    for (int k = 0; k < ARMS; ++k)
+    {
+      drawing arm = motif;
+      arm.scale_all(0.68 + 0.32 * std::cos(2.0 * std::numbers::pi * 3.0 * k / ARMS));
+      group const rotation(sheet, "rotate(" + number(360.0 * k / ARMS) + ")");
+      arm.draw_into(sheet, color{"#ff6a3d"}, color{"#3aa2e2"});
+    }
 
     std::cout << "drawn " << sheet.strokes() << " shapes over " << ARMS << " arms\n";
   }

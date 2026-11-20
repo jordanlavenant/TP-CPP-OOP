@@ -2,6 +2,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="900" height="900" viewBox="0 0 900 900">
 <rect width="100%" height="100%" fill="#0d0d12"/>
 <g transform="translate(450,450)">
+<g transform="rotate(0)">
 <circle cx="0" cy="-45" r="11.257" fill="#ff6a3d"/>
 <rect x="-12.738" y="-97.738" width="25.476" height="25.476" fill="#e67152"/>
 <polygon points="0,-150.55 22.128,-112.22 -22.128,-112.22" fill="#ce7866"/>
@@ -11,5 +12,259 @@
 <circle cx="0" cy="-285" r="16.431" fill="#6b94b9"/>
 <rect x="-12.738" y="-337.74" width="25.476" height="25.476" fill="#539bcd"/>
 <polygon points="0,-382.51 15.161,-356.25 -15.161,-356.25" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(15)">
+<circle cx="0" cy="-45" r="10.202" fill="#ff6a3d"/>
+<rect x="-11.544" y="-96.544" width="23.088" height="23.088" fill="#e67152"/>
+<polygon points="0,-148.16 20.054,-113.42 -20.054,-113.42" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="15.973" fill="#b57f7b"/>
+<rect x="-14.472" y="-219.47" width="28.944" height="28.944" fill="#9d8690"/>
+<polygon points="0,-269.84 21.513,-232.58 -21.513,-232.58" fill="#848da4"/>
+<circle cx="0" cy="-285" r="14.891" fill="#6b94b9"/>
+<rect x="-11.544" y="-336.54" width="23.088" height="23.088" fill="#539bcd"/>
+<polygon points="0,-380.87 13.74,-357.07 -13.74,-357.07" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(30)">
+<circle cx="0" cy="-45" r="7.6549" fill="#ff6a3d"/>
+<rect x="-8.6617" y="-93.662" width="17.323" height="17.323" fill="#e67152"/>
+<polygon points="0,-142.38 15.047,-116.31 -15.047,-116.31" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="11.985" fill="#b57f7b"/>
+<rect x="-10.859" y="-215.86" width="21.717" height="21.717" fill="#9d8690"/>
+<polygon points="0,-263.64 16.141,-235.68 -16.141,-235.68" fill="#848da4"/>
+<circle cx="0" cy="-285" r="11.173" fill="#6b94b9"/>
+<rect x="-8.6617" y="-333.66" width="17.323" height="17.323" fill="#539bcd"/>
+<polygon points="0,-376.9 10.309,-359.05 -10.309,-359.05" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(45)">
+<circle cx="0" cy="-45" r="5.1077" fill="#ff6a3d"/>
+<rect x="-5.7795" y="-90.779" width="11.559" height="11.559" fill="#e67152"/>
+<polygon points="0,-136.59 10.04,-119.2 -10.04,-119.2" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="7.9971" fill="#b57f7b"/>
+<rect x="-7.2454" y="-212.25" width="14.491" height="14.491" fill="#9d8690"/>
+<polygon points="0,-257.44 10.77,-238.78 -10.77,-238.78" fill="#848da4"/>
+<circle cx="0" cy="-285" r="7.455" fill="#6b94b9"/>
+<rect x="-5.7795" y="-330.78" width="11.559" height="11.559" fill="#539bcd"/>
+<polygon points="0,-372.94 6.8789,-361.03 -6.8789,-361.03" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(60)">
+<circle cx="0" cy="-45" r="4.0526" fill="#ff6a3d"/>
+<rect x="-4.5856" y="-89.586" width="9.1712" height="9.1712" fill="#e67152"/>
+<polygon points="0,-134.2 7.9662,-120.4 -7.9662,-120.4" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="6.3451" fill="#b57f7b"/>
+<rect x="-5.7487" y="-210.75" width="11.497" height="11.497" fill="#9d8690"/>
+<polygon points="0,-254.87 8.5455,-240.07 -8.5455,-240.07" fill="#848da4"/>
+<circle cx="0" cy="-285" r="5.915" fill="#6b94b9"/>
+<rect x="-4.5856" y="-329.59" width="9.1712" height="9.1712" fill="#539bcd"/>
+<polygon points="0,-371.3 5.4579,-361.85 -5.4579,-361.85" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(75)">
+<circle cx="0" cy="-45" r="5.1077" fill="#ff6a3d"/>
+<rect x="-5.7795" y="-90.779" width="11.559" height="11.559" fill="#e67152"/>
+<polygon points="0,-136.59 10.04,-119.2 -10.04,-119.2" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="7.9971" fill="#b57f7b"/>
+<rect x="-7.2454" y="-212.25" width="14.491" height="14.491" fill="#9d8690"/>
+<polygon points="0,-257.44 10.77,-238.78 -10.77,-238.78" fill="#848da4"/>
+<circle cx="0" cy="-285" r="7.455" fill="#6b94b9"/>
+<rect x="-5.7795" y="-330.78" width="11.559" height="11.559" fill="#539bcd"/>
+<polygon points="0,-372.94 6.8789,-361.03 -6.8789,-361.03" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(90)">
+<circle cx="0" cy="-45" r="7.6549" fill="#ff6a3d"/>
+<rect x="-8.6617" y="-93.662" width="17.323" height="17.323" fill="#e67152"/>
+<polygon points="0,-142.38 15.047,-116.31 -15.047,-116.31" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="11.985" fill="#b57f7b"/>
+<rect x="-10.859" y="-215.86" width="21.717" height="21.717" fill="#9d8690"/>
+<polygon points="0,-263.64 16.141,-235.68 -16.141,-235.68" fill="#848da4"/>
+<circle cx="0" cy="-285" r="11.173" fill="#6b94b9"/>
+<rect x="-8.6617" y="-333.66" width="17.323" height="17.323" fill="#539bcd"/>
+<polygon points="0,-376.9 10.309,-359.05 -10.309,-359.05" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(105)">
+<circle cx="0" cy="-45" r="10.202" fill="#ff6a3d"/>
+<rect x="-11.544" y="-96.544" width="23.088" height="23.088" fill="#e67152"/>
+<polygon points="0,-148.16 20.054,-113.42 -20.054,-113.42" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="15.973" fill="#b57f7b"/>
+<rect x="-14.472" y="-219.47" width="28.944" height="28.944" fill="#9d8690"/>
+<polygon points="0,-269.84 21.513,-232.58 -21.513,-232.58" fill="#848da4"/>
+<circle cx="0" cy="-285" r="14.891" fill="#6b94b9"/>
+<rect x="-11.544" y="-336.54" width="23.088" height="23.088" fill="#539bcd"/>
+<polygon points="0,-380.87 13.74,-357.07 -13.74,-357.07" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(120)">
+<circle cx="0" cy="-45" r="11.257" fill="#ff6a3d"/>
+<rect x="-12.738" y="-97.738" width="25.476" height="25.476" fill="#e67152"/>
+<polygon points="0,-150.55 22.128,-112.22 -22.128,-112.22" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="17.625" fill="#b57f7b"/>
+<rect x="-15.969" y="-220.97" width="31.937" height="31.937" fill="#9d8690"/>
+<polygon points="0,-272.41 23.737,-231.3 -23.737,-231.3" fill="#848da4"/>
+<circle cx="0" cy="-285" r="16.431" fill="#6b94b9"/>
+<rect x="-12.738" y="-337.74" width="25.476" height="25.476" fill="#539bcd"/>
+<polygon points="0,-382.51 15.161,-356.25 -15.161,-356.25" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(135)">
+<circle cx="0" cy="-45" r="10.202" fill="#ff6a3d"/>
+<rect x="-11.544" y="-96.544" width="23.088" height="23.088" fill="#e67152"/>
+<polygon points="0,-148.16 20.054,-113.42 -20.054,-113.42" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="15.973" fill="#b57f7b"/>
+<rect x="-14.472" y="-219.47" width="28.944" height="28.944" fill="#9d8690"/>
+<polygon points="0,-269.84 21.513,-232.58 -21.513,-232.58" fill="#848da4"/>
+<circle cx="0" cy="-285" r="14.891" fill="#6b94b9"/>
+<rect x="-11.544" y="-336.54" width="23.088" height="23.088" fill="#539bcd"/>
+<polygon points="0,-380.87 13.74,-357.07 -13.74,-357.07" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(150)">
+<circle cx="0" cy="-45" r="7.6549" fill="#ff6a3d"/>
+<rect x="-8.6617" y="-93.662" width="17.323" height="17.323" fill="#e67152"/>
+<polygon points="0,-142.38 15.047,-116.31 -15.047,-116.31" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="11.985" fill="#b57f7b"/>
+<rect x="-10.859" y="-215.86" width="21.717" height="21.717" fill="#9d8690"/>
+<polygon points="0,-263.64 16.141,-235.68 -16.141,-235.68" fill="#848da4"/>
+<circle cx="0" cy="-285" r="11.173" fill="#6b94b9"/>
+<rect x="-8.6617" y="-333.66" width="17.323" height="17.323" fill="#539bcd"/>
+<polygon points="0,-376.9 10.309,-359.05 -10.309,-359.05" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(165)">
+<circle cx="0" cy="-45" r="5.1077" fill="#ff6a3d"/>
+<rect x="-5.7795" y="-90.779" width="11.559" height="11.559" fill="#e67152"/>
+<polygon points="0,-136.59 10.04,-119.2 -10.04,-119.2" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="7.9971" fill="#b57f7b"/>
+<rect x="-7.2454" y="-212.25" width="14.491" height="14.491" fill="#9d8690"/>
+<polygon points="0,-257.44 10.77,-238.78 -10.77,-238.78" fill="#848da4"/>
+<circle cx="0" cy="-285" r="7.455" fill="#6b94b9"/>
+<rect x="-5.7795" y="-330.78" width="11.559" height="11.559" fill="#539bcd"/>
+<polygon points="0,-372.94 6.8789,-361.03 -6.8789,-361.03" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(180)">
+<circle cx="0" cy="-45" r="4.0526" fill="#ff6a3d"/>
+<rect x="-4.5856" y="-89.586" width="9.1712" height="9.1712" fill="#e67152"/>
+<polygon points="0,-134.2 7.9662,-120.4 -7.9662,-120.4" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="6.3451" fill="#b57f7b"/>
+<rect x="-5.7487" y="-210.75" width="11.497" height="11.497" fill="#9d8690"/>
+<polygon points="0,-254.87 8.5455,-240.07 -8.5455,-240.07" fill="#848da4"/>
+<circle cx="0" cy="-285" r="5.915" fill="#6b94b9"/>
+<rect x="-4.5856" y="-329.59" width="9.1712" height="9.1712" fill="#539bcd"/>
+<polygon points="0,-371.3 5.4579,-361.85 -5.4579,-361.85" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(195)">
+<circle cx="0" cy="-45" r="5.1077" fill="#ff6a3d"/>
+<rect x="-5.7795" y="-90.779" width="11.559" height="11.559" fill="#e67152"/>
+<polygon points="0,-136.59 10.04,-119.2 -10.04,-119.2" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="7.9971" fill="#b57f7b"/>
+<rect x="-7.2454" y="-212.25" width="14.491" height="14.491" fill="#9d8690"/>
+<polygon points="0,-257.44 10.77,-238.78 -10.77,-238.78" fill="#848da4"/>
+<circle cx="0" cy="-285" r="7.455" fill="#6b94b9"/>
+<rect x="-5.7795" y="-330.78" width="11.559" height="11.559" fill="#539bcd"/>
+<polygon points="0,-372.94 6.8789,-361.03 -6.8789,-361.03" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(210)">
+<circle cx="0" cy="-45" r="7.6549" fill="#ff6a3d"/>
+<rect x="-8.6617" y="-93.662" width="17.323" height="17.323" fill="#e67152"/>
+<polygon points="0,-142.38 15.047,-116.31 -15.047,-116.31" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="11.985" fill="#b57f7b"/>
+<rect x="-10.859" y="-215.86" width="21.717" height="21.717" fill="#9d8690"/>
+<polygon points="0,-263.64 16.141,-235.68 -16.141,-235.68" fill="#848da4"/>
+<circle cx="0" cy="-285" r="11.173" fill="#6b94b9"/>
+<rect x="-8.6617" y="-333.66" width="17.323" height="17.323" fill="#539bcd"/>
+<polygon points="0,-376.9 10.309,-359.05 -10.309,-359.05" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(225)">
+<circle cx="0" cy="-45" r="10.202" fill="#ff6a3d"/>
+<rect x="-11.544" y="-96.544" width="23.088" height="23.088" fill="#e67152"/>
+<polygon points="0,-148.16 20.054,-113.42 -20.054,-113.42" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="15.973" fill="#b57f7b"/>
+<rect x="-14.472" y="-219.47" width="28.944" height="28.944" fill="#9d8690"/>
+<polygon points="0,-269.84 21.513,-232.58 -21.513,-232.58" fill="#848da4"/>
+<circle cx="0" cy="-285" r="14.891" fill="#6b94b9"/>
+<rect x="-11.544" y="-336.54" width="23.088" height="23.088" fill="#539bcd"/>
+<polygon points="0,-380.87 13.74,-357.07 -13.74,-357.07" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(240)">
+<circle cx="0" cy="-45" r="11.257" fill="#ff6a3d"/>
+<rect x="-12.738" y="-97.738" width="25.476" height="25.476" fill="#e67152"/>
+<polygon points="0,-150.55 22.128,-112.22 -22.128,-112.22" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="17.625" fill="#b57f7b"/>
+<rect x="-15.969" y="-220.97" width="31.937" height="31.937" fill="#9d8690"/>
+<polygon points="0,-272.41 23.737,-231.3 -23.737,-231.3" fill="#848da4"/>
+<circle cx="0" cy="-285" r="16.431" fill="#6b94b9"/>
+<rect x="-12.738" y="-337.74" width="25.476" height="25.476" fill="#539bcd"/>
+<polygon points="0,-382.51 15.161,-356.25 -15.161,-356.25" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(255)">
+<circle cx="0" cy="-45" r="10.202" fill="#ff6a3d"/>
+<rect x="-11.544" y="-96.544" width="23.088" height="23.088" fill="#e67152"/>
+<polygon points="0,-148.16 20.054,-113.42 -20.054,-113.42" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="15.973" fill="#b57f7b"/>
+<rect x="-14.472" y="-219.47" width="28.944" height="28.944" fill="#9d8690"/>
+<polygon points="0,-269.84 21.513,-232.58 -21.513,-232.58" fill="#848da4"/>
+<circle cx="0" cy="-285" r="14.891" fill="#6b94b9"/>
+<rect x="-11.544" y="-336.54" width="23.088" height="23.088" fill="#539bcd"/>
+<polygon points="0,-380.87 13.74,-357.07 -13.74,-357.07" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(270)">
+<circle cx="0" cy="-45" r="7.6549" fill="#ff6a3d"/>
+<rect x="-8.6617" y="-93.662" width="17.323" height="17.323" fill="#e67152"/>
+<polygon points="0,-142.38 15.047,-116.31 -15.047,-116.31" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="11.985" fill="#b57f7b"/>
+<rect x="-10.859" y="-215.86" width="21.717" height="21.717" fill="#9d8690"/>
+<polygon points="0,-263.64 16.141,-235.68 -16.141,-235.68" fill="#848da4"/>
+<circle cx="0" cy="-285" r="11.173" fill="#6b94b9"/>
+<rect x="-8.6617" y="-333.66" width="17.323" height="17.323" fill="#539bcd"/>
+<polygon points="0,-376.9 10.309,-359.05 -10.309,-359.05" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(285)">
+<circle cx="0" cy="-45" r="5.1077" fill="#ff6a3d"/>
+<rect x="-5.7795" y="-90.779" width="11.559" height="11.559" fill="#e67152"/>
+<polygon points="0,-136.59 10.04,-119.2 -10.04,-119.2" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="7.9971" fill="#b57f7b"/>
+<rect x="-7.2454" y="-212.25" width="14.491" height="14.491" fill="#9d8690"/>
+<polygon points="0,-257.44 10.77,-238.78 -10.77,-238.78" fill="#848da4"/>
+<circle cx="0" cy="-285" r="7.455" fill="#6b94b9"/>
+<rect x="-5.7795" y="-330.78" width="11.559" height="11.559" fill="#539bcd"/>
+<polygon points="0,-372.94 6.8789,-361.03 -6.8789,-361.03" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(300)">
+<circle cx="0" cy="-45" r="4.0526" fill="#ff6a3d"/>
+<rect x="-4.5856" y="-89.586" width="9.1712" height="9.1712" fill="#e67152"/>
+<polygon points="0,-134.2 7.9662,-120.4 -7.9662,-120.4" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="6.3451" fill="#b57f7b"/>
+<rect x="-5.7487" y="-210.75" width="11.497" height="11.497" fill="#9d8690"/>
+<polygon points="0,-254.87 8.5455,-240.07 -8.5455,-240.07" fill="#848da4"/>
+<circle cx="0" cy="-285" r="5.915" fill="#6b94b9"/>
+<rect x="-4.5856" y="-329.59" width="9.1712" height="9.1712" fill="#539bcd"/>
+<polygon points="0,-371.3 5.4579,-361.85 -5.4579,-361.85" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(315)">
+<circle cx="0" cy="-45" r="5.1077" fill="#ff6a3d"/>
+<rect x="-5.7795" y="-90.779" width="11.559" height="11.559" fill="#e67152"/>
+<polygon points="0,-136.59 10.04,-119.2 -10.04,-119.2" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="7.9971" fill="#b57f7b"/>
+<rect x="-7.2454" y="-212.25" width="14.491" height="14.491" fill="#9d8690"/>
+<polygon points="0,-257.44 10.77,-238.78 -10.77,-238.78" fill="#848da4"/>
+<circle cx="0" cy="-285" r="7.455" fill="#6b94b9"/>
+<rect x="-5.7795" y="-330.78" width="11.559" height="11.559" fill="#539bcd"/>
+<polygon points="0,-372.94 6.8789,-361.03 -6.8789,-361.03" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(330)">
+<circle cx="0" cy="-45" r="7.6549" fill="#ff6a3d"/>
+<rect x="-8.6617" y="-93.662" width="17.323" height="17.323" fill="#e67152"/>
+<polygon points="0,-142.38 15.047,-116.31 -15.047,-116.31" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="11.985" fill="#b57f7b"/>
+<rect x="-10.859" y="-215.86" width="21.717" height="21.717" fill="#9d8690"/>
+<polygon points="0,-263.64 16.141,-235.68 -16.141,-235.68" fill="#848da4"/>
+<circle cx="0" cy="-285" r="11.173" fill="#6b94b9"/>
+<rect x="-8.6617" y="-333.66" width="17.323" height="17.323" fill="#539bcd"/>
+<polygon points="0,-376.9 10.309,-359.05 -10.309,-359.05" fill="#3aa2e2"/>
+</g>
+<g transform="rotate(345)">
+<circle cx="0" cy="-45" r="10.202" fill="#ff6a3d"/>
+<rect x="-11.544" y="-96.544" width="23.088" height="23.088" fill="#e67152"/>
+<polygon points="0,-148.16 20.054,-113.42 -20.054,-113.42" fill="#ce7866"/>
+<circle cx="0" cy="-165" r="15.973" fill="#b57f7b"/>
+<rect x="-14.472" y="-219.47" width="28.944" height="28.944" fill="#9d8690"/>
+<polygon points="0,-269.84 21.513,-232.58 -21.513,-232.58" fill="#848da4"/>
+<circle cx="0" cy="-285" r="14.891" fill="#6b94b9"/>
+<rect x="-11.544" y="-336.54" width="23.088" height="23.088" fill="#539bcd"/>
+<polygon points="0,-380.87 13.74,-357.07 -13.74,-357.07" fill="#3aa2e2"/>
+</g>
 </g>
 </svg>

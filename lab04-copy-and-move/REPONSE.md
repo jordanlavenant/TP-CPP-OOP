@@ -53,3 +53,15 @@ En enlevant le `noexcept`, on remarque qu'il y a 7 clones.
 Le constructeur par défaut du compilateur déplace les membres, il appelle donc le constructeur de déplacement de `shapes`, ce qui transfère sans copie.
 
 Non car si tous les membres ont un constructeur de déplacement `noexcept`, la version par défaut du constructeur est implicitement marquée `noexcept`.
+
+## Partie 4
+
+### 4.2
+
+Grâce à l'idiome `copy-and-swap` utilisé dans `operator=(drawing const& other)`
+
+### 4.4
+
+La figure est devenue incomplète car en passant par une référence `drawing& arm = motif;`, `arm` n'est plus une copie indépendante, et deviens un alias vers l'unique objet `motif`.
+
+Ainsi à chaque tour de boucle, les facteurs d'échelle se cumulent tour après tour au lieu de repartir de la taille initiale du motif, on reprt donc du motif déjà réduit par les tours précédents, jusqu'à réduire sa taille définitivemnt.

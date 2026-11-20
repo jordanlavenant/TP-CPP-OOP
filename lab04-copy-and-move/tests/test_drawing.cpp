@@ -100,7 +100,33 @@ int main()
     check(shape::cloned() == 0, "vérifie qu'il n'y a pas eu de clones");
 
     std::cout << "shape::cloned() = " << shape::cloned() << '\n';
+  }
 
+  // 4.1
+  {
+    drawing a = sample();
+    drawing b = sample();
+
+    a.scale_all(2.0);
+    shape::forget_clones();
+    a = b;
+
+    check(shape::cloned() == 3, "vérifie qu'il y a 3 clones");
+    check(shape::alive() == 6, "vérifie qu'il y a 6 formes vivantes");
+    check(a.total_area() == b.total_area(), "vérifie que les deux dessins ont la même aire");
+  }
+
+  // 4.2
+  {
+    drawing a = sample();
+    double const aire_avant = a.total_area();
+    std::size_t const taille_avant = a.size();
+
+    drawing& same = a;
+    a = same;
+
+    check(a.size() == taille_avant, "le nombre de forme est inchangé");
+    check(a.total_area() == aire_avant, "l'aire totale est inchangée");
   }
 
   if (failures == 0) { std::cout << "all checks passed\n"; }
